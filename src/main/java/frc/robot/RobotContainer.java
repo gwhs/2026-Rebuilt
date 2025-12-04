@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AlignToPose;
-import frc.robot.commands.DriveCommand;
 import frc.robot.generated.TunerConstants_Comp;
 import frc.robot.generated.TunerConstants_WALLE;
 import frc.robot.generated.TunerConstants_practiceDrivetrain;
@@ -152,19 +150,11 @@ public class RobotContainer {
         break;
     }
 
-    DriveCommand driveCommand =
-        new DriveCommand(
-            m_driverController,
-            drivetrain,
-            () -> {
-              return 42.0;
-            });
-
     configureAutonomous();
     configureBindings();
 
     // Default Commands
-    drivetrain.setDefaultCommand(driveCommand);
+
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -254,21 +244,6 @@ public class RobotContainer {
     return drivetrain.getPose();
   }
 
-  /**
-   * this is a wrapper for the command of the same name
-   *
-   * @param Pose pose to go to
-   * @return run the command
-   */
-  public Command alignToPose(Supplier<Pose2d> Pose) {
-    return new AlignToPose(
-        Pose,
-        drivetrain,
-        () -> {
-          return 42.0;
-        },
-        m_driverController);
-  }
 
   public Command unPrepClimbCommand() {
     return Commands.sequence();
