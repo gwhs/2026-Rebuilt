@@ -22,7 +22,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.aprilTagCam.AprilTagCam;
 import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 public class RobotContainer {
 
@@ -155,7 +154,6 @@ public class RobotContainer {
 
     // Default Commands
 
-
     drivetrain.registerTelemetry(logger::telemeterize);
 
     PathfindingCommand.warmupCommand().schedule();
@@ -243,7 +241,6 @@ public class RobotContainer {
   public Pose2d getRobotPose() {
     return drivetrain.getPose();
   }
-
 
   public Command unPrepClimbCommand() {
     return Commands.sequence();
