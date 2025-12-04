@@ -1,9 +1,5 @@
 package frc.robot;
 
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.HALUtil;
@@ -46,10 +42,6 @@ public class Robot extends TimedRobot {
         .getStringTopic("/Metadata/SHA")
         .publish()
         .set(BuildConstants.GIT_SHA);
-    NetworkTableInstance.getDefault()
-        .getStringTopic("/Metadata/DIRTY")
-        .publish()
-        .set("" + BuildConstants.DIRTY);
   }
 
   @Override
@@ -61,7 +53,6 @@ public class Robot extends TimedRobot {
 
     Threads.setCurrentThreadPriority(true, 99);
 
-    EagleUtil.clearCachedPose();
     double startTime = HALUtil.getFPGATime();
 
     CommandScheduler.getInstance().run();
@@ -91,7 +82,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
