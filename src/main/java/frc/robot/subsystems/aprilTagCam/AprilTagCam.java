@@ -1,6 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.aprilTagCam;
 
 import com.ctre.phoenix6.Utils;
@@ -60,6 +57,7 @@ public class AprilTagCam {
 
     PortForwarder.add(5800, "photonvision.local", 5800);
     try {
+      // TODO: update to 2026 layouts
       aprilTagFieldLayout =
           new AprilTagFieldLayout(
               Path.of(Filesystem.getDeployDirectory().getPath(), "welded/2025-reef.json"));
