@@ -56,11 +56,8 @@ public class RobotContainer {
 
     configureBindings();
 
-    // Default Commands
 
     PathfindingCommand.warmupCommand().schedule();
-
-    // Calculate reef setpoints at startup
 
     addPeriodic.accept(() -> {}, 0.5);
   }
@@ -82,11 +79,6 @@ public class RobotContainer {
 
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
-
-    // 1
-    DogLog.log(
-        "Loop Time/Robot Container/Log Closest Reef Set Point",
-        (HALUtil.getFPGATime() - startTime) / 1000);
 
     startTime = HALUtil.getFPGATime();
 
