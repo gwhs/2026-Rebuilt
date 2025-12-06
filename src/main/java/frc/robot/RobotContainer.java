@@ -56,7 +56,6 @@ public class RobotContainer {
 
     configureBindings();
 
-
     PathfindingCommand.warmupCommand().schedule();
 
     addPeriodic.accept(() -> {}, 0.5);

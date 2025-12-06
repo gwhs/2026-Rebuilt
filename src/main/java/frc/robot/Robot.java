@@ -48,9 +48,10 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
 
     try {
-    Threads.setCurrentThreadPriority(true, 99);
+      Threads.setCurrentThreadPriority(true, 99);
+    } finally {
+      Threads.setCurrentThreadPriority(false, 10);
     }
-    finally {Threads.setCurrentThreadPriority(false, 10);}
     double startTime = HALUtil.getFPGATime();
 
     CommandScheduler.getInstance().run();
@@ -68,8 +69,6 @@ public class Robot extends TimedRobot {
     double currentTime = HALUtil.getFPGATime();
     DogLog.log("Loop Time/Total", (currentTime - prevTime) / 1000);
     prevTime = currentTime;
-
-
   }
 
   @Override
