@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
-      Threads.setCurrentThreadPriority(true, 99);
+    Threads.setCurrentThreadPriority(true, 99);
 
     double startTime = HALUtil.getFPGATime();
 
