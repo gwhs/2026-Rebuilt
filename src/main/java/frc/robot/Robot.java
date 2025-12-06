@@ -69,10 +69,7 @@ public class Robot extends TimedRobot {
     DogLog.log("Loop Time/Total", (currentTime - prevTime) / 1000);
     prevTime = currentTime;
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 2d7194d (.)
   }
 
   @Override
