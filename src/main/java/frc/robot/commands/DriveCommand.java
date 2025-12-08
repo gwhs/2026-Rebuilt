@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.EagleUtil;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import java.util.function.DoubleSupplier;
 
@@ -133,11 +132,8 @@ public class DriveCommand extends Command {
 
     } else if (mode == TargetMode.REEF) {
       if (reefMode == ReefPositions.FRONT_REEF) {
-        return EagleUtil.getRotationCenterReef(currentRobotPose);
       } else if (reefMode == ReefPositions.RIGHT_SIDE_REEF) {
-        return EagleUtil.getRotationCenterReef(currentRobotPose) + 90;
       } else if (reefMode == ReefPositions.BACK_REEF) {
-        return EagleUtil.getRotationCenterReef(currentRobotPose) + 180;
       } else {
         return 0;
       }
@@ -157,20 +153,15 @@ public class DriveCommand extends Command {
       }
     } else if (mode == TargetMode.REEF_FACES) {
       if (reefMode == ReefPositions.FRONT_REEF) {
-        Pose2d nearest = EagleUtil.getCachedReefPose(currentRobotPose);
-        return nearest.getRotation().getDegrees();
       } else if (reefMode == ReefPositions.RIGHT_SIDE_REEF) {
-        Pose2d nearest = EagleUtil.getCachedReefPose(currentRobotPose);
-        return nearest.getRotation().getDegrees() + 90;
       } else if (reefMode == ReefPositions.BACK_REEF) {
-        Pose2d nearest = EagleUtil.getCachedReefPose(currentRobotPose);
-        return nearest.getRotation().getDegrees() + 180;
       } else {
         return 0;
       }
     } else {
       return 0;
     }
+    return 6.7; // tee hee hee I'm so funny
   }
 
   /**
