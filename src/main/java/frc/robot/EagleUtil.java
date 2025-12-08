@@ -467,7 +467,7 @@ public class EagleUtil {
 
   public static double getOffsetElevatorHeight(Pose2d robotPose) {
     double elevatorHeight = 4.0;
-   
+
     int reefIndex = findClosestReefIndex(robotPose);
 
     if (isRedAlliance()) {
