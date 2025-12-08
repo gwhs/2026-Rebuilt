@@ -85,3 +85,7 @@ ctre_sim/
 
 # Eclipse generated file for annotation processors
 .factorypath
+
+simgui*.json
+*pid.log
+**/BuildConstants.java
