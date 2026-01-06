@@ -43,6 +43,9 @@ public class RobotContainer {
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
 
+  private final CANBus rioCanbus = new CANBus("rio");
+  private final CANBus canivoreCanbus = new CANBus("CANivore");
+
   private final RobotVisualizer robovisual = new RobotVisualizer();
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
