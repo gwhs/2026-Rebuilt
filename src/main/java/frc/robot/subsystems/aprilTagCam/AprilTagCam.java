@@ -161,7 +161,7 @@ public class AprilTagCam {
   public boolean filterResults(
       Pose3d estimPose3d, EstimatedRobotPose optionalEstimPose, ChassisSpeeds speed) {
 
-    // If vision’s pose estimation is above/below the ground
+    // If vision's pose estimation is above/below the ground
     double upperZBound = AprilTagCamConstants.Z_TOLERANCE;
     double lowerZBound = -(AprilTagCamConstants.Z_TOLERANCE);
     if (estimPose3d.getZ() > upperZBound
