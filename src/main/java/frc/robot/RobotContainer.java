@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
@@ -42,6 +43,9 @@ public class RobotContainer {
 
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
+
+  private final CANBus rioCanbus = new CANBus("rio");
+  private final CANBus canivoreCanbus = new CANBus("CANivore");
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
 
