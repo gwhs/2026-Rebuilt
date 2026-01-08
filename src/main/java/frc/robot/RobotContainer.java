@@ -50,13 +50,12 @@ public class RobotContainer {
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
 
-
+	  CANBusStatus status = canivoreCanbus.getStatus();
 
     this.addPeriodic = addPeriodic;
 
 	addPeriodic.accept(
         () -> {
-          CANBusStatus status = canivoreCanbus.getStatus();
                     DogLog.log("Canivore/Canivore Bus Utilization", status.BusUtilization);
           DogLog.log("Canivore/Status Code on Canivore", status.Status.toString());
         },
