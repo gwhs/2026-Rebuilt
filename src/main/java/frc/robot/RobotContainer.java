@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
@@ -16,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.function.BiConsumer;
 
 public class RobotContainer {
-
   public enum Robot {
     WALLE,
     DEV,
@@ -53,7 +53,16 @@ public class RobotContainer {
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
+    CANBusStatus status = canivoreCanbus.getStatus();
+
     this.addPeriodic = addPeriodic;
+
+    addPeriodic.accept(
+        () -> {
+          DogLog.log("Canivore/Canivore Bus Utilization", status.BusUtilization);
+          DogLog.log("Canivore/Status Code on Canivore", status.Status.toString());
+        },
+        0.5);
 
     switch (getRobot()) {
       default:
