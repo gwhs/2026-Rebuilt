@@ -1,8 +1,9 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2025.3.2"
-    id 'com.diffplug.spotless' version '6.20.0'
     id 'com.peterabeles.gversion' version '1.10'
+    id 'pmd'
+    id 'com.github.sherter.google-java-format' version '0.9'
 }
 
 java {
@@ -127,53 +128,10 @@ tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
 
-project.compileJava.dependsOn(spotlessApply)
-spotless {
-    java {
-        target fileTree('.') {
-            include '**/*.java'
-            exclude '**/build/**', '**/build-*/**', '**/bin/**'
-        }
-        toggleOffOn()
-        googleJavaFormat()
-        removeUnusedImports()
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-    groovyGradle {
-        target fileTree('.') {
-            include '**/*.gradle'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        greclipse()
-        indentWithSpaces(4)
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-    format 'xml', {
-        target fileTree('.') {
-            include '**/*.xml'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        eclipseWtp('xml')
-        trimTrailingWhitespace()
-        indentWithSpaces(2)
-        endWithNewline()
-    }
-    format 'misc', {
-        target fileTree('.') {
-            include '**/.gitignore'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        trimTrailingWhitespace()
-        indentWithSpaces(2)
-        endWithNewline()
-    }
-}
-
 project.compileJava.dependsOn(createVersionFile)
 gversion {
     srcDir = "src/main/java"
+
     classPackage = "frc.robot"
     className = "BuildConstants"
     dateFormat = "dd-MM-yy HH:mm:ss"
@@ -181,7 +139,6 @@ gversion {
     indent = "  "
 }
 
-// Create commit with working changes on event branches
 task(eventDeploy) {
     doLast {
         if (project.gradle.startParameter.taskNames.any({ it.toLowerCase().contains("deploy") })) {
@@ -213,6 +170,14 @@ task(eventDeploy) {
     }
 }
 createVersionFile.dependsOn(eventDeploy)
+
+//project.compileJava.dependsOn(pmd)
+pmd {
+    toolVersion = "7.16.0"
+    ignoreFailures = false 
+    ruleSets = ["category/java/bestpractices.xml", "category/java/errorprone.xml"]
+}
+
 
 task docs(type: Javadoc) {
     // Specify the source directory containing your Java files
