@@ -12,6 +12,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.function.BiConsumer;
+import frc.robot.subsystems.objectDetection.GamePieceTracker;
+import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
+import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
+import java.util.Optional;
 
 public class RobotContainer {
 
@@ -42,6 +46,9 @@ public class RobotContainer {
   }
 
   @SuppressWarnings("unused")
+
+  private ObjectDetectionCam objDecCam;
+
   private final BiConsumer<Runnable, Double> addPeriodic;
 
   private final CANBus rioCanbus = new CANBus("rio");
@@ -57,6 +64,10 @@ public class RobotContainer {
       default:
         break;
     }
+
+    objDecCam =
+    new ObjectDetectionCam(
+        "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getPose());
 
     configureBindings();
 
@@ -85,6 +96,12 @@ public class RobotContainer {
 
     startTime = HALUtil.getFPGATime();
 
+    if (objDecCam != null) {
+      objDecCam.updateDetection();
+    }
+    // 4
+    DogLog.log("Loop Time/Robot Container/Cam4", (HALUtil.getFPGATime() - startTime) / 1000);
+
     // 2
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
@@ -94,5 +111,15 @@ public class RobotContainer {
     // Log Triggers
     DogLog.log("Current Robot", getRobot().toString());
     DogLog.log("Match Timer", DriverStation.getMatchTime());
+
+
+    // log object
+    Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
+
+    if (obj.isPresent()) {
+      DogLog.log("Object Detection/Coral Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
+    } else {
+      DogLog.log("Object Detection/Coral Pose", new Pose2d[0]); // ill forget it tommorow
+    }
   }
 }
