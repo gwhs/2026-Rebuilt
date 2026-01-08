@@ -27,7 +27,8 @@ public class RobotContainer {
     if (RobotController.getSerialNumber().equals("032414F0")) {
       return Robot.COMP;
     } else if (RobotController.getSerialNumber().equals("0323CA18")) {
-      return Robot.DEV; } else if (RobotController.getSerialNumber().equals("03223849")) {
+      return Robot.DEV;
+    } else if (RobotController.getSerialNumber().equals("03223849")) {
       return Robot.WALLE;
     } else {
       new Alert(
@@ -42,6 +43,7 @@ public class RobotContainer {
 
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
+
   private final CANBus rioCanbus = new CANBus("rio");
   private final CANBus canivoreCanbus = new CANBus("CANivore");
 
@@ -49,18 +51,16 @@ public class RobotContainer {
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
-
-	  CANBusStatus status = canivoreCanbus.getStatus();
+    CANBusStatus status = canivoreCanbus.getStatus();
 
     this.addPeriodic = addPeriodic;
 
-	addPeriodic.accept(
+    addPeriodic.accept(
         () -> {
-                    DogLog.log("Canivore/Canivore Bus Utilization", status.BusUtilization);
+          DogLog.log("Canivore/Canivore Bus Utilization", status.BusUtilization);
           DogLog.log("Canivore/Status Code on Canivore", status.Status.toString());
         },
         0.5);
-
 
     switch (getRobot()) {
       default:
