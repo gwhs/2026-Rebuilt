@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.TunerConstants_Comp;
 import java.util.function.BiConsumer;
 
 public class RobotContainer {
@@ -20,6 +23,12 @@ public class RobotContainer {
     DEV,
     COMP
   }
+
+  private final SwerveSubsystem drivetrain = TunerConstants_Comp.createDrivetrain();
+
+  private final CommandXboxController controller = new CommandXboxController(0);
+
+  private final DriveCommand defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
   // TODO: update serial numbers
   @SuppressWarnings("resource")
@@ -59,7 +68,7 @@ public class RobotContainer {
     }
 
     configureBindings();
-
+    drivetrain.setDefaultCommand(defualtDriveCommand);
     PathfindingCommand.warmupCommand().schedule();
 
     addPeriodic.accept(() -> {}, 0.5);
