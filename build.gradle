@@ -132,7 +132,7 @@ spotless {
     java {
         target fileTree('.') {
             include '**/*.java'
-            exclude '**/build/**', '**/build-*/**', '**/bin/**'
+            exclude '**/build/**', '**/build-*/**', '**/bin/**', 'src/main/java/frc/robot/BuildConstants.java'
         }
         toggleOffOn()
         googleJavaFormat()
