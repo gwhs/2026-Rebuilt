@@ -13,32 +13,34 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
-import frc.robot.subsystems.swerve.TunerConstants_Comp;
+import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import java.util.function.BiConsumer;
 
 public class RobotContainer {
 
   public enum Robot {
-    WALLE,
     DEV,
-    COMP
+    COMP,
+    ANEMONE,
+    KITBOT
   }
 
-  private final SwerveSubsystem drivetrain = TunerConstants_Comp.createDrivetrain();
-
+  private final SwerveSubsystem drivetrain;
   private final CommandXboxController controller = new CommandXboxController(0);
 
-  private final DriveCommand defualtDriveCommand = new DriveCommand(drivetrain, controller);
+  private final DriveCommand defualtDriveCommand;
 
   // TODO: update serial numbers
   @SuppressWarnings("resource")
   public static Robot getRobot() {
     if (RobotController.getSerialNumber().equals("032414F0")) {
-      return Robot.COMP;
+      return Robot.ANEMONE;
     } else if (RobotController.getSerialNumber().equals("0323CA18")) {
       return Robot.DEV;
     } else if (RobotController.getSerialNumber().equals("03223849")) {
-      return Robot.WALLE;
+      return Robot.COMP;
+    } else if (RobotController.getSerialNumber().equals("03223849")) {
+      return Robot.KITBOT;
     } else {
       new Alert(
               "roborio unrecognized. here is the serial number:"
@@ -63,9 +65,24 @@ public class RobotContainer {
     this.addPeriodic = addPeriodic;
 
     switch (getRobot()) {
+      case COMP:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        break;
+      case ANEMONE:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        break;
+      case KITBOT:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        break;
+      case DEV:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        break;
       default:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
         break;
     }
+
+    defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
     configureBindings();
     drivetrain.setDefaultCommand(defualtDriveCommand);
