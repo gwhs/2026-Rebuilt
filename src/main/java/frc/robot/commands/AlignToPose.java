@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.;
+import frc.robot.subsystems.swerve.*;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -27,9 +27,9 @@ public class AlignToPose extends Command {
   private boolean resetLimiter = true;
   private CommandXboxController driverController;
 
-  private CommandSwerveDrivetrain drivetrain;
+  private SwerveSubsystem drivetrain;
 
-  private double maxSpeed = CommandSwerveDrivetrain.kSpeedAt12Volts.in(MetersPerSecond);
+  private double maxSpeed = SwerveSubsystem.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxAngularRate = 1.0 * Math.PI;
 
   private long startTime;
@@ -45,7 +45,7 @@ public class AlignToPose extends Command {
 
   public AlignToPose(
       Supplier<Pose2d> Pose,
-      CommandSwerveDrivetrain drivetrain,
+      SwerveSubsystem drivetrain,
       DoubleSupplier elevatorHeight,
       CommandXboxController driverController) {
     addRequirements(drivetrain);
@@ -62,7 +62,7 @@ public class AlignToPose extends Command {
   public boolean isAtTargetPose() {
     boolean isAtX = drivetrain.PID_X.atSetpoint();
     boolean isAtY = drivetrain.PID_Y.atSetpoint();
-    boolean isAtRotation = drivetrain.PID_Rotation.atSetpoint();
+    boolean isAtRotation = drivetrain.c.atSetpoint();
     DogLog.log("Align/atX", isAtX);
     DogLog.log("Align/atY", isAtY);
     DogLog.log("Align/atRotation", isAtRotation);
