@@ -2,8 +2,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
+import com.ctre.phoenix6.StatusSignalCollection;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
@@ -54,7 +54,7 @@ public class RobotContainer {
   private final CANBus canivoreCanbus = new CANBus("CANivore");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
-  
+
   private final RobotVisualizer robovisual = new RobotVisualizer();
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
@@ -101,8 +101,7 @@ public class RobotContainer {
     return Commands.sequence();
   }
 
-  public void addSignal(BaseStatusSignal signal) 
-  {
+  public void addSignal(BaseStatusSignal signal) {
     signalList.addSignals(signal);
   }
 
@@ -110,8 +109,6 @@ public class RobotContainer {
     double startTime = HALUtil.getFPGATime();
 
     startTime = HALUtil.getFPGATime();
-
-    
 
     // 2
     DogLog.log(
