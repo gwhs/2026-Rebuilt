@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
@@ -19,7 +20,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class AlignToPose extends Command {
-
+  
   Supplier<Pose2d> targetPose;
   private final double ELEVATOR_UP_SLEW_RATE = 1;
 
@@ -119,8 +120,7 @@ public class AlignToPose extends Command {
     DogLog.log("Align/PIDYoutput", PIDYOutput);
 
     double PIDRotationOutput =
-        MathUtil.clamp(
-            PID_Rotation.calculate(currRotation), -PID_ROTATION_MAX, PID_ROTATION_MAX);
+        MathUtil.clamp(PID_Rotation.calculate(currRotation), -PID_ROTATION_MAX, PID_ROTATION_MAX);
     double angularVelocity = PIDRotationOutput;
     DogLog.log("Align/PIDRotationoutput", PIDRotationOutput);
 
