@@ -5,8 +5,12 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -28,7 +32,11 @@ public class AlignToPose extends Command {
   private CommandXboxController driverController;
 
   private SwerveSubsystem drivetrain;
+  public Constraints constraints = new TrapezoidProfile.Constraints(3, 2);
+  public ProfiledPIDController PID_X = new ProfiledPIDController(3.0, 0, 0, constraints);
+  public ProfiledPIDController PID_Y = new ProfiledPIDController(3.0, 0, 0, constraints);
 
+  public PIDController PID_Rotation = new PIDController(0.05, 0, 0);
   private double maxSpeed = SwerveSubsystem.kSpeedAt12Volts.in(MetersPerSecond);
   private double maxAngularRate = 1.0 * Math.PI;
 
@@ -60,8 +68,8 @@ public class AlignToPose extends Command {
    * @return if it is at pose true if not false
    */
   public boolean isAtTargetPose() {
-    boolean isAtX = drivetrain.PID_X.atSetpoint();
-    boolean isAtY = drivetrain.PID_Y.atSetpoint();
+    boolean isAtX = PID_X.atSetpoint();
+    boolean isAtY = PID_Y.atSetpoint();
     boolean isAtRotation = drivetrain.c.atSetpoint();
     DogLog.log("Align/atX", isAtX);
     DogLog.log("Align/atY", isAtY);
@@ -102,17 +110,17 @@ public class AlignToPose extends Command {
     double currY = currPose.getY();
     Double currRotation = currPose.getRotation().getDegrees();
 
-    double PIDXOutput = MathUtil.clamp(drivetrain.PID_X.calculate(currX), -PID_MAX, PID_MAX);
+    double PIDXOutput = MathUtil.clamp(PID_X.calculate(currX), -PID_MAX, PID_MAX);
     double xVelocity = -PIDXOutput;
     DogLog.log("Align/PIDXOutput", PIDXOutput);
 
-    double PIDYOutput = MathUtil.clamp(drivetrain.PID_Y.calculate(currY), -PID_MAX, PID_MAX);
+    double PIDYOutput = MathUtil.clamp(PID_Y.calculate(currY), -PID_MAX, PID_MAX);
     double yVelocity = -PIDYOutput;
     DogLog.log("Align/PIDYoutput", PIDYOutput);
 
     double PIDRotationOutput =
         MathUtil.clamp(
-            drivetrain.PID_Rotation.calculate(currRotation), -PID_ROTATION_MAX, PID_ROTATION_MAX);
+            PID_Rotation.calculate(currRotation), -PID_ROTATION_MAX, PID_ROTATION_MAX);
     double angularVelocity = PIDRotationOutput;
     DogLog.log("Align/PIDRotationoutput", PIDRotationOutput);
 
