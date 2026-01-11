@@ -1,13 +1,16 @@
 package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -17,7 +20,6 @@ import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import java.util.function.BiConsumer;
 
 public class RobotContainer {
-
   public enum Robot {
     DEV,
     COMP,
@@ -62,7 +64,16 @@ public class RobotContainer {
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
+    CANBusStatus status = canivoreCanbus.getStatus();
+
     this.addPeriodic = addPeriodic;
+
+    addPeriodic.accept(
+        () -> {
+          DogLog.log("Canivore/Canivore Bus Utilization", status.BusUtilization);
+          DogLog.log("Canivore/Status Code on Canivore", status.Status.toString());
+        },
+        0.5);
 
     switch (getRobot()) {
       case COMP:
@@ -87,6 +98,8 @@ public class RobotContainer {
     configureBindings();
     drivetrain.setDefaultCommand(defualtDriveCommand);
     PathfindingCommand.warmupCommand().schedule();
+
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
     addPeriodic.accept(() -> {}, 0.5);
   }
