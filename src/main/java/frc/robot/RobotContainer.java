@@ -104,7 +104,7 @@ public class RobotContainer {
 
     configureBindings();
     drivetrain.setDefaultCommand(defualtDriveCommand);
-    PathfindingCommand.warmupCommand().schedule();
+    CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
