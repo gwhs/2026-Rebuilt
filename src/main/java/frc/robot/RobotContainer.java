@@ -70,14 +70,13 @@ public class RobotContainer {
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
-    CANBusStatus status = canivoreCanbus.getStatus();
-
     signalList.setUpdateFrequencyForAll(STATUS_UPD_FREQUENCY);
 
     this.addPeriodic = addPeriodic;
 
     addPeriodic.accept(
         () -> {
+          CANBusStatus status = canivoreCanbus.getStatus();
           DogLog.log("Canivore/Canivore Bus Utilization", status.BusUtilization);
           DogLog.log("Canivore/Status Code on Canivore", status.Status.toString());
         },
@@ -105,7 +104,7 @@ public class RobotContainer {
 
     configureBindings();
     drivetrain.setDefaultCommand(defualtDriveCommand);
-    PathfindingCommand.warmupCommand().schedule();
+    CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
