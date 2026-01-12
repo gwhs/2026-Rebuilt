@@ -206,7 +206,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   }
 
   public Pose2d getPose(double timeSeconds) {
-    Pose2d currPose = this.getPose(timeSeconds);
+    Pose2d currPose = getState().Pose;
     ChassisSpeeds speeds = getState().Speeds;
     double velocityX = speeds.vxMetersPerSecond;
     double velocityY = speeds.vyMetersPerSecond;
