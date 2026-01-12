@@ -1,7 +1,9 @@
 package frc.robot;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
+import com.ctre.phoenix6.StatusSignalCollection;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
@@ -57,14 +59,20 @@ public class RobotContainer {
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
 
+  private final int STATUS_UPD_FREQUENCY = 20; // in hz (updates per sec)
+
   private final CANBus rioCanbus = new CANBus("rio");
   private final CANBus canivoreCanbus = new CANBus("CANivore");
+
+  private final StatusSignalCollection signalList = new StatusSignalCollection();
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
     CANBusStatus status = canivoreCanbus.getStatus();
+
+    signalList.setUpdateFrequencyForAll(STATUS_UPD_FREQUENCY);
 
     this.addPeriodic = addPeriodic;
 
@@ -117,6 +125,10 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return Commands.sequence();
+  }
+
+  public void addSignal(BaseStatusSignal signal) {
+    signalList.addSignals(signal);
   }
 
   public void periodic() {

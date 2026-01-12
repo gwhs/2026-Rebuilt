@@ -10,8 +10,12 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -20,7 +24,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class AlignToPose extends Command {
-  
+
   Supplier<Pose2d> targetPose;
   private final double ELEVATOR_UP_SLEW_RATE = 1;
 
@@ -36,9 +40,9 @@ public class AlignToPose extends Command {
   public Constraints constraints = new TrapezoidProfile.Constraints(3, 2);
   public ProfiledPIDController PID_X = new ProfiledPIDController(3.0, 0, 0, constraints);
   public ProfiledPIDController PID_Y = new ProfiledPIDController(3.0, 0, 0, constraints);
-
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.73);
   public PIDController PID_Rotation = new PIDController(0.05, 0, 0);
-  private double maxSpeed = SwerveSubsystem.kSpeedAt12Volts.in(MetersPerSecond);
+  private double maxSpeed = kSpeedAt12Volts.in(MetersPerSecond);
   private double maxAngularRate = 1.0 * Math.PI;
 
   private long startTime;
@@ -71,7 +75,7 @@ public class AlignToPose extends Command {
   public boolean isAtTargetPose() {
     boolean isAtX = PID_X.atSetpoint();
     boolean isAtY = PID_Y.atSetpoint();
-    boolean isAtRotation = drivetrain.c.atSetpoint();
+    boolean isAtRotation = PID_Rotation.atSetpoint();
     DogLog.log("Align/atX", isAtX);
     DogLog.log("Align/atY", isAtY);
     DogLog.log("Align/atRotation", isAtRotation);
@@ -96,10 +100,45 @@ public class AlignToPose extends Command {
     return false;
   }
 
+  public Pose2d getPose(double timeSeconds) {
+    Pose2d currPose = this.getPose(timeSeconds);
+    ChassisSpeeds speeds = drivetrain.getState().Speeds;
+    double velocityX = speeds.vxMetersPerSecond;
+    double velocityY = speeds.vyMetersPerSecond;
+
+    double transformX = timeSeconds * velocityX;
+    double transformY = timeSeconds * velocityY;
+    Rotation2d transformRotation = new Rotation2d(timeSeconds * speeds.omegaRadiansPerSecond);
+    Transform2d transformPose = new Transform2d(transformX, transformY, transformRotation);
+    Pose2d predictedPose = currPose.plus(transformPose);
+
+    DogLog.log("Predicted Pose", predictedPose);
+
+    return predictedPose;
+  }
+
+  public Rotation2d getRotation() {
+    return getPose(0.0).getRotation();
+  }
+
+  public void goToPoseWithPID(Pose2d targetPose) {
+    ChassisSpeeds currentSpeed =
+        ChassisSpeeds.fromRobotRelativeSpeeds(drivetrain.getState().Speeds, getRotation());
+
+    double predicted_X = (targetPose.getX() - getPose(0.0).getX()) * 0.3 + getPose(0.0).getX();
+    double predicted_Y = (targetPose.getY() - getPose(0.0).getY()) * 0.3 + getPose(0.0).getY();
+
+    PID_X.reset(predicted_X, currentSpeed.vxMetersPerSecond * 0.4);
+    PID_Y.reset(predicted_Y, currentSpeed.vyMetersPerSecond * 0.4);
+    PID_X.setGoal(targetPose.getX());
+    PID_Y.setGoal(targetPose.getY());
+    PID_Rotation.setSetpoint(targetPose.getRotation().getDegrees());
+  }
+
   @Override
   public void initialize() {
     startTime = System.currentTimeMillis();
-    drivetrain.goToPoseWithPID(targetPose.get());
+    goToPoseWithPID(targetPose.get());
     DogLog.log("Align/Target Pose", targetPose.get());
   }
 
