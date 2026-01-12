@@ -70,22 +70,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
    * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
    * @param modules Constants for each specific module
    */
-  public Pose2d getPose(double timeSeconds) {
-    Pose2d currPose = this.getPose(timeSeconds);
-    ChassisSpeeds speeds = getState().Speeds;
-    double velocityX = speeds.vxMetersPerSecond;
-    double velocityY = speeds.vyMetersPerSecond;
-
-    double transformX = timeSeconds * velocityX;
-    double transformY = timeSeconds * velocityY;
-    Rotation2d transformRotation = new Rotation2d(timeSeconds * speeds.omegaRadiansPerSecond);
-    Transform2d transformPose = new Transform2d(transformX, transformY, transformRotation);
-    Pose2d predictedPose = currPose.plus(transformPose);
-
-    DogLog.log("Predicted Pose", predictedPose);
-
-    return predictedPose;
-  }
+  
 
   public SwerveSubsystem(
       SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
@@ -220,5 +205,22 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       default:
         return 0;
     }
+  }
+
+  public Pose2d getPose(double timeSeconds) {
+    Pose2d currPose = this.getPose(timeSeconds);
+    ChassisSpeeds speeds = getState().Speeds;
+    double velocityX = speeds.vxMetersPerSecond;
+    double velocityY = speeds.vyMetersPerSecond;
+
+    double transformX = timeSeconds * velocityX;
+    double transformY = timeSeconds * velocityY;
+    Rotation2d transformRotation = new Rotation2d(timeSeconds * speeds.omegaRadiansPerSecond);
+    Transform2d transformPose = new Transform2d(transformX, transformY, transformRotation);
+    Pose2d predictedPose = currPose.plus(transformPose);
+
+    DogLog.log("Predicted Pose", predictedPose);
+
+    return predictedPose;
   }
 }
