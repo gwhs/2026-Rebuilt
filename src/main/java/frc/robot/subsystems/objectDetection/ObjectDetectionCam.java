@@ -204,4 +204,3 @@ public class ObjectDetectionCam {
     return true;
   }
 }
-

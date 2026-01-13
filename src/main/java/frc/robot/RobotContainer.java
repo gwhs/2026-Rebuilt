@@ -7,6 +7,7 @@ import com.ctre.phoenix6.StatusSignalCollection;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -17,13 +18,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
-import frc.robot.subsystems.swerve.TunerConstants_Anemone;
-import java.util.function.BiConsumer;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
 import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 public class RobotContainer {
   public enum Robot {
@@ -61,7 +62,6 @@ public class RobotContainer {
   }
 
   @SuppressWarnings("unused")
-
   private ObjectDetectionCam objDecCam;
 
   private final BiConsumer<Runnable, Double> addPeriodic;
@@ -110,8 +110,8 @@ public class RobotContainer {
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
     objDecCam =
-    new ObjectDetectionCam(
-        "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getPose());
+        new ObjectDetectionCam(
+            "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
 
     configureBindings();
 
@@ -161,7 +161,6 @@ public class RobotContainer {
     // Log Triggers
     DogLog.log("Current Robot", getRobot().toString());
     DogLog.log("Match Timer", DriverStation.getMatchTime());
-
 
     // log object
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
