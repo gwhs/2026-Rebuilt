@@ -29,7 +29,7 @@ public class RobotContainer {
   }
 
   private final SwerveSubsystem drivetrain;
-  private final CommandXboxController controller = new CommandXboxController(0);
+  public static final CommandXboxController controller = new CommandXboxController(0);
 
   private final DriveCommand defualtDriveCommand;
 
