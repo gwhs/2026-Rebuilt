@@ -1,6 +1,5 @@
 package frc.robot;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.StatusSignalCollection;
@@ -10,10 +9,10 @@ import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
@@ -60,18 +59,16 @@ public class RobotContainer {
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
 
-  private final int STATUS_UPD_FREQUENCY = 20; // in hz (updates per sec)
-
   private final CANBus rioCanbus = new CANBus("rio");
   private final CANBus canivoreCanbus = new CANBus("CANivore");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
+  //
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
-
-    signalList.setUpdateFrequencyForAll(STATUS_UPD_FREQUENCY);
 
     this.addPeriodic = addPeriodic;
 
@@ -104,6 +101,7 @@ public class RobotContainer {
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
     configureBindings();
+    configureAutonomous();
     drivetrain.setDefaultCommand(defualtDriveCommand);
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
@@ -124,17 +122,19 @@ public class RobotContainer {
   private void configureBindings() {}
 
   public Command getAutonomousCommand() {
-    return Commands.sequence();
+    return autoChooser.getSelected();
   }
 
-  public void addSignal(BaseStatusSignal signal) {
-    signalList.addSignals(signal);
+  private void configureAutonomous() {
+    SmartDashboard.putData("autonomous", autoChooser);
   }
 
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
     startTime = HALUtil.getFPGATime();
+
+    signalList.refreshAll();
 
     // 2
     DogLog.log(
