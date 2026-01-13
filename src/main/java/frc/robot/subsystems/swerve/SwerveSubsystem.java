@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AlignToPose;
+import java.util.function.Supplier;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -39,7 +42,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   }
 
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
-
+  private CommandXboxController controller;
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
@@ -71,9 +74,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
    * @param modules Constants for each specific module
    */
   public SwerveSubsystem(
-      SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
+      CommandXboxController controller,
+      SwerveDrivetrainConstants drivetrainConstants,
+      SwerveModuleConstants<?, ?, ?>... modules) {
     super(TalonFX::new, TalonFX::new, CANcoder::new, drivetrainConstants, modules);
-
+    this.controller = controller;
     if (Utils.isSimulation()) {
       startSimThread();
     }
@@ -220,5 +225,15 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Predicted Pose", predictedPose);
 
     return predictedPose;
+  }
+
+  public Command driveToPose(Supplier<Pose2d> pose) {
+    return new AlignToPose(
+        pose,
+        this,
+        () -> {
+          return 0.0;
+        },
+        this.controller);
   }
 }
