@@ -8,6 +8,7 @@ import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -109,3 +110,16 @@ public class RobotContainer {
     DogLog.log("Match Timer", DriverStation.getMatchTime());
   }
 }
+
+private boolean autoFacePaused = false;
+private final Alert autoFaceAlert = new Alert("AUTO FACE stop (RB)", AlertType.kWarning);
+
+m_driverController.rightBumper().onTrue(
+    Commands.runOnce(() -> {
+      autoFacePaused = !autoFacePaused;
+      autoFaceAlert.set(autoFacePaused);
+      driveCommand.setAutoFaceEnabled(!autoFacePaused);
+      DogLog.log("Drive
+      /AutoFacePaused", autoFacePaused);
+    })
+);
