@@ -12,8 +12,10 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -145,6 +147,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
+    DogLog.log("Intake Drive Assist/Is Driving Toward Coral", isDrivingToCoral());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -199,5 +202,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       default:
         return 0;
     }
+  }
+
+  public boolean isDrivingToCoral() {
+    ChassisSpeeds currRobotSpeed = getState().Speeds;
+    return currRobotSpeed.vxMetersPerSecond < -0.1;
   }
 }

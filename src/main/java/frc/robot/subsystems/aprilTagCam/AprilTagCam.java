@@ -49,7 +49,7 @@ public class AprilTagCam {
   private AprilTagHelp helper = new AprilTagHelp(null, 0, null);
 
   public AprilTagCam(
-      String str,
+      String name,
       Transform3d robotToCam,
       Consumer<AprilTagHelp> addVisionMeasurement,
       Supplier<Pose2d> currRobotPose,
@@ -60,18 +60,26 @@ public class AprilTagCam {
       // TODO: update to 2026 layouts
       aprilTagFieldLayout =
           new AprilTagFieldLayout(
-              Path.of(Filesystem.getDeployDirectory().getPath(), "welded/2025-reef.json"));
+              Path.of(
+                  Filesystem.getDeployDirectory().getPath(),
+                  "public boolean isDrivingToCoral() {\n"
+                      + //
+                      "    ChassisSpeeds currRobotSpeed = getState().Speeds;\n"
+                      + //
+                      "    return currRobotSpeed.vxMetersPerSecond < -0.1;\n"
+                      + //
+                      "  }"));
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    cam = new PhotonCamera(str);
+    cam = new PhotonCamera(name);
     this.addVisionMeasurement = addVisionMeasurement;
     this.robotToCam = robotToCam;
     this.currRobotPose = currRobotPose;
     this.currRobotSpeed = currRobotSpeed;
 
-    visionNotConnected = new Alert(str + " NOT CONNECTED", AlertType.kError);
+    visionNotConnected = new Alert(name + " NOT CONNECTED", AlertType.kError);
 
     photonEstimator =
         new PhotonPoseEstimator(
@@ -79,7 +87,7 @@ public class AprilTagCam {
             PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             robotToCam);
 
-    ntKey = "/Vision/" + str + "/";
+    ntKey = "/Vision/" + name + "/";
 
     counter = 0;
   }
