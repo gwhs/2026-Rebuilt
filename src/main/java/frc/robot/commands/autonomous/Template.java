@@ -16,7 +16,7 @@ public class Template extends SequentialCommandGroup {
       /*
         TODO: Load Paths
       */
-      PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
+      PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("NewPath");
       // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
 
       Pose2d startingPose =
