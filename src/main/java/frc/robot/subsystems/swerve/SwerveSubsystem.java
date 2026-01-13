@@ -12,8 +12,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.EagleUtil;
 import frc.robot.commands.AlignToPose;
 import java.util.function.Supplier;
 
@@ -42,11 +41,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     NORMAL,
     TOWER,
     HUB,
-  }
-
-  private RotationTarget rotationTarget = RotationTarget.NORMAL;
-
-    FORTY_FIVE
   }
 
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
@@ -215,8 +209,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 0;
       case HUB:
         return EagleUtil.getRotationalHub(getState().Pose);
-      case FORTY_FIVE:
-        return 45.0;
       default:
         return 0;
     }
