@@ -1,7 +1,9 @@
 package frc.robot;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
+import com.ctre.phoenix6.StatusSignalCollection;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
@@ -14,6 +16,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import java.util.function.BiConsumer;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
@@ -22,20 +27,28 @@ import java.util.Optional;
 
 public class RobotContainer {
   public enum Robot {
-    WALLE,
     DEV,
-    COMP
+    COMP,
+    ANEMONE,
+    KITBOT
   }
+
+  private final SwerveSubsystem drivetrain;
+  private final CommandXboxController controller = new CommandXboxController(0);
+
+  private final DriveCommand defualtDriveCommand;
 
   // TODO: update serial numbers
   @SuppressWarnings("resource")
   public static Robot getRobot() {
     if (RobotController.getSerialNumber().equals("032414F0")) {
-      return Robot.COMP;
+      return Robot.ANEMONE;
     } else if (RobotController.getSerialNumber().equals("0323CA18")) {
       return Robot.DEV;
     } else if (RobotController.getSerialNumber().equals("03223849")) {
-      return Robot.WALLE;
+      return Robot.COMP;
+    } else if (RobotController.getSerialNumber().equals("03223849")) {
+      return Robot.KITBOT;
     } else {
       new Alert(
               "roborio unrecognized. here is the serial number:"
@@ -53,28 +66,48 @@ public class RobotContainer {
 
   private final BiConsumer<Runnable, Double> addPeriodic;
 
+  private final int STATUS_UPD_FREQUENCY = 20; // in hz (updates per sec)
+
   private final CANBus rioCanbus = new CANBus("rio");
   private final CANBus canivoreCanbus = new CANBus("CANivore");
+
+  private final StatusSignalCollection signalList = new StatusSignalCollection();
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
-    CANBusStatus status = canivoreCanbus.getStatus();
+    signalList.setUpdateFrequencyForAll(STATUS_UPD_FREQUENCY);
 
     this.addPeriodic = addPeriodic;
 
     addPeriodic.accept(
         () -> {
+          CANBusStatus status = canivoreCanbus.getStatus();
           DogLog.log("Canivore/Canivore Bus Utilization", status.BusUtilization);
           DogLog.log("Canivore/Status Code on Canivore", status.Status.toString());
         },
         0.5);
 
     switch (getRobot()) {
+      case COMP:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        break;
+      case ANEMONE:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        break;
+      case KITBOT:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        break;
+      case DEV:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        break;
       default:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
         break;
     }
+
+    defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
     objDecCam =
     new ObjectDetectionCam(
@@ -82,7 +115,7 @@ public class RobotContainer {
 
     configureBindings();
 
-    PathfindingCommand.warmupCommand().schedule();
+    CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
@@ -102,6 +135,10 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return Commands.sequence();
+  }
+
+  public void addSignal(BaseStatusSignal signal) {
+    signalList.addSignals(signal);
   }
 
   public void periodic() {
