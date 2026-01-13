@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.Template;
+import frc.robot.commands.autonomous.Trench;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import java.util.function.BiConsumer;
@@ -131,6 +132,7 @@ public class RobotContainer {
 
   private void configureAutonomous() {
     autoChooser.addOption("Template", new Template());
+    autoChooser.addOption("Trench", new Trench());
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
