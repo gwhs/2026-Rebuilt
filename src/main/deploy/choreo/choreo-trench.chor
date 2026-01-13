@@ -3,7 +3,22 @@
  "version":2,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
+  "expressions":{
+   "AccConstraint":{
+    "dimension":"LinAcc",
+    "var":{
+     "exp":"4.5 m / s / s",
+     "val":4.5
+    }
+   },
+   "VelConstraint":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"4.5 m / s",
+     "val":4.5
+    }
+   }
+  },
   "poses":{
    "Climb":{
     "x":{
