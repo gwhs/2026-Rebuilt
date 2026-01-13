@@ -9,10 +9,10 @@ import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
@@ -65,6 +65,7 @@ public class RobotContainer {
   //
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -99,6 +100,7 @@ public class RobotContainer {
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
     configureBindings();
+    configureAutonomous();
     drivetrain.setDefaultCommand(defualtDriveCommand);
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
@@ -119,7 +121,11 @@ public class RobotContainer {
   private void configureBindings() {}
 
   public Command getAutonomousCommand() {
-    return Commands.sequence();
+    return autoChooser.getSelected();
+  }
+
+  private void configureAutonomous() {
+    SmartDashboard.putData("autonomous", autoChooser);
   }
 
   public void periodic() {
