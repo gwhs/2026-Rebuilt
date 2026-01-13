@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.autonomous.BumpPathAuto;
 import frc.robot.commands.autonomous.Template;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
@@ -131,6 +132,7 @@ public class RobotContainer {
 
   private void configureAutonomous() {
     autoChooser.addOption("Template", new Template());
+    autoChooser.addOption("Bump Auto", new BumpPathAuto());
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
