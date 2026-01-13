@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.EagleUtil;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -31,7 +32,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public enum RotationTarget {
     NORMAL,
-    FORTY_FIVE
+    TOWER,
+    HUB,
   }
 
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
@@ -192,10 +194,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public double getGoalHeading() {
     switch (this.rotationTarget) {
-      case FORTY_FIVE:
-        return 45.0;
       case NORMAL:
         return 0;
+      case TOWER:
+        return 0;
+      case HUB:
+        return EagleUtil.getRotationalHub(getState().Pose);
       default:
         return 0;
     }
