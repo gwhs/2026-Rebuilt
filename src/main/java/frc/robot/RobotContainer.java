@@ -1,6 +1,5 @@
 package frc.robot;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.StatusSignalCollection;
@@ -69,8 +68,6 @@ public class RobotContainer {
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
-    
-
     this.addPeriodic = addPeriodic;
 
     addPeriodic.accept(
@@ -124,7 +121,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return Commands.sequence();
   }
-
 
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
