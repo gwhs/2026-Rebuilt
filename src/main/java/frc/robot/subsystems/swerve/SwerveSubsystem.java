@@ -236,4 +236,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         },
         this.controller);
   }
+
+public Command alignToRotation(Rotation2d angle) {
+	return Commands.run(() -> {
+		resetRotation(angle);
+	}
+			);
+}
 }
