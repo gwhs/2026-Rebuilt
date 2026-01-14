@@ -237,7 +237,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         this.controller);
   }
 
-
   /*
    * the idea behind this command is that it:
    * 1. saves current rotation target,
@@ -245,11 +244,13 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
    * 3. does whatever inbetween thing needs to be done while we aren't aligning
    * 4. set the target back to the previous target.
    */
-public Command DisableRotation(Supplier<Command> thingtodo) {
-	RotationTarget prevTarget = getRotationTarget();
-return Commands.runOnce(() -> {
-	setRotationCommand(RotationTarget.NORMAL);
-	thingtodo.get();
-	setRotationCommand(prevTarget);
-});
-} }
+  public Command DisableRotation(Supplier<Command> thingtodo) {
+    RotationTarget prevTarget = getRotationTarget();
+    return Commands.runOnce(
+        () -> {
+          setRotationCommand(RotationTarget.NORMAL);
+          thingtodo.get();
+          setRotationCommand(prevTarget);
+        });
+  }
+}
