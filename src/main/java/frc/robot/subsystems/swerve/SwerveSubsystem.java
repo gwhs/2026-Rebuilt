@@ -81,8 +81,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     super(TalonFX::new, TalonFX::new, CANcoder::new, drivetrainConstants, modules);
     this.controller = controller;
 
-    SmartDashboard.putData("rotate 2 45", setRotationCommand(RotationTarget.FORTY_FIVE));
-    SmartDashboard.putData("test disable", DisableRotation());
     if (Utils.isSimulation()) {
       startSimThread();
     }
@@ -251,11 +249,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
    * 3. does whatever inbetween thing needs to be done while we aren't aligning
    * 4. set the target back to the previous target.
    */
-  public Command DisableRotation() {
+  public Command temporarilyDisableRotation() {
     return Commands.run(
             () -> {
               this.disableAutoRotate = true;
-              this.rotationTarget = RotationTarget.NORMAL;
             })
         .finallyDo(
             () -> {

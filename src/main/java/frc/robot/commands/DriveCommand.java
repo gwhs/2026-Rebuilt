@@ -57,7 +57,7 @@ public class DriveCommand extends Command {
     boolean hasRotationInput = Math.abs(rotationalInput) > 0.1;
     if (drivetrain.getRotationTarget() != RotationTarget.NORMAL
         && !hasRotationInput
-        && drivetrain.getdisableAutoRotate()) {
+        && !drivetrain.getdisableAutoRotate()) {
 
       double currentRobotHeading = drivetrain.getState().Pose.getRotation().getDegrees();
 
