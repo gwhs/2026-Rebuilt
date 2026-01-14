@@ -237,10 +237,19 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         this.controller);
   }
 
-public Command alignToRotation(Rotation2d angle) {
-	return Commands.run(() -> {
-		resetRotation(angle);
-	}
-			);
-}
-}
+
+  /*
+   * the idea behind this command is that it:
+   * 1. saves current rotation target,
+   * 2. resets the rotation target to normal
+   * 3. does whatever inbetween thing needs to be done while we aren't aligning
+   * 4. set the target back to the previous target.
+   */
+public Command DisableRotation(Supplier<Command> thingtodo) {
+	RotationTarget prevTarget = getRotationTarget();
+return Commands.runOnce(() -> {
+	setRotationCommand(RotationTarget.NORMAL);
+	thingtodo.get();
+	setRotationCommand(prevTarget);
+});
+} }
