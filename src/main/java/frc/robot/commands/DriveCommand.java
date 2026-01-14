@@ -27,7 +27,7 @@ public class DriveCommand extends Command {
 
   private final double deadband = 0.1;
 
-  public final PIDController robotHeadingController = new PIDController(0.2, 0, 0);
+  public final PIDController robotHeadingController = new PIDController(0.05, 0, 0);
 
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -55,8 +55,9 @@ public class DriveCommand extends Command {
     rotationalInput = MathUtil.applyDeadband(rotationalInput, deadband);
 
     boolean hasRotationInput = Math.abs(rotationalInput) > 0.1;
-
-    if (drivetrain.getRotationTarget() != RotationTarget.NORMAL && !hasRotationInput) {
+    if (drivetrain.getRotationTarget() != RotationTarget.NORMAL
+        && !hasRotationInput
+        && drivetrain.getdisableAutoRotate()) {
 
       double currentRobotHeading = drivetrain.getState().Pose.getRotation().getDegrees();
 

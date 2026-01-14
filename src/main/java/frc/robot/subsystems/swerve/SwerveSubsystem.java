@@ -42,12 +42,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     FORTY_FIVE
   }
 
+  private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
   private CommandXboxController controller;
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
-
   private final Telemetry logger = new Telemetry();
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -191,6 +191,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return slowMode;
   }
 
+  public boolean getdisableAutoRotate() {
+    return disableAutoRotate;
+  }
+
   public Command setRotationCommand(RotationTarget rotationTarget) {
     return Commands.runOnce(
         () -> {
@@ -248,17 +252,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
    * 4. set the target back to the previous target.
    */
   public Command DisableRotation() {
-    RotationTarget prevTarget = getRotationTarget();
-    return Commands.runOnce(
+    return Commands.run(
             () -> {
-              setRotationCommand(RotationTarget.NORMAL);
+              this.disableAutoRotate = true;
+              this.rotationTarget = RotationTarget.NORMAL;
             })
         .finallyDo(
             () -> {
-              Commands.run(
-                  () -> {
-                    setRotationCommand(prevTarget);
-                  });
+              this.disableAutoRotate = false;
             });
   }
 }
