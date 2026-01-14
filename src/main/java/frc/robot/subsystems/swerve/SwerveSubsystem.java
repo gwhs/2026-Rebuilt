@@ -82,7 +82,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     if (Utils.isSimulation()) {
       startSimThread();
     }
-
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
   }
@@ -244,13 +243,18 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
    * 3. does whatever inbetween thing needs to be done while we aren't aligning
    * 4. set the target back to the previous target.
    */
-  public Command DisableRotation(Supplier<Command> thingtodo) {
+  public Command DisableRotation() {
     RotationTarget prevTarget = getRotationTarget();
     return Commands.runOnce(
-        () -> {
-          setRotationCommand(RotationTarget.NORMAL);
-          thingtodo.get();
-          setRotationCommand(prevTarget);
-        });
+            () -> {
+              setRotationCommand(RotationTarget.NORMAL);
+            })
+        .finallyDo(
+            () -> {
+              Commands.run(
+                  () -> {
+                    setRotationCommand(prevTarget);
+                  });
+            });
   }
 }
