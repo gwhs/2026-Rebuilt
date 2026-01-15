@@ -22,4 +22,32 @@ public class EagleUtil {
     }
     return hub.minus(pose.getTranslation()).getAngle().getDegrees();
   }
+public static boolean isInAllianceZone(Pose2d robotPose) {
+    if (isRedAlliance()) {
+      return robotPose.getX() > FieldConstants.ALLIANCE_ZONE_LINE_RED;
+    } else {
+      return robotPose.getX() < FieldConstants.ALLIANCE_ZONE_LINE_BLUE;
+    }
+  }
+
+  public static boolean isInOpponentAllianceZone(Pose2d robotPose) {
+    if (isRedAlliance()) {
+      return robotPose.getX() < FieldConstants.ALLIANCE_ZONE_LINE_BLUE;
+    } else {
+      return robotPose.getX() > FieldConstants.ALLIANCE_ZONE_LINE_RED;
+    }
+  }
+
+  public static boolean isInNeutralZone(Pose2d robotPose) {
+    return (robotPose.getX() >= FieldConstants.ALLIANCE_ZONE_LINE_BLUE
+        && robotPose.getX() <= FieldConstants.ALLIANCE_ZONE_LINE_RED);
+  }
+
+  public static double getRobotTargetAngle(Pose2d robotpose, Translation2d target) {
+    return target.minus(robotpose.getTranslation()).getAngle().getDegrees();
+  }
+
+  public static double getRobotTargetDistance(Pose2d robotpose, Translation2d target) {
+    return target.getDistance(robotpose.getTranslation());
+  }
 }
