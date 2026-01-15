@@ -60,7 +60,7 @@ public class AprilTagCam {
       // TODO: update to 2026 layouts
       aprilTagFieldLayout =
           new AprilTagFieldLayout(
-              Path.of(Filesystem.getDeployDirectory().getPath(), "welded/2025-reef.json"));
+              Path.of(Filesystem.getDeployDirectory().getPath(), "2026-rebuilt-welded.json"));
     } catch (IOException e) {
       e.printStackTrace();
     }
