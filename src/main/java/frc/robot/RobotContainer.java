@@ -106,7 +106,6 @@ public class RobotContainer {
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-
     addPeriodic.accept(() -> {}, 0.5);
   }
 
