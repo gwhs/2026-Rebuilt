@@ -87,6 +87,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     if (Utils.isSimulation()) {
       startSimThread();
     }
+
+    SmartDashboard.putData("align to depot", setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+    SmartDashboard.putData(
+        "align to outpost", setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
   }
