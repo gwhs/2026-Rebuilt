@@ -10,7 +10,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -64,12 +63,13 @@ public class AlignToPose extends Command {
     startTime = System.currentTimeMillis();
     Pose2d tp = targetPose.get();
     ChassisSpeeds currentSpeed =
-        ChassisSpeeds.fromRobotRelativeSpeeds(drivetrain.getState().Speeds, getRotation());
+        ChassisSpeeds.fromRobotRelativeSpeeds(
+            drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
 
     double predicted_X =
         (tp.getX() - drivetrain.getPose(0.0).getX()) * 0.3 + drivetrain.getPose(0.0).getX();
     double predicted_Y =
-        (tp.getY() - drivetrain.getPose(0.0).getY()) * 0.3 + drivetrain.getPose(0.0).getY();
+        (tp.getY() - drivetrain.getState().Pose.getY()) * 0.3 + drivetrain.getPose(0.0).getY();
 
     PID_X.reset(predicted_X, currentSpeed.vxMetersPerSecond * 0.4);
     PID_Y.reset(predicted_Y, currentSpeed.vyMetersPerSecond * 0.4);
@@ -112,10 +112,6 @@ public class AlignToPose extends Command {
       return true;
     }
     return false;
-  }
-
-  public Rotation2d getRotation() {
-    return drivetrain.getPose(0.0).getRotation();
   }
 
   @Override
