@@ -209,9 +209,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case NORMAL:
         return 0;
       case PASSING_DEPOT_SIDE:
-	return EagleUtil.getTarget(RotationTarget.PASSING_DEPOT_SIDE, getState().Pose);
+        return EagleUtil.getTarget(RotationTarget.PASSING_DEPOT_SIDE, getState().Pose);
       case PASSING_OUTPOST_SIDE:
-	return EagleUtil.getTarget(RotationTarget.PASSING_OUTPOST_SIDE, getState().Pose);
+        return EagleUtil.getTarget(RotationTarget.PASSING_OUTPOST_SIDE, getState().Pose);
       default:
         return 0;
     }
