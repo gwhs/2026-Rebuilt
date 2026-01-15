@@ -10,9 +10,15 @@ public class EagleUtil {
         return target.minus(robotpose.getTranslation()).getAngle().getDegrees();
     }
 
+    public static double getRobotTargetDistance(Pose2d robotpose, Translation2d target)
+    {
+        return target.getDistance(robotpose.getTranslation());
+    }
+
     public static boolean isInAllianceZone(Pose2d robot)
     {
-        return robot.getX() < 4.03;
+
+        return robot.getX() < FieldConstants.allianceZoneX;
     }
 
     public static boolean isInNeutralZone(Pose2d robot)
@@ -22,7 +28,7 @@ public class EagleUtil {
 
     public static boolean isInOpponentZone(Pose2d robot)
     {
-        return robot.getX() > 12.01;
+        return robot.getX() > (FieldConstants.fieldX - FieldConstants.allianceZoneX);
     }
     
 
