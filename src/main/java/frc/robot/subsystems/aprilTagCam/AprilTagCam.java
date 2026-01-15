@@ -60,15 +60,7 @@ public class AprilTagCam {
       // TODO: update to 2026 layouts
       aprilTagFieldLayout =
           new AprilTagFieldLayout(
-              Path.of(
-                  Filesystem.getDeployDirectory().getPath(),
-                  "public boolean isDrivingToCoral() {\n"
-                      + //
-                      "    ChassisSpeeds currRobotSpeed = getState().Speeds;\n"
-                      + //
-                      "    return currRobotSpeed.vxMetersPerSecond < -0.1;\n"
-                      + //
-                      "  }"));
+              Path.of(Filesystem.getDeployDirectory().getPath(), "welded/2025-reef.json"));
     } catch (IOException e) {
       e.printStackTrace();
     }

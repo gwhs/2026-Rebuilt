@@ -114,6 +114,7 @@ public class RobotContainer {
             "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
 
     configureBindings();
+    drivetrain.setDefaultCommand(defualtDriveCommand);
 
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
@@ -149,10 +150,9 @@ public class RobotContainer {
     if (objDecCam != null) {
       objDecCam.updateDetection();
     }
-    // 4
-    DogLog.log("Loop Time/Robot Container/Cam4", (HALUtil.getFPGATime() - startTime) / 1000);
+    
+    DogLog.log("Loop Time/Robot Container/objectDetection Cam", (HALUtil.getFPGATime() - startTime) / 1000);
 
-    // 2
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
     robovisual.update();
@@ -166,9 +166,9 @@ public class RobotContainer {
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
     if (obj.isPresent()) {
-      DogLog.log("Object Detection/Coral Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
+      DogLog.log("Object Detection/Fuel Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
     } else {
-      DogLog.log("Object Detection/Coral Pose", new Pose2d[0]); // ill forget it tommorow
+      DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
   }
 }

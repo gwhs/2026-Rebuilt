@@ -154,7 +154,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
-    DogLog.log("Intake Drive Assist/Is Driving Toward Coral", isDrivingToCoral());
+    DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -211,7 +211,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
   }
 
-  public boolean isDrivingToCoral() {
+  public boolean isDrivingToFuel() {
     ChassisSpeeds currRobotSpeed = getState().Speeds;
     return currRobotSpeed.vxMetersPerSecond < -0.1;
   }
