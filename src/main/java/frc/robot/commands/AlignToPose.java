@@ -67,9 +67,9 @@ public class AlignToPose extends Command {
             drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
 
     double predicted_X =
-        (tp.getX() - drivetrain.getPose(0.0).getX()) * 0.3 + drivetrain.getPose(0.0).getX();
+        (tp.getX() - drivetrain.getState().Pose.getX()) * 0.3 + drivetrain.getState().Pose.getX();
     double predicted_Y =
-        (tp.getY() - drivetrain.getState().Pose.getY()) * 0.3 + drivetrain.getPose(0.0).getY();
+        (tp.getY() - drivetrain.getState().Pose.getY()) * 0.3 + drivetrain.getState().Pose.getY();
 
     PID_X.reset(predicted_X, currentSpeed.vxMetersPerSecond * 0.4);
     PID_Y.reset(predicted_Y, currentSpeed.vyMetersPerSecond * 0.4);
