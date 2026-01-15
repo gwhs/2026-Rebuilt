@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class BumpPathAuto extends SequentialCommandGroup {
-  public BumpPathAuto() {
+public class BumpPathAuto_1c extends SequentialCommandGroup {
+  public BumpPathAuto_1c() {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -30,8 +30,9 @@ public class BumpPathAuto extends SequentialCommandGroup {
           AutoBuilder.followPath(cyclePath),
           // stow/protect ground intake
 
-          Commands.waitSeconds(3.0), // score
-          AutoBuilder.followPath(cyclePath),
+          Commands.waitSeconds(7.0), // score
+
+          // AutoBuilder.followPath(cyclePath),
           /*
           Commands.parallel(
               AutoBuilder.followPath(cross2Path),
