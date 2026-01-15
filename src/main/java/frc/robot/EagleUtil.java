@@ -21,10 +21,6 @@ public class EagleUtil {
         {
             theta = 180 - theta;
         }
-        if (dy < 0)
-        {
-            theta += 180;
-        }
         return theta;
     }
 }
