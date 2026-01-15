@@ -1,6 +1,5 @@
 package frc.robot;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.StatusSignalCollection;
@@ -22,6 +21,7 @@ import frc.robot.commands.autonomous.BumpPathAuto_2c;
 import frc.robot.commands.autonomous.Template;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
+import frc.robot.subsystems.swerve.TunerConstants_mk4n;
 import java.util.function.BiConsumer;
 
 public class RobotContainer {
@@ -33,7 +33,7 @@ public class RobotContainer {
   }
 
   private final SwerveSubsystem drivetrain;
-  private final CommandXboxController controller = new CommandXboxController(0);
+  public static final CommandXboxController controller = new CommandXboxController(0);
 
   private final DriveCommand defualtDriveCommand;
 
@@ -42,11 +42,11 @@ public class RobotContainer {
   public static Robot getRobot() {
     if (RobotController.getSerialNumber().equals("032414F0")) {
       return Robot.ANEMONE;
-    } else if (RobotController.getSerialNumber().equals("0323CA18")) {
+    } else if (RobotController.getSerialNumber().equals("03223849")) {
       return Robot.DEV;
-    } else if (RobotController.getSerialNumber().equals("03223849")) {
+    } else if (RobotController.getSerialNumber().equals("1234")) {
       return Robot.COMP;
-    } else if (RobotController.getSerialNumber().equals("03223849")) {
+    } else if (RobotController.getSerialNumber().equals("123")) {
       return Robot.KITBOT;
     } else {
       new Alert(
@@ -62,19 +62,16 @@ public class RobotContainer {
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
 
-  private final int STATUS_UPD_FREQUENCY = 20; // in hz (updates per sec)
-
   private final CANBus rioCanbus = new CANBus("rio");
   private final CANBus canivoreCanbus = new CANBus("CANivore");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
+  //
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
-
-    signalList.setUpdateFrequencyForAll(STATUS_UPD_FREQUENCY);
 
     this.addPeriodic = addPeriodic;
 
@@ -97,7 +94,7 @@ public class RobotContainer {
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         break;
       case DEV:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        drivetrain = TunerConstants_mk4n.createDrivetrain();
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -112,7 +109,6 @@ public class RobotContainer {
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-
     addPeriodic.accept(() -> {}, 0.5);
   }
 
@@ -138,14 +134,16 @@ public class RobotContainer {
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
-  public void addSignal(BaseStatusSignal signal) {
-    signalList.addSignals(signal);
+  private void configureAutonomous() {
+    SmartDashboard.putData("autonomous", autoChooser);
   }
 
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
     startTime = HALUtil.getFPGATime();
+
+    signalList.refreshAll();
 
     // 2
     DogLog.log(
