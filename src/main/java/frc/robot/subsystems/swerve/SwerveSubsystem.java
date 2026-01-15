@@ -88,8 +88,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
-
-    SmartDashboard.putData("Auto Rotate to 45", setRotationCommand(RotationTarget.HUB));
   }
 
   private void configureAutoBuilder() {
