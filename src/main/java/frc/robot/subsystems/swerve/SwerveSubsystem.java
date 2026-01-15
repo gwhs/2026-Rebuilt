@@ -41,12 +41,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     FORTY_FIVE
   }
 
+  private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
   private CommandXboxController controller;
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
-
   private final Telemetry logger = new Telemetry();
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -79,10 +79,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(TalonFX::new, TalonFX::new, CANcoder::new, drivetrainConstants, modules);
     this.controller = controller;
+
     if (Utils.isSimulation()) {
       startSimThread();
     }
-
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
   }
@@ -189,6 +189,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return slowMode;
   }
 
+  public boolean getdisableAutoRotate() {
+    return disableAutoRotate;
+  }
+
   public Command setRotationCommand(RotationTarget rotationTarget) {
     return Commands.runOnce(
         () -> {
@@ -241,5 +245,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
           return 0.0;
         },
         this.controller);
+  }
+
+  /*
+   * the idea behind this command is that it:
+   * 1. saves current rotation target,
+   * 2. resets the rotation target to normal
+   * 3. does whatever inbetween thing needs to be done while we aren't aligning
+   * 4. set the target back to the previous target.
+   */
+  public Command temporarilyDisableRotation() {
+    return Commands.run(
+            () -> {
+              this.disableAutoRotate = true;
+            })
+        .finallyDo(
+            () -> {
+              this.disableAutoRotate = false;
+            });
   }
 }
