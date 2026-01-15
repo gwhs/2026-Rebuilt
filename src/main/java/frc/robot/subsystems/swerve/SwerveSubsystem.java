@@ -213,7 +213,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public boolean isDrivingToFuel() {
     ChassisSpeeds currRobotSpeed = getState().Speeds;
-    return currRobotSpeed.vxMetersPerSecond < -0.1;
+    return currRobotSpeed.vxMetersPerSecond > 0.1;
   }
 
   public Pose2d getPose(double timeSeconds) {

@@ -150,8 +150,10 @@ public class RobotContainer {
     if (objDecCam != null) {
       objDecCam.updateDetection();
     }
-    
-    DogLog.log("Loop Time/Robot Container/objectDetection Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+
+    DogLog.log(
+        "Loop Time/Robot Container/objectDetection Cam",
+        (HALUtil.getFPGATime() - startTime) / 1000);
 
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
