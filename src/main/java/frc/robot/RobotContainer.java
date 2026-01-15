@@ -123,17 +123,20 @@ public class RobotContainer {
   private void configureBindings() {}
 
   public Command loadArmCoral() {
-    /* */
+    return Commands.print("loadArmCoral"); //temp
+    /*
     return Commands.sequence(
         Commands.parallel(
             endEffector.intake(),
             arm.setAngle(ArmConstants.ARM_INTAKE_ANGLE),
             elevator.setHeight(ElevatorConstants.INTAKE_METER),
             drivetrain.setFaceTarget(FaceTarget.CORAL_STATION)));
+            */
   }
 
   public Command resetGroundIntake() // reset ground intake to defult position
       {
+        return Commands.print("resetGroundIntake"); //temp
     /*
     return Commands.sequence(
         groundIntake.setAngleAndAmp(0, 0, 0),
