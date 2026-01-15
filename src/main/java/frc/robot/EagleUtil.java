@@ -28,14 +28,14 @@ public class EagleUtil {
         && DriverStation.getAlliance().get() == Alliance.Red;
   }
 
-  public static double getrotationalhub(Pose2d pose) {
-    Translation2d Hub;
+  public static double getRotationalHub(Pose2d pose) {
+    Translation2d hub;
 
     if (isRedAlliance()) {
-      Hub = RED_HUB;
+      hub = RED_HUB;
     } else {
-      Hub = BLUE_HUB;
+      hub = BLUE_HUB;
     }
-    return Hub.minus(pose.getTranslation()).getAngle().getDegrees();
+    return hub.minus(pose.getTranslation()).getAngle().getDegrees();
   }
 }

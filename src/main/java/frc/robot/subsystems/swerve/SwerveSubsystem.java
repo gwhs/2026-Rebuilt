@@ -208,7 +208,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case TOWER:
         return 0;
       case HUB:
-        return EagleUtil.getrotationalhub(getState().Pose);
+        return EagleUtil.getRotationalHub(getState().Pose);
       default:
         return 0;
     }
