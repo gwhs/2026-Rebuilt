@@ -14,8 +14,8 @@ public class EagleUtil {
     }
     public static double getRobotTargetAngle(Pose2d robotpose, Translation2d target)
     {
-        double dx = target.getX() - robotpose.getX();
-        double dy = target.getY() - robotpose.getY();
+        double dx = robotpose.getX() - target.getX();
+        double dy = robotpose.getY() - target.getY();
         double theta = radianToDegree(Math.atan(dy/dx));
         if (dx < 0)
         {
