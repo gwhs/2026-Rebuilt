@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.EagleUtil;
 import frc.robot.commands.AlignToPose;
 import java.util.function.Supplier;
 
@@ -38,7 +39,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public enum RotationTarget {
     NORMAL,
-    FORTY_FIVE
+    FORTY_FIVE,
+    PASSING_DEPOT_SIDE,
+    PASSING_OUTPOST_SIDE
   }
 
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
@@ -205,6 +208,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 45.0;
       case NORMAL:
         return 0;
+      case PASSING_DEPOT_SIDE:
+	return EagleUtil.getTarget(RotationTarget.PASSING_DEPOT_SIDE, getState().Pose);
+      case PASSING_OUTPOST_SIDE:
+	return EagleUtil.getTarget(RotationTarget.PASSING_OUTPOST_SIDE, getState().Pose);
       default:
         return 0;
     }
