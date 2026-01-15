@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -86,6 +87,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       startSimThread();
     }
 
+    SmartDashboard.putData(
+        "go to fren depot", setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+    SmartDashboard.putData(
+        "go to fren outpost", setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
   }
