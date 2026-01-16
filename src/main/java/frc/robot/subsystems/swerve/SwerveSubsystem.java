@@ -42,6 +42,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     FORTY_FIVE,
     PASSING_DEPOT_SIDE,
     PASSING_OUTPOST_SIDE
+    TOWER,
+    HUB,
   }
 
   private boolean disableAutoRotate = false;
@@ -209,14 +211,16 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public double getGoalHeading() {
     switch (this.rotationTarget) {
-      case FORTY_FIVE:
-        return 45.0;
       case NORMAL:
         return 0;
       case PASSING_DEPOT_SIDE:
         return EagleUtil.getRobotTargetAngle(RotationTarget.PASSING_DEPOT_SIDE, getState().Pose);
       case PASSING_OUTPOST_SIDE:
         return EagleUtil.getRobotTargetAngle(RotationTarget.PASSING_OUTPOST_SIDE, getState().Pose);
+      case TOWER:
+        return 0;
+      case HUB:
+        return EagleUtil.getRotationalHub(getState().Pose);
       default:
         return 0;
     }
