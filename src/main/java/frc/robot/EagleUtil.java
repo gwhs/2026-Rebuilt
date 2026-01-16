@@ -33,28 +33,28 @@ public class EagleUtil {
         && robotPose.getX() <= FieldConstants.ALLIANCE_ZONE_LINE_RED);
   }
 
-  public static double getTarget(RotationTarget target, Pose2d pose) {
+  public static double getRobotTargetAngle(RotationTarget target, Pose2d pose) {
     Translation2d alignmentTarget;
     if (target == RotationTarget.PASSING_DEPOT_SIDE) {
       if (isRedAlliance()) {
-        alignmentTarget = FieldConstants.RED_DEPOT;
-        return getRobotTargetAngle(pose, alignmentTarget);
+        alignmentTarget = FieldConstants.RED_DEPOT_PASSING;
+        return getTargetAngle(pose, alignmentTarget);
       }
-      alignmentTarget = FieldConstants.BLUE_DEPOT;
-      return getRobotTargetAngle(pose, alignmentTarget);
+      alignmentTarget = FieldConstants.BLUE_DEPOT_PASSING;
+      return getTargetAngle(pose, alignmentTarget);
     }
     if (target == RotationTarget.PASSING_OUTPOST_SIDE) {
       if (isRedAlliance()) {
-        alignmentTarget = FieldConstants.RED_OUTPOST;
-        getRobotTargetAngle(pose, alignmentTarget);
+        alignmentTarget = FieldConstants.RED_OUTPOST_PASSING;
+        getTargetAngle(pose, alignmentTarget);
       }
-      alignmentTarget = FieldConstants.BLUE_OUTPOST;
-      return getRobotTargetAngle(pose, alignmentTarget);
+      alignmentTarget = FieldConstants.BLUE_OUTPOST_PASSING;
+      return getTargetAngle(pose, alignmentTarget);
     }
     return 0.0;
   }
 
-  public static double getRobotTargetAngle(Pose2d robotpose, Translation2d target) {
+  private static double getTargetAngle(Pose2d robotpose, Translation2d target) {
     return target.minus(robotpose.getTranslation()).getAngle().getDegrees();
   }
 
