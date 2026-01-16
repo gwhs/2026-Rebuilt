@@ -41,7 +41,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     NORMAL,
     FORTY_FIVE,
     PASSING_DEPOT_SIDE,
-    PASSING_OUTPOST_SIDE
+    PASSING_OUTPOST_SIDE,
     TOWER,
     HUB,
   }
