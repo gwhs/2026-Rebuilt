@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.EagleUtil;
+import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToPose;
 import java.util.function.Supplier;
 
@@ -214,9 +215,15 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case NORMAL:
         return 0;
       case PASSING_DEPOT_SIDE:
-        return EagleUtil.getRobotTargetAngle(RotationTarget.PASSING_DEPOT_SIDE, getState().Pose);
+        if (EagleUtil.isRedAlliance()) {
+          return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.RED_DEPOT_PASSING);
+        }
+        return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.BLUE_DEPOT_PASSING);
       case PASSING_OUTPOST_SIDE:
-        return EagleUtil.getRobotTargetAngle(RotationTarget.PASSING_OUTPOST_SIDE, getState().Pose);
+        if (EagleUtil.isRedAlliance()) {
+          return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.RED_OUTPOST_PASSING);
+        }
+        return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.BLUE_OUTPOST_PASSING);
       case TOWER:
         return 0;
       case HUB:

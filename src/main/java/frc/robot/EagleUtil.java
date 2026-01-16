@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 
 public class EagleUtil {
 
@@ -45,28 +44,7 @@ public class EagleUtil {
         && robotPose.getX() <= FieldConstants.ALLIANCE_ZONE_LINE_RED);
   }
 
-  public static double getRobotTargetAngle(RotationTarget target, Pose2d pose) {
-    Translation2d alignmentTarget;
-    if (target == RotationTarget.PASSING_DEPOT_SIDE) {
-      if (isRedAlliance()) {
-        alignmentTarget = FieldConstants.RED_DEPOT_PASSING;
-        return getTargetAngle(pose, alignmentTarget);
-      }
-      alignmentTarget = FieldConstants.BLUE_DEPOT_PASSING;
-      return getTargetAngle(pose, alignmentTarget);
-    }
-    if (target == RotationTarget.PASSING_OUTPOST_SIDE) {
-      if (isRedAlliance()) {
-        alignmentTarget = FieldConstants.RED_OUTPOST_PASSING;
-        getTargetAngle(pose, alignmentTarget);
-      }
-      alignmentTarget = FieldConstants.BLUE_OUTPOST_PASSING;
-      return getTargetAngle(pose, alignmentTarget);
-    }
-    return 0.0;
-  }
-
-  private static double getTargetAngle(Pose2d robotpose, Translation2d target) {
+  public static double getRobotTargetAngle(Pose2d robotpose, Translation2d target) {
     return target.minus(robotpose.getTranslation()).getAngle().getDegrees();
   }
 
