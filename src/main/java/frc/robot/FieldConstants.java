@@ -14,6 +14,7 @@ public class FieldConstants {
 
   public static final double ALLIANCE_ZONE_LINE_BLUE = 3.977894;
   public static final double ALLIANCE_ZONE_LINE_RED = 12.535154;
+
   public static double RED_DEPOT_PASSING_X = Units.inchesToMeters(2.014);
   public static double RED_DEPOT_PASSING_Y = Units.inchesToMeters(6.704);
   public static double BLUE_DEPOT_PASSING_X = Units.inchesToMeters(9.604);
