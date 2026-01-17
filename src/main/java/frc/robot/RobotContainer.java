@@ -134,10 +134,6 @@ public class RobotContainer {
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
-  private void configureAutonomous() {
-    SmartDashboard.putData("autonomous", autoChooser);
-  }
-
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
