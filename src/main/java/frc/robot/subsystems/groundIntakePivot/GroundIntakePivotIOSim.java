@@ -4,68 +4,81 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.SingleJointedGroundIntakePivotSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public class GroundIntakePivotIOSim implements GroundIntakePivotIO {
-  private SingleJointedGroundIntakePivotSim groundIntakePivotSim =
-      new SingleJointedGroundIntakePivotSim(
+
+  // Simulation of the ground intake pivot
+  private final SingleJointedArmSim groundIntakePivotSim =
+      new SingleJointedArmSim(
           DCMotor.getFalcon500Foc(1),
           GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_GEAR_RATIO,
-          0.1,
-          1,
+          0.1, // moment of inertia
+          1,   // damping
           Units.degreesToRadians(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND),
           Units.degreesToRadians(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND),
           false,
-          Units.degreesToRadians(90));
+          Units.degreesToRadians(90) // initial position
+      );
 
-  private TrapezoidProfile.Constraints constraints =
+  // Convert MAX_VELOCITY and MAX_ACCELERATION from rotations/sec to radians/sec
+  private final TrapezoidProfile.Constraints constraints =
       new TrapezoidProfile.Constraints(
-          GroundIntakePivotConstants.MAX_VELOCITY * 360, GroundIntakePivotConstants.MAX_ACCELERATION * 360);
-  private ProfiledPIDController pidController = new ProfiledPIDController(.1, 0, 0, constraints);
+          Units.rotationsToRadians(GroundIntakePivotConstants.MAX_VELOCITY),
+          Units.rotationsToRadians(GroundIntakePivotConstants.MAX_ACCELERATION)
+      );
 
-  private boolean m_emergencyMode;
+  private final ProfiledPIDController pidController = new ProfiledPIDController(0.5, 0, 0, constraints);
+
+  private boolean m_emergencyMode = false;
 
   public GroundIntakePivotIOSim() {
-    pidController.setGoal(90);
-  }
-
-  public double getPIDGoalDegrees() {
-    return this.pidController.getGoal().position;
-  }
-
-  public double getPosition() {
-    return Units.radiansToDegrees(GroundIntakePivotSim.getAngleRads());
+    // Initialize PID goal to current position
+    pidController.setGoal(groundIntakePivotSim.getAngleRads());
   }
 
   @Override
-  public void setAngle(double angle) {
-    if (m_emergencyMode == false) {
-      pidController.setGoal(angle);
+  public double getPIDGoalDegrees() {
+    return Units.radiansToDegrees(pidController.getGoal().position);
+  }
+
+  @Override
+  public double getPosition() {
+    return Units.radiansToDegrees(groundIntakePivotSim.getAngleRads());
+  }
+
+  @Override
+  public void setAngle(double angleDegrees) {
+    if (!m_emergencyMode) {
+      pidController.setGoal(Units.degreesToRadians(angleDegrees));
     }
   }
 
+  @Override
   public double getPositionError() {
-    return pidController.getPositionError();
+    // PID position error in degrees
+    return Units.radiansToDegrees(pidController.getPositionError());
   }
 
-  /**
-   * @param volts how many volts to set to
-   */
+  @Override
   public void setVoltage(double volts) {
-    if (m_emergencyMode == true) {
+    if (m_emergencyMode) {
       groundIntakePivotSim.setInputVoltage(0);
     } else {
       groundIntakePivotSim.setInputVoltage(volts);
     }
   }
 
+  @Override
   public void update() {
-    groundIntakePivotSim.update(0.20);
-    if (m_emergencyMode == false) {
-      double pidOutput = pidController.calculate(getPosition());
-
-      groundIntakePivotSim.setInputVoltage(pidOutput);
+    if (!m_emergencyMode) {
+      // PID output in volts (assuming 1:1 scaling)
+      double pidOutputVolts = pidController.calculate(groundIntakePivotSim.getAngleRads());
+      groundIntakePivotSim.setInputVoltage(pidOutputVolts);
     }
+
+    // Update simulation with 20ms timestep
+    groundIntakePivotSim.update(0.020);
   }
 
   @Override

@@ -75,7 +75,7 @@ public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
     slot0Configs.kP = 43; // A position error of 2.5 rotations results in 12 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 10; // A velocity error of 1 rps results in 0.1 V output
-    slot0Configs.withGravityType(GravityTypeValue.GroundIntakePivot_Cosine);
+    slot0Configs.withGravityType(GravityTypeValue.Cosine);
 
     feedbackConfigs.FeedbackRotorOffset = 0;
     feedbackConfigs.FeedbackRemoteSensorID = GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_ENCODER_ID;
@@ -102,7 +102,7 @@ public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; i++) {
-      status = GroundIntakePivotMotor.getConfigurator().apply(talonFXConfigs);
+      status = groundIntakePivotMotor.getConfigurator().apply(talonFXConfigs);
       if (status.isOK()) break;
     }
     if (!status.isOK()) {
