@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class Trench_2c extends SequentialCommandGroup {
-  public Trench_2c(boolean Mirror) {
+  public Trench_2c(boolean mirror) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -17,19 +17,19 @@ public class Trench_2c extends SequentialCommandGroup {
       /*
         TODO: Load Paths
       */
-      PathPlannerPath Neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
-      if (Mirror) {
-        Neutral = Neutral.mirrorPath();
+      PathPlannerPath neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
+      if (mirror) {
+        neutral = neutral.mirrorPath();
       }
 
       Pose2d startingPose =
-          new Pose2d(Neutral.getPoint(0).position, Neutral.getIdealStartingState().rotation());
+          new Pose2d(neutral.getPoint(0).position, neutral.getIdealStartingState().rotation());
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(Neutral),
+          AutoBuilder.followPath(neutral),
           Commands.waitSeconds(6),
-          AutoBuilder.followPath(Neutral),
+          AutoBuilder.followPath(neutral),
           Commands.waitSeconds(6)
           /*
            * TODO: The rest of the autonomous routine command

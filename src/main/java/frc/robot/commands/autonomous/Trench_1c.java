@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class Trench_1c extends SequentialCommandGroup {
-  public Trench_1c(boolean Mirror) {
+  public Trench_1c(boolean mirror) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -17,23 +17,23 @@ public class Trench_1c extends SequentialCommandGroup {
       /*
         TODO: Load Paths
       */
-      PathPlannerPath Neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
-      PathPlannerPath Climb = PathPlannerPath.fromChoreoTrajectory("Score_Climb");
+      PathPlannerPath neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
+      PathPlannerPath climb = PathPlannerPath.fromChoreoTrajectory("Score_Climb");
 
-      if (Mirror) {
-        Neutral = Neutral.mirrorPath();
-        Climb = PathPlannerPath.fromChoreoTrajectory("Score_Climb_Mirror");
+      if (mirror) {
+        neutral = neutral.mirrorPath();
+        climb = PathPlannerPath.fromChoreoTrajectory("Score_Climb_Mirror");
       }
       // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
 
       Pose2d startingPose =
-          new Pose2d(Neutral.getPoint(0).position, Neutral.getIdealStartingState().rotation());
+          new Pose2d(neutral.getPoint(0).position, neutral.getIdealStartingState().rotation());
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(Neutral),
+          AutoBuilder.followPath(neutral),
           Commands.waitSeconds(6),
-          AutoBuilder.followPath(Climb)
+          AutoBuilder.followPath(climb)
           /*
            * TODO: The rest of the autonomous routine command
            */
