@@ -102,38 +102,4 @@ public class GroundIntakePivotSubsystem extends SubsystemBase {
   public double getAngle() {
     return groundIntakePivotIO.getPosition();
   }
-
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutine.quasistatic(direction);
-  }
-
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutine.dynamic(direction);
-  }
-
-  /** Increase angle by a certain number of degrees */
-  public Command increaseAngle(double degrees) {
-    return Commands.runOnce(
-            () -> {
-              double newAngle = groundIntakePivotIO.getPosition() + degrees;
-              groundIntakePivotIO.setAngle(newAngle);
-              groundIntakePivotGoal = newAngle;
-            })
-        .andThen(Commands.waitUntil(() -> Math.abs(groundIntakePivotIO.getPositionError()) < 1.0));
-  }
-
-  /** Decrease angle by a certain number of degrees */
-  public Command decreaseAngle(double degrees) {
-    return increaseAngle(-degrees);
-  }
-
-  /** Engage emergency mode (stop motor) */
-  public Command engageEmergencyMode() {
-    return Commands.runOnce(() -> groundIntakePivotIO.setEmergencyMode(true));
-  }
-
-  /** Exit emergency mode */
-  public Command exitEmergencyMode() {
-    return Commands.runOnce(() -> groundIntakePivotIO.setEmergencyMode(false));
-  }
 }
