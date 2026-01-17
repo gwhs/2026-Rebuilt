@@ -30,24 +30,37 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 
 public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
-  private TalonFX groundIntakePivotMotor = new TalonFX(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_MOTOR_ID, "rio");
-  private CANcoder groundIntakePivotEncoder = new CANcoder(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_ENCODER_ID, "rio");
+  private TalonFX groundIntakePivotMotor =
+      new TalonFX(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_MOTOR_ID, "rio");
+  private CANcoder groundIntakePivotEncoder =
+      new CANcoder(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_ENCODER_ID, "rio");
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
   private final VoltageOut m_voltReq = new VoltageOut(0.0);
 
-  private final StatusSignal<Double> groundIntakePivotPIDGoal = GroundIntakePivotSubsystem.getClosedLoopReference();
-  private final StatusSignal<Voltage> groundIntakePivotMotorVoltage = groundIntakePivotMotor.getMotorVoltage();
-  private final StatusSignal<Voltage> groundIntakePivotSupplyVoltage = groundIntakePivotMotor.getSupplyVoltage();
-  private final StatusSignal<Temperature> groundIntakePivotDeviceTemp = groundIntakePivotMotor.getDeviceTemp();
-  private final StatusSignal<Current> groundIntakePivotStatorCurrent = groundIntakePivotMotor.getStatorCurrent();
-  private final StatusSignal<Angle> groundIntakePivotEncoderPosition = groundIntakePivotEncoder.getPosition();
-  private final StatusSignal<Angle> groundIntakePivotPosition = groundIntakePivotMotor.getPosition();
-  private final StatusSignal<Double> groundIntakePivotAngleError = groundIntakePivotMotor.getClosedLoopError();
-  private final StatusSignal<Double> feedForwardOutput = groundIntakePivotMotor.getClosedLoopFeedForward();
-  private final StatusSignal<Double> closedLoopOutput = groundIntakePivotMotor.getClosedLoopOutput();
+  private final StatusSignal<Double> groundIntakePivotPIDGoal = groundIntakePivotMotor.getClosedLoopReference();
+
+  private final StatusSignal<Voltage> groundIntakePivotMotorVoltage =
+      groundIntakePivotMotor.getMotorVoltage();
+  private final StatusSignal<Voltage> groundIntakePivotSupplyVoltage =
+      groundIntakePivotMotor.getSupplyVoltage();
+  private final StatusSignal<Temperature> groundIntakePivotDeviceTemp =
+      groundIntakePivotMotor.getDeviceTemp();
+  private final StatusSignal<Current> groundIntakePivotStatorCurrent =
+      groundIntakePivotMotor.getStatorCurrent();
+  private final StatusSignal<Angle> groundIntakePivotEncoderPosition =
+      groundIntakePivotEncoder.getPosition();
+  private final StatusSignal<Angle> groundIntakePivotPosition =
+      groundIntakePivotMotor.getPosition();
+  private final StatusSignal<Double> groundIntakePivotAngleError =
+      groundIntakePivotMotor.getClosedLoopError();
+  private final StatusSignal<Double> feedForwardOutput =
+      groundIntakePivotMotor.getClosedLoopFeedForward();
+  private final StatusSignal<Double> closedLoopOutput =
+      groundIntakePivotMotor.getClosedLoopOutput();
   private final StatusSignal<Double> closedLoopProportionalOutput =
       groundIntakePivotMotor.getClosedLoopProportionalOutput();
-  private final StatusSignal<Double> closedLoopIntegral = groundIntakePivotMotor.getClosedLoopIntegratedOutput();
+  private final StatusSignal<Double> closedLoopIntegral =
+      groundIntakePivotMotor.getClosedLoopIntegratedOutput();
   private final StatusSignal<Double> closedLoopDerivative =
       groundIntakePivotMotor.getClosedLoopDerivativeOutput();
 
@@ -75,10 +88,11 @@ public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
     slot0Configs.kP = 43; // A position error of 2.5 rotations results in 12 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 10; // A velocity error of 1 rps results in 0.1 V output
-    slot0Configs.withGravityType(GravityTypeValue.Cosine);
+    slot0Configs.withGravityType(GravityTypeValue.Arm_Cosine);
 
     feedbackConfigs.FeedbackRotorOffset = 0;
-    feedbackConfigs.FeedbackRemoteSensorID = GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_ENCODER_ID;
+    feedbackConfigs.FeedbackRemoteSensorID =
+        GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_ENCODER_ID;
     feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     feedbackConfigs.RotorToSensorRatio = GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_GEAR_RATIO;
     feedbackConfigs.SensorToMechanismRatio = 1;
@@ -187,20 +201,31 @@ public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
                 closedLoopIntegral,
                 closedLoopDerivative)
             .isOK());
-    DogLog.log("GroundIntakePivot/Motor/pid goal", Units.rotationsToDegrees(groundIntakePivotPIDGoal.getValueAsDouble()));
-    DogLog.log("GroundIntakePivot/Motor/motor voltage", groundIntakePivotMotorVoltage.getValueAsDouble());
-    DogLog.log("GroundIntakePivot/Motor/supply voltage", groundIntakePivotSupplyVoltage.getValueAsDouble());
-    DogLog.log("GroundIntakePivot/Motor/device temp", groundIntakePivotDeviceTemp.getValueAsDouble());
-    DogLog.log("GroundIntakePivot/Motor/stator current", groundIntakePivotStatorCurrent.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakePivot/Motor/pid goal",
+        Units.rotationsToDegrees(groundIntakePivotPIDGoal.getValueAsDouble()));
+    DogLog.log(
+        "GroundIntakePivot/Motor/motor voltage", groundIntakePivotMotorVoltage.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakePivot/Motor/supply voltage",
+        groundIntakePivotSupplyVoltage.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakePivot/Motor/device temp", groundIntakePivotDeviceTemp.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakePivot/Motor/stator current",
+        groundIntakePivotStatorCurrent.getValueAsDouble());
     DogLog.log("GroundIntakePivot/Motor/Connected", groundIntakePivotConnected);
     DogLog.log("GroundIntakePivot/Encoder/encoder position", getPosition());
     DogLog.log("GroundIntakePivot/Encoder/Connected", groundIntakePivotEncoder.isConnected());
     DogLog.log("GroundIntakePivot/Motor/feed forward", feedForwardOutput.getValueAsDouble());
     DogLog.log("GroundIntakePivot/Motor/closed loop output", closedLoopOutput.getValueAsDouble());
     DogLog.log(
-        "GroundIntakePivot/Motor/closed loop proportional", closedLoopProportionalOutput.getValueAsDouble());
-    DogLog.log("GroundIntakePivot/Motor/closed loop integral", closedLoopIntegral.getValueAsDouble());
-    DogLog.log("GroundIntakePivot/Motor/closed loop derivative", closedLoopDerivative.getValueAsDouble());
+        "GroundIntakePivot/Motor/closed loop proportional",
+        closedLoopProportionalOutput.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakePivot/Motor/closed loop integral", closedLoopIntegral.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakePivot/Motor/closed loop derivative", closedLoopDerivative.getValueAsDouble());
 
     groundIntakePivotMotorConnectedAlert.set(!groundIntakePivotConnected);
     groundIntakePivotEncoderConnectedAlert.set(!groundIntakePivotEncoder.isConnected());
@@ -210,4 +235,3 @@ public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
     }
   }
 }
-

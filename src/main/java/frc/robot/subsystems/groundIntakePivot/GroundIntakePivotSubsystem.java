@@ -21,9 +21,10 @@ public class GroundIntakePivotSubsystem extends SubsystemBase {
 
   // Make AT_GOAL_ANGLE lazy to avoid NPE
   public Trigger AT_GOAL_ANGLE() {
-    return new Trigger(() -> 
-        groundIntakePivotIO != null &&
-        MathUtil.isNear(groundIntakePivotGoal, groundIntakePivotIO.getPosition(), 3.0));
+    return new Trigger(
+        () ->
+            groundIntakePivotIO != null
+                && MathUtil.isNear(groundIntakePivotGoal, groundIntakePivotIO.getPosition(), 3.0));
   }
 
   private final SysIdRoutine m_sysIdRoutine =
@@ -32,14 +33,9 @@ public class GroundIntakePivotSubsystem extends SubsystemBase {
               null, // default ramp rate
               Units.Volts.of(4), // Reduce dynamic step voltage
               null, // default timeout
-              state -> SignalLogger.writeString("state", state.toString())
-          ),
+              state -> SignalLogger.writeString("state", state.toString())),
           new SysIdRoutine.Mechanism(
-              volts -> groundIntakePivotIO.setVoltage(volts.in(Volts)),
-              null,
-              this
-          )
-      );
+              volts -> groundIntakePivotIO.setVoltage(volts.in(Volts)), null, this));
 
   public GroundIntakePivotSubsystem() {
     if (RobotBase.isSimulation()) {
@@ -49,46 +45,46 @@ public class GroundIntakePivotSubsystem extends SubsystemBase {
     }
   }
 
-  /**
-   * Drives the groundIntakePivot to a given angle (degrees)
-   */
+  /** Drives the groundIntakePivot to a given angle (degrees) */
   public Command setAngle(double angle) {
-    double clampedAngle = MathUtil.clamp(
-        angle,
-        GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
-        GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND
-    );
+    double clampedAngle =
+        MathUtil.clamp(
+            angle,
+            GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
+            GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND);
 
-    return this.runOnce(() -> {
-      groundIntakePivotIO.setAngle(clampedAngle);
-      groundIntakePivotGoal = clampedAngle;
-    }).andThen(
-        Commands.waitUntil(() -> MathUtil.isNear(clampedAngle, groundIntakePivotIO.getPosition(), 1.0))
-    );
+    return this.runOnce(
+            () -> {
+              groundIntakePivotIO.setAngle(clampedAngle);
+              groundIntakePivotGoal = clampedAngle;
+            })
+        .andThen(
+            Commands.waitUntil(
+                () -> MathUtil.isNear(clampedAngle, groundIntakePivotIO.getPosition(), 1.0)));
   }
 
-  /**
-   * Drives the groundIntakePivot based on a supplier (degrees)
-   */
+  /** Drives the groundIntakePivot based on a supplier (degrees) */
   public Command setAngleSupplier(DoubleSupplier angleSupplier) {
-    return this.runOnce(() -> {
-      double clampedAngle = MathUtil.clamp(
-          angleSupplier.getAsDouble(),
-          GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
-          GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND
-      );
-      groundIntakePivotIO.setAngle(clampedAngle); // FIXED typo here
-      groundIntakePivotGoal = clampedAngle;
-    }).andThen(
-        Commands.waitUntil(() -> {
-          double clampedAngle = MathUtil.clamp(
-              angleSupplier.getAsDouble(),
-              GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
-              GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND
-          );
-          return MathUtil.isNear(clampedAngle, groundIntakePivotIO.getPosition(), 1.0);
-        })
-    );
+    return this.runOnce(
+            () -> {
+              double clampedAngle =
+                  MathUtil.clamp(
+                      angleSupplier.getAsDouble(),
+                      GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
+                      GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND);
+              groundIntakePivotIO.setAngle(clampedAngle); // FIXED typo here
+              groundIntakePivotGoal = clampedAngle;
+            })
+        .andThen(
+            Commands.waitUntil(
+                () -> {
+                  double clampedAngle =
+                      MathUtil.clamp(
+                          angleSupplier.getAsDouble(),
+                          GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
+                          GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND);
+                  return MathUtil.isNear(clampedAngle, groundIntakePivotIO.getPosition(), 1.0);
+                }));
   }
 
   @Override
@@ -100,7 +96,9 @@ public class GroundIntakePivotSubsystem extends SubsystemBase {
     DogLog.log("LoopTime/GroundIntakePivot", (HALUtil.getFPGATime() - startTime) / 1000.0);
   }
 
-  /** @return the current angle (degrees) */
+  /**
+   * @return the current angle (degrees)
+   */
   public double getAngle() {
     return groundIntakePivotIO.getPosition();
   }
@@ -115,13 +113,13 @@ public class GroundIntakePivotSubsystem extends SubsystemBase {
 
   /** Increase angle by a certain number of degrees */
   public Command increaseAngle(double degrees) {
-    return Commands.runOnce(() -> {
-      double newAngle = groundIntakePivotIO.getPosition() + degrees;
-      groundIntakePivotIO.setAngle(newAngle);
-      groundIntakePivotGoal = newAngle;
-    }).andThen(
-        Commands.waitUntil(() -> Math.abs(groundIntakePivotIO.getPositionError()) < 1.0)
-    );
+    return Commands.runOnce(
+            () -> {
+              double newAngle = groundIntakePivotIO.getPosition() + degrees;
+              groundIntakePivotIO.setAngle(newAngle);
+              groundIntakePivotGoal = newAngle;
+            })
+        .andThen(Commands.waitUntil(() -> Math.abs(groundIntakePivotIO.getPositionError()) < 1.0));
   }
 
   /** Decrease angle by a certain number of degrees */

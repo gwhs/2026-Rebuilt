@@ -29,4 +29,3 @@ public class GroundIntakePivotConstants {
   public static final double PREP_CLIMB_ANGLE = -170;
   public static final double CLIMB_ANGLE = -10;
 }
-

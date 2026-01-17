@@ -14,21 +14,21 @@ public class GroundIntakePivotIOSim implements GroundIntakePivotIO {
           DCMotor.getFalcon500Foc(1),
           GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_GEAR_RATIO,
           0.1, // moment of inertia
-          1,   // damping
+          1, // damping
           Units.degreesToRadians(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND),
           Units.degreesToRadians(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND),
           false,
           Units.degreesToRadians(90) // initial position
-      );
+          );
 
   // Convert MAX_VELOCITY and MAX_ACCELERATION from rotations/sec to radians/sec
   private final TrapezoidProfile.Constraints constraints =
       new TrapezoidProfile.Constraints(
           Units.rotationsToRadians(GroundIntakePivotConstants.MAX_VELOCITY),
-          Units.rotationsToRadians(GroundIntakePivotConstants.MAX_ACCELERATION)
-      );
+          Units.rotationsToRadians(GroundIntakePivotConstants.MAX_ACCELERATION));
 
-  private final ProfiledPIDController pidController = new ProfiledPIDController(0.5, 0, 0, constraints);
+  private final ProfiledPIDController pidController =
+      new ProfiledPIDController(0.5, 0, 0, constraints);
 
   private boolean m_emergencyMode = false;
 
