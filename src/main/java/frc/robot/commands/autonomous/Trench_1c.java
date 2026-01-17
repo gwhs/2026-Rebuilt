@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class Trench_1c extends SequentialCommandGroup {
-  public Trench_1c() {
+  public Trench_1c(boolean Mirror) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -20,6 +20,10 @@ public class Trench_1c extends SequentialCommandGroup {
       PathPlannerPath Neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
       PathPlannerPath Climb = PathPlannerPath.fromChoreoTrajectory("Score_Climb");
 
+      if (Mirror) {
+        Neutral = Neutral.mirrorPath();
+        Climb = PathPlannerPath.fromChoreoTrajectory("Score_Climb_Mirror");
+      }
       // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
 
       Pose2d startingPose =
