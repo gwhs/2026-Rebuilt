@@ -30,12 +30,12 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 
 public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
-  private TalonFX groundIntakePivotMotor = new TalonFX(GroundIntakePivotConstants.GroundIntakePivot_MOTOR_ID, "rio");
-  private CANcoder groundIntakePivotEncoder = new CANcoder(GroundIntakePivotConstants.GroundIntakePivot_ENCODER_ID, "rio");
+  private TalonFX groundIntakePivotMotor = new TalonFX(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_MOTOR_ID, "rio");
+  private CANcoder groundIntakePivotEncoder = new CANcoder(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_ENCODER_ID, "rio");
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
   private final VoltageOut m_voltReq = new VoltageOut(0.0);
 
-  private final StatusSignal<Double> groundIntakePivotPIDGoal = GroundIntakePivot.getClosedLoopReference();
+  private final StatusSignal<Double> groundIntakePivotPIDGoal = GroundIntakePivotSubsystem.getClosedLoopReference();
   private final StatusSignal<Voltage> groundIntakePivotMotorVoltage = groundIntakePivotMotor.getMotorVoltage();
   private final StatusSignal<Voltage> groundIntakePivotSupplyVoltage = groundIntakePivotMotor.getSupplyVoltage();
   private final StatusSignal<Temperature> groundIntakePivotDeviceTemp = groundIntakePivotMotor.getDeviceTemp();
@@ -78,9 +78,9 @@ public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
     slot0Configs.withGravityType(GravityTypeValue.GroundIntakePivot_Cosine);
 
     feedbackConfigs.FeedbackRotorOffset = 0;
-    feedbackConfigs.FeedbackRemoteSensorID = GroundIntakePivotConstants.GroundIntakePivot_ENCODER_ID;
+    feedbackConfigs.FeedbackRemoteSensorID = GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_ENCODER_ID;
     feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    feedbackConfigs.RotorToSensorRatio = GroundIntakePivotConstants.GroundIntakePivot_GEAR_RATIO;
+    feedbackConfigs.RotorToSensorRatio = GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_GEAR_RATIO;
     feedbackConfigs.SensorToMechanismRatio = 1;
 
     motionMagicConfigs.MotionMagicCruiseVelocity = GroundIntakePivotConstants.MAX_VELOCITY;
@@ -92,10 +92,10 @@ public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
 
     softwareLimitSwitch.ForwardSoftLimitEnable = true;
     softwareLimitSwitch.ForwardSoftLimitThreshold =
-        Units.degreesToRotations(GroundIntakePivotConstants.GroundIntakePivot_UPPER_BOUND);
+        Units.degreesToRotations(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND);
     softwareLimitSwitch.ReverseSoftLimitEnable = true;
     softwareLimitSwitch.ReverseSoftLimitThreshold =
-        Units.degreesToRotations(GroundIntakePivotConstants.GroundIntakePivot_LOWER_BOUND);
+        Units.degreesToRotations(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND);
 
     currentConfig.withStatorCurrentLimitEnable(true);
     currentConfig.withStatorCurrentLimit(30);

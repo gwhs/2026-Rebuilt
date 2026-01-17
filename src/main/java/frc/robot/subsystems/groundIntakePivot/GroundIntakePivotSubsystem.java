@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
 
-public class GroundIntakePivot extends SubsystemBase {
+public class GroundIntakePivotSubsystem extends SubsystemBase {
   private GroundIntakePivotIO groundIntakePivotIO;
 
   private double groundIntakePivotGoal;
@@ -48,7 +48,7 @@ public class GroundIntakePivot extends SubsystemBase {
    */
   public Command setAngle(double angle) {
     double clampedAngle =
-        MathUtil.clamp(angle, GroundIntakePivotConstants.GroundIntakePivot_LOWER_BOUND, GroundIntakePivotConstants.GroundIntakePivot_UPPER_BOUND);
+        MathUtil.clamp(angle, GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND, GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND);
     return this.runOnce(
             () -> {
               groundIntakePivotIO.setAngle(clampedAngle);
@@ -74,8 +74,8 @@ public class GroundIntakePivot extends SubsystemBase {
                   double clampedAngle =
                       MathUtil.clamp(
                           angle.getAsDouble(),
-                          GroundIntakePivotConstants.GroundIntakePivot_LOWER_BOUND,
-                          GroundIntakePivotConstants.GroundIntakePivot_UPPER_BOUND);
+                          GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
+                          GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND);
                   return MathUtil.isNear(clampedAngle, groundIntakePivotIO.getPosition(), 1);
                 }));
   }

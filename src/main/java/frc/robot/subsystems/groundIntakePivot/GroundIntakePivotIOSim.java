@@ -10,7 +10,7 @@ public class GroundIntakePivotIOSim implements GroundIntakePivotIO {
   private SingleJointedGroundIntakePivotSim groundIntakePivotSim =
       new SingleJointedGroundIntakePivotSim(
           DCMotor.getFalcon500Foc(1),
-          GroundIntakePivotConstants.GroundIntakePivot_GEAR_RATIO,
+          GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_GEAR_RATIO,
           0.1,
           1,
           Units.degreesToRadians(GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND),
