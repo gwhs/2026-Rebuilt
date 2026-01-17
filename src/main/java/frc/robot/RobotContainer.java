@@ -133,6 +133,10 @@ public class RobotContainer {
 
     startTime = HALUtil.getFPGATime();
 
+    if (DriverStation.getAlliance().isPresent()) {
+      DogLog.log("Alliance", DriverStation.getAlliance().get());
+    }
+
     signalList.refreshAll();
 
     // 2

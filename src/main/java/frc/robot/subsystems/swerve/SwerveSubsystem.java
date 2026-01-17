@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -89,7 +90,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     if (Utils.isSimulation()) {
       startSimThread();
     }
-
+    SmartDashboard.putData("align to depot", setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+    SmartDashboard.putData(
+        "align to outpost", setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
   }
@@ -217,13 +220,16 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case PASSING_DEPOT_SIDE:
         if (EagleUtil.isRedAlliance()) {
           return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.RED_DEPOT_PASSING);
+        } else {
+          return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.BLUE_DEPOT_PASSING);
         }
-        return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.BLUE_DEPOT_PASSING);
       case PASSING_OUTPOST_SIDE:
         if (EagleUtil.isRedAlliance()) {
           return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.RED_OUTPOST_PASSING);
+        } else {
+          return EagleUtil.getRobotTargetAngle(
+              getState().Pose, FieldConstants.BLUE_OUTPOST_PASSING);
         }
-        return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.BLUE_OUTPOST_PASSING);
       case TOWER:
         return 0;
       case HUB:
