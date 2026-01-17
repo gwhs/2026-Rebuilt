@@ -22,7 +22,8 @@ public class EagleUtil {
     }
     return hub.minus(pose.getTranslation()).getAngle().getDegrees();
   }
-public static boolean isInAllianceZone(Pose2d robotPose) {
+
+  public static boolean isInAllianceZone(Pose2d robotPose) {
     if (isRedAlliance()) {
       return robotPose.getX() > FieldConstants.ALLIANCE_ZONE_LINE_RED;
     } else {
