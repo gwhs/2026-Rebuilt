@@ -18,9 +18,6 @@ public class Trench_2c extends SequentialCommandGroup {
         TODO: Load Paths
       */
       PathPlannerPath Neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
-      PathPlannerPath Climb = PathPlannerPath.fromChoreoTrajectory("Score_Climb");
-
-      // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
 
       Pose2d startingPose =
           new Pose2d(Neutral.getPoint(0).position, Neutral.getIdealStartingState().rotation());
