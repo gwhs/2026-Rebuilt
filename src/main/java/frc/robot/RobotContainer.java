@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.autonomous.Template;
+import frc.robot.commands.autonomous.Trench_1c;
+import frc.robot.commands.autonomous.Trench_2c;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
@@ -125,6 +128,11 @@ public class RobotContainer {
   }
 
   private void configureAutonomous() {
+    autoChooser.addOption("Template", new Template());
+    autoChooser.addOption("Trench 1 Cycle", new Trench_1c(false));
+    autoChooser.addOption("Trench 2 Cycle", new Trench_2c(false));
+    autoChooser.addOption("Trench 1 Cycle Mirrored", new Trench_1c(true));
+    autoChooser.addOption("Trench 2 Cycle Mirrored", new Trench_2c(true));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
