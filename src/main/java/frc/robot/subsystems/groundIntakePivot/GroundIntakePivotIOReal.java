@@ -37,7 +37,8 @@ public class GroundIntakePivotIOReal implements GroundIntakePivotIO {
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
   private final VoltageOut m_voltReq = new VoltageOut(0.0);
 
-  private final StatusSignal<Double> groundIntakePivotPIDGoal = groundIntakePivotMotor.getClosedLoopReference();
+  private final StatusSignal<Double> groundIntakePivotPIDGoal =
+      groundIntakePivotMotor.getClosedLoopReference();
 
   private final StatusSignal<Voltage> groundIntakePivotMotorVoltage =
       groundIntakePivotMotor.getMotorVoltage();
