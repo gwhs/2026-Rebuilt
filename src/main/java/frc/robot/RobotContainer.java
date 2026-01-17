@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import java.util.function.BiConsumer;
@@ -67,6 +68,9 @@ public class RobotContainer {
   private final StatusSignalCollection signalList = new StatusSignalCollection();
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
+
+  private final ShooterSubsystem shooter =
+      new ShooterSubsystem(rioCanbus, canivoreCanbus, signalList);
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
