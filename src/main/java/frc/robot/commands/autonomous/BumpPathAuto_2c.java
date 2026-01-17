@@ -9,13 +9,18 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class BumpPathAuto_2c extends SequentialCommandGroup {
-  public BumpPathAuto_2c() {
+  public BumpPathAuto_2c(boolean mirror) {
 
     /* All your code should go inside this try-catch block */
     try {
 
       PathPlannerPath cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle");
       PathPlannerPath climbPath = PathPlannerPath.fromChoreoTrajectory("Climb");
+
+      if (mirror) {
+        cyclePath = cyclePath.mirrorPath();
+        climbPath = PathPlannerPath.fromChoreoTrajectory("Climb_Mirrored");
+      }
 
       Pose2d startingPose =
           new Pose2d(cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
