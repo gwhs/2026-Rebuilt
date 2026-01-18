@@ -51,4 +51,13 @@ public class EagleUtil {
   public static double getRobotTargetDistance(Pose2d robotpose, Translation2d target) {
     return target.getDistance(robotpose.getTranslation());
   }
+
+  public static Translation2d calcAimpoint(Pose2d robotPose, Pose2d newRobotPose, Translation2d target)
+  {
+    double x = robotPose.getX() + target.getX() - newRobotPose.getX();
+    double y = robotPose.getY() + target.getY() - newRobotPose.getY();
+    Translation2d aimpoint = new Translation2d(x, y);
+    return aimpoint;
+
+  }
 }
