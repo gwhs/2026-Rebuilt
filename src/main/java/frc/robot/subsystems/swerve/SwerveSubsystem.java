@@ -166,6 +166,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
+    DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -226,6 +227,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       default:
         return 0;
     }
+  }
+
+  public boolean isDrivingToFuel() {
+    ChassisSpeeds currRobotSpeed = getState().Speeds;
+    return currRobotSpeed.vxMetersPerSecond > 0.1;
   }
 
   public Pose2d getPose(double timeSeconds) {
