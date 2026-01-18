@@ -53,9 +53,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private final Telemetry logger = new Telemetry();
 
   public Trigger isInAllianceZone = new Trigger(() -> EagleUtil.isInAllianceZone(getState().Pose));
-  public Trigger isInOpponentAllianceZone = new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getState().Pose));
+  public Trigger isInOpponentAllianceZone =
+      new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getState().Pose));
   public Trigger isInNeutralZone = new Trigger(() -> EagleUtil.isInNeutralZone(getState().Pose));
-  
+
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
   /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -161,6 +162,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
+
+    DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
+    DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
+    DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
   }
 
   private double defualtSlowFactor = 0.25;
