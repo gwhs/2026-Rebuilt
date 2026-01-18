@@ -145,6 +145,10 @@ public class RobotContainer {
 
     startTime = HALUtil.getFPGATime();
 
+    if (DriverStation.getAlliance().isPresent()) {
+      DogLog.log("Alliance", DriverStation.getAlliance().get());
+    }
+
     if (objDecCam != null) {
       objDecCam.updateDetection();
     }
