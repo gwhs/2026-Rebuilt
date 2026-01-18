@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
 import frc.robot.commands.AlignToPose;
 import java.util.function.Supplier;
@@ -50,6 +51,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
   private final Telemetry logger = new Telemetry();
+
+  public Trigger isInAllianceZone = new Trigger(() -> EagleUtil.isInAllianceZone(getState().Pose));
+  public Trigger isInOpponentAllianceZone =
+      new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getState().Pose));
+  public Trigger isInNeutralZone = new Trigger(() -> EagleUtil.isInNeutralZone(getState().Pose));
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -156,6 +162,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
+
+    DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
+    DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
+    DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
   }
 
