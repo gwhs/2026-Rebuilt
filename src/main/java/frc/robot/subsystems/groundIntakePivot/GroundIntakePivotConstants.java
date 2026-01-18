@@ -1,9 +1,9 @@
 package frc.robot.subsystems.groundIntakePivot;
 
 public class GroundIntakePivotConstants {
-  public static final int GROUND_INTAKE_PIVOT_MOTOR_ID = 15;
+  public static final int GROUND_INTAKE_PIVOT_MOTOR_ID = 31;
 
-  public static final int GROUND_INTAKE_PIVOT_ENCODER_ID = 20;
+  public static final int GROUND_INTAKE_PIVOT_ENCODER_ID = 32;
   public static final double MAX_VELOCITY = 1.2; // rotation per second
   public static final double MAX_ACCELERATION = 3.0; // rotation per second per second
   public static final double GROUND_INTAKE_PIVOT_GEAR_RATIO = 68.0 / 12 * 84 / 20 * 48 / 18; // 64
