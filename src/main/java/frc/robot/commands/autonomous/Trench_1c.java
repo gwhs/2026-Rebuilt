@@ -7,9 +7,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class Trench_1c extends SequentialCommandGroup {
-  public Trench_1c(boolean mirror) {
+  public Trench_1c(ShooterSubsystem shooter, boolean mirror) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -31,9 +32,9 @@ public class Trench_1c extends SequentialCommandGroup {
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(neutral),
+          AutoBuilder.followPath(neutral).deadlineFor(shooter.runVelocity(200)),
           Commands.waitSeconds(6),
-          AutoBuilder.followPath(climb)
+          AutoBuilder.followPath(climb).deadlineFor(shooter.runVelocity(0))
           /*
            * TODO: The rest of the autonomous routine command
            */
