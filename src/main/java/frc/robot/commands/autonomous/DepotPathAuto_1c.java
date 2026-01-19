@@ -7,9 +7,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class DepotPathAuto_1c extends SequentialCommandGroup {
-  public DepotPathAuto_1c() {
+  public DepotPathAuto_1c(ShooterSubsystem shooter) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -31,9 +32,9 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           AutoBuilder.followPath(startingPath),
           AutoBuilder.followPath(depotPath),
-          AutoBuilder.followPath(scorePath),
-          Commands.waitSeconds(7.0),
-          AutoBuilder.followPath(climbPath));
+          AutoBuilder.followPath(scorePath).deadlineFor(shooter.runVelocity(5000)),
+          Commands.waitSeconds(6),
+          AutoBuilder.followPath(climbPath).deadlineFor(shooter.runVelocity(0)));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
