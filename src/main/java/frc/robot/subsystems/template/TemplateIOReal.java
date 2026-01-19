@@ -8,7 +8,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -28,9 +27,7 @@ public class TemplateIOReal implements TemplateIO {
   private final StatusSignal<Temperature> motorTemp;
   private final StatusSignal<Double> motorClosedLoopGoal;
 
-
-  private final Alert motorNotConnectedAlert =
-      new Alert("Motor 1 Not Connected", AlertType.kError);
+  private final Alert motorNotConnectedAlert = new Alert("Motor 1 Not Connected", AlertType.kError);
 
   public TemplateIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {
@@ -52,7 +49,7 @@ public class TemplateIOReal implements TemplateIO {
         motorAcceleration,
         motorClosedLoopGoal);
 
-	TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
+    TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     talonFXConfig.CurrentLimits.StatorCurrentLimit = 80;
@@ -68,7 +65,7 @@ public class TemplateIOReal implements TemplateIO {
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
-   StatusCode status = StatusCode.StatusCodeNotInitialized;
+    StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
       status = motor.getConfigurator().apply(talonFXConfig);
       if (status.isOK()) break;
@@ -81,13 +78,11 @@ public class TemplateIOReal implements TemplateIO {
     }
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+  }
 
-    }
-@Override
-public void periodic() {
-	DogLog.log("the best team ever", 5507);
-	motorNotConnectedAlert.set(!motor.isConnected());
-}
-
-
+  @Override
+  public void periodic() {
+    DogLog.log("the best team ever", 5507);
+    motorNotConnectedAlert.set(!motor.isConnected());
+  }
 }

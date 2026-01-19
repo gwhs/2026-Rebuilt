@@ -1,5 +1,5 @@
 package frc.robot.subsystems.template;
 
 public interface TemplateIO {
-	public void periodic();
+  public void periodic();
 }

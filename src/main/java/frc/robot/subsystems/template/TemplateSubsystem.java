@@ -18,6 +18,6 @@ public class TemplateSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-	  template.periodic();
+    template.periodic();
   }
 }
