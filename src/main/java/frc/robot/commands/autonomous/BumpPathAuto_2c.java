@@ -17,8 +17,6 @@ public class BumpPathAuto_2c extends SequentialCommandGroup {
 
       PathPlannerPath cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle");
       PathPlannerPath cycle2Path = PathPlannerPath.fromChoreoTrajectory("Cycle2");
-      
-      
 
       if (mirror) {
         cyclePath = cyclePath.mirrorPath();
@@ -26,14 +24,13 @@ public class BumpPathAuto_2c extends SequentialCommandGroup {
       }
 
       Pose2d startingPose =
-          new Pose2d(
-              cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
+          new Pose2d(cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           AutoBuilder.followPath(cyclePath),
           shooter.runVelocity(80),
-          Commands.waitSeconds(6.0), //score
+          Commands.waitSeconds(6.0), // score
           shooter.runVelocity(0),
           AutoBuilder.followPath(cycle2Path),
           shooter.runVelocity(80),
