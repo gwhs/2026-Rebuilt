@@ -4,7 +4,6 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.path.RotationTarget;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
@@ -26,6 +25,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
+import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 
 import static edu.wpi.first.units.Units.Rotation;
 
