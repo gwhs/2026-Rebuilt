@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class BumpPathAuto_1c extends SequentialCommandGroup {
-  public BumpPathAuto_1c() {
+  public BumpPathAuto_1c(boolean mirror) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -21,6 +21,11 @@ public class BumpPathAuto_1c extends SequentialCommandGroup {
       PathPlannerPath climbPath = PathPlannerPath.fromChoreoTrajectory("Climb");
 
       // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
+
+      if (mirror) {
+        cyclePath = cyclePath.mirrorPath();
+        climbPath = PathPlannerPath.fromChoreoTrajectory("Climb_Mirrored");
+      }
 
       Pose2d startingPose =
           new Pose2d(cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
