@@ -32,7 +32,7 @@ public class Trench_1c extends SequentialCommandGroup {
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(neutral).deadlineFor(shooter.runVelocity(200)),
+          AutoBuilder.followPath(neutral).deadlineFor(shooter.runVelocity(80)),
           Commands.waitSeconds(6),
           AutoBuilder.followPath(climb).deadlineFor(shooter.runVelocity(0))
           /*

@@ -7,9 +7,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class Trench_2c extends SequentialCommandGroup {
-  public Trench_2c(boolean mirror) {
+  public Trench_2c(ShooterSubsystem shooter, boolean mirror) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -29,9 +30,9 @@ public class Trench_2c extends SequentialCommandGroup {
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(neutral),
+          AutoBuilder.followPath(neutral).deadlineFor(shooter.runVelocity(80)),
           Commands.waitSeconds(6),
-          AutoBuilder.followPath(neutral),
+          AutoBuilder.followPath(neutral).deadlineFor(shooter.runVelocity(80)),
           Commands.waitSeconds(6),
           AutoBuilder.followPath(score_neutral)
           /*
