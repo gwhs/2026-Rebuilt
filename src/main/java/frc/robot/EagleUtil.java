@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
@@ -49,8 +50,7 @@ public class EagleUtil {
     return target.getTranslation().minus(robotpose.getTranslation()).getAngle().getDegrees();
   }
 
-  public static double getRobotTargetAngle(Pose2d robotpose, Translation2d target)
-  {
+  public static double getRobotTargetAngle(Pose2d robotpose, Translation2d target) {
     return target.minus(robotpose.getTranslation()).getAngle().getDegrees();
   }
 
@@ -58,8 +58,7 @@ public class EagleUtil {
     return target.getDistance(robotpose.getTranslation());
   }
 
-  public static double getRobotTargetDistance(Pose2d robotpose, Pose2d target)
-  {
+  public static double getRobotTargetDistance(Pose2d robotpose, Pose2d target) {
     return target.getTranslation().getDistance(robotpose.getTranslation());
   }
 
@@ -68,5 +67,22 @@ public class EagleUtil {
     double y = robotPose.getY() + target.getY() - newRobotPose.getY();
     Pose2d aimpoint = new Pose2d(x, y, Rotation2d.kZero);
     return aimpoint;
+  }
+
+  public static Pose2d calcAimpoint(
+      Pose2d robotPose, Pose2d newRobotPose, Translation2d target, ChassisSpeeds robot) {
+    double dis = getRobotTargetDistance(newRobotPose, target);
+    double x = robotPose.getX() + target.getX() - newRobotPose.getX() + getFuelDx(robot, dis);
+    double y = robotPose.getY() + target.getY() - newRobotPose.getY() + getFuelDy(robot, dis);
+    Pose2d aimpoint = new Pose2d(x, y, Rotation2d.kZero);
+    return aimpoint;
+  }
+
+  public static double getFuelDx(ChassisSpeeds robot, double distanceToTarget) {
+    return robot.vxMetersPerSecond * distanceToTarget / FieldConstants.fuelSpeed;
+  }
+
+  public static double getFuelDy(ChassisSpeeds robot, double distanceToTarget) {
+    return robot.vyMetersPerSecond * distanceToTarget / FieldConstants.fuelSpeed;
   }
 }
