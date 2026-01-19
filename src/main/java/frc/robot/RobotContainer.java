@@ -6,6 +6,7 @@ import com.ctre.phoenix6.StatusSignalCollection;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -16,12 +17,14 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.autonomous.BumpPathAuto_1c;
-import frc.robot.commands.autonomous.BumpPathAuto_2c;
-import frc.robot.commands.autonomous.Template;
+import frc.robot.subsystems.objectDetection.GamePieceTracker;
+import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
+import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public class RobotContainer {
@@ -60,6 +63,8 @@ public class RobotContainer {
   }
 
   @SuppressWarnings("unused")
+  private ObjectDetectionCam objDecCam;
+
   private final BiConsumer<Runnable, Double> addPeriodic;
 
   private final CANBus rioCanbus = new CANBus("rio");
@@ -70,6 +75,9 @@ public class RobotContainer {
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
+  private final ShooterSubsystem shooter =
+      new ShooterSubsystem(rioCanbus, canivoreCanbus, signalList);
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -103,9 +111,14 @@ public class RobotContainer {
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
+    objDecCam =
+        new ObjectDetectionCam(
+            "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
+
     configureBindings();
     configureAutonomous();
     drivetrain.setDefaultCommand(defualtDriveCommand);
+
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
@@ -121,7 +134,9 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+  }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
@@ -139,6 +154,18 @@ public class RobotContainer {
 
     startTime = HALUtil.getFPGATime();
 
+    if (DriverStation.getAlliance().isPresent()) {
+      DogLog.log("Alliance", DriverStation.getAlliance().get());
+    }
+
+    if (objDecCam != null) {
+      objDecCam.updateDetection();
+    }
+
+    DogLog.log(
+        "Loop Time/Robot Container/objectDetection Cam",
+        (HALUtil.getFPGATime() - startTime) / 1000);
+
     signalList.refreshAll();
 
     // 2
@@ -150,5 +177,14 @@ public class RobotContainer {
     // Log Triggers
     DogLog.log("Current Robot", getRobot().toString());
     DogLog.log("Match Timer", DriverStation.getMatchTime());
+
+    // log object
+    Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
+
+    if (obj.isPresent()) {
+      DogLog.log("Object Detection/Fuel Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
+    } else {
+      DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
+    }
   }
 }
