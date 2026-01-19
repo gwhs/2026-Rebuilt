@@ -36,6 +36,13 @@ public class ShooterSubsystem extends SubsystemBase {
         });
   }
 
+  public Command runVoltage(double voltage) {
+    return this.runOnce(
+        () -> {
+          shooterIO.runVoltage(voltage);
+        });
+  }
+
   @Override
   public void periodic() {
     shooterIO.periodic();
