@@ -7,9 +7,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class BumpPathAuto_2c extends SequentialCommandGroup {
-  public BumpPathAuto_2c(boolean mirror) {
+  public BumpPathAuto_2c(ShooterSubsystem shooter, boolean mirror) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -33,11 +34,15 @@ public class BumpPathAuto_2c extends SequentialCommandGroup {
           AutoBuilder.followPath(score_neutral),
           AutoBuilder.followPath(neutral),
           AutoBuilder.followPath(neutral_score),
-          Commands.waitSeconds(7.0), // score
+          shooter.runVelocity(5000),
+          Commands.waitSeconds(6.0),
+          shooter.runVelocity(0),
           AutoBuilder.followPath(score_neutral),
           AutoBuilder.followPath(neutral),
           AutoBuilder.followPath(neutral_score),
+          shooter.runVelocity(5000),
           Commands.waitSeconds(7.0), // score
+          shooter.runVelocity(0),
           AutoBuilder.followPath(score_neutral));
 
     } catch (Exception e) {
