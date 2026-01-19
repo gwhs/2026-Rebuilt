@@ -15,35 +15,31 @@ public class BumpPathAuto_2c extends SequentialCommandGroup {
     /* All your code should go inside this try-catch block */
     try {
 
-      PathPlannerPath neutral_score = PathPlannerPath.fromChoreoTrajectory("Neutral_Score");
-      PathPlannerPath neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
-      PathPlannerPath score_neutral = PathPlannerPath.fromChoreoTrajectory("Score_Neutral");
+      PathPlannerPath cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle");
+      PathPlannerPath cycle2Path = PathPlannerPath.fromChoreoTrajectory("Cycle2");
+      
+      
 
       if (mirror) {
-        neutral_score = neutral_score.mirrorPath();
-        neutral = neutral.mirrorPath();
-        score_neutral = score_neutral.mirrorPath();
+        cyclePath = cyclePath.mirrorPath();
+        cycle2Path = cycle2Path.mirrorPath();
       }
 
       Pose2d startingPose =
           new Pose2d(
-              score_neutral.getPoint(0).position, score_neutral.getIdealStartingState().rotation());
+              cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(score_neutral),
-          AutoBuilder.followPath(neutral),
-          AutoBuilder.followPath(neutral_score),
-          shooter.runVelocity(5000),
-          Commands.waitSeconds(6.0),
+          AutoBuilder.followPath(cyclePath),
+          shooter.runVelocity(80),
+          Commands.waitSeconds(6.0), //score
           shooter.runVelocity(0),
-          AutoBuilder.followPath(score_neutral),
-          AutoBuilder.followPath(neutral),
-          AutoBuilder.followPath(neutral_score),
-          shooter.runVelocity(5000),
+          AutoBuilder.followPath(cycle2Path),
+          shooter.runVelocity(80),
           Commands.waitSeconds(7.0), // score
           shooter.runVelocity(0),
-          AutoBuilder.followPath(score_neutral));
+          AutoBuilder.followPath(cycle2Path));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());

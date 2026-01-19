@@ -41,7 +41,7 @@ public class BumpPathAuto_1c extends SequentialCommandGroup {
           AutoBuilder.followPath(score_neutral),
           AutoBuilder.followPath(neutral),
           AutoBuilder.followPath(neutral_score),
-          shooter.runVelocity(5000),
+          shooter.runVelocity(80),
           Commands.waitSeconds(6.0),
           shooter.runVelocity(0),
           AutoBuilder.followPath(climb),
