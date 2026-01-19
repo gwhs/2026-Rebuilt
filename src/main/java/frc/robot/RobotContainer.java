@@ -134,7 +134,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings(){
+  private void configureBindings() {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
   }
 
