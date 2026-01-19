@@ -1,4 +1,3 @@
 package frc.robot.subsystems.template;
 
-public interface TemplateIO {
-}
+public interface TemplateIO {}
