@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.EagleUtil;
+import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToPose;
 import java.util.function.Supplier;
 
@@ -41,6 +42,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     NORMAL,
     TOWER,
     HUB,
+    TST,
   }
 
   private boolean disableAutoRotate = false;
@@ -213,6 +215,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 0;
       case HUB:
         return EagleUtil.getRotationalHub(getState().Pose);
+      case TST: // test case for shoot on move
+        return EagleUtil.getRobotTargetAngle(
+            getState().Pose,
+            EagleUtil.calcAimpoint(getState().Pose, getPose(0.2), FieldConstants.RED_HUB));
       default:
         return 0;
     }
