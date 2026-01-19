@@ -1,3 +1,5 @@
 package frc.robot.subsystems.template;
 
-class TemplateConstants {}
+class TemplateConstants {
+	public static int MOTOR_ID = 1;
+}
