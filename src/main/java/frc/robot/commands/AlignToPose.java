@@ -59,7 +59,7 @@ public class AlignToPose extends Command {
       SwerveSubsystem drivetrain,
       DoubleSupplier elevatorHeight,
       CommandXboxController driverController) {
-        
+
     this.drivetrain = drivetrain;
     this.targetPose = poseSupplier;
     this.driverController = driverController;
