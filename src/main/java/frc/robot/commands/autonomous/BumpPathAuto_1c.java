@@ -17,42 +17,33 @@ public class BumpPathAuto_1c extends SequentialCommandGroup {
       /*
         TODO: Load Paths
       */
-      PathPlannerPath cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle");
-      PathPlannerPath climbPath = PathPlannerPath.fromChoreoTrajectory("Climb");
+      PathPlannerPath climb = PathPlannerPath.fromChoreoTrajectory("Climb");
+      PathPlannerPath neutral_score = PathPlannerPath.fromChoreoTrajectory("Neutral_Score");
+      PathPlannerPath neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
+      PathPlannerPath score_neutral = PathPlannerPath.fromChoreoTrajectory("Score_Neutral");
 
       // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
 
       if (mirror) {
-        cyclePath = cyclePath.mirrorPath();
-        climbPath = PathPlannerPath.fromChoreoTrajectory("Climb_Mirrored");
+        neutral = neutral.mirrorPath();
+        neutral_score = neutral_score.mirrorPath();
+        score_neutral = score_neutral.mirrorPath();
+        climb = PathPlannerPath.fromChoreoTrajectory("Climb_Mirrored");
       }
 
       Pose2d startingPose =
-          new Pose2d(cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
+          new Pose2d(
+              score_neutral.getPoint(0).position, score_neutral.getIdealStartingState().rotation());
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(cyclePath),
+          AutoBuilder.followPath(score_neutral),
+          AutoBuilder.followPath(neutral),
+          AutoBuilder.followPath(neutral_score),
+          Commands.waitSeconds(6),
+          AutoBuilder.followPath(climb),
           // stow/protect ground intake
-
-          Commands.waitSeconds(7.0), // score
-
-          // AutoBuilder.followPath(cyclePath),
-          /*
-          Commands.parallel(
-              AutoBuilder.followPath(cross2Path),
-              Commands.sequence(
-                  Commands.waitSeconds(0.8)
-                  // deploy ground intake
-                  )),
-          */
-          AutoBuilder.followPath(climbPath),
-          // stow/protect ground intake
-          Commands.waitSeconds(3.0)
-          /*
-           * TODO: The rest of the autonomous routine command
-           */
-          );
+          Commands.waitSeconds(3.0));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());

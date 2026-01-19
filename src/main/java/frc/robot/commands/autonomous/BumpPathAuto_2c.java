@@ -14,24 +14,31 @@ public class BumpPathAuto_2c extends SequentialCommandGroup {
     /* All your code should go inside this try-catch block */
     try {
 
-      PathPlannerPath cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle");
-      PathPlannerPath climbPath = PathPlannerPath.fromChoreoTrajectory("Climb");
+      PathPlannerPath neutral_score = PathPlannerPath.fromChoreoTrajectory("Neutral_Score");
+      PathPlannerPath neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
+      PathPlannerPath score_neutral = PathPlannerPath.fromChoreoTrajectory("Score_Neutral");
 
       if (mirror) {
-        cyclePath = cyclePath.mirrorPath();
-        climbPath = PathPlannerPath.fromChoreoTrajectory("Climb_Mirrored");
+        neutral_score = neutral_score.mirrorPath();
+        neutral = neutral.mirrorPath();
+        score_neutral = score_neutral.mirrorPath();
       }
 
       Pose2d startingPose =
-          new Pose2d(cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
+          new Pose2d(
+              score_neutral.getPoint(0).position, score_neutral.getIdealStartingState().rotation());
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(cyclePath),
+          AutoBuilder.followPath(score_neutral),
+          AutoBuilder.followPath(neutral),
+          AutoBuilder.followPath(neutral_score),
           Commands.waitSeconds(7.0), // score
-          AutoBuilder.followPath(cyclePath),
+          AutoBuilder.followPath(score_neutral),
+          AutoBuilder.followPath(neutral),
+          AutoBuilder.followPath(neutral_score),
           Commands.waitSeconds(7.0), // score
-          AutoBuilder.followPath(cyclePath));
+          AutoBuilder.followPath(score_neutral));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
