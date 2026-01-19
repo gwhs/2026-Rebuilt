@@ -32,7 +32,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           AutoBuilder.followPath(startingPath),
           AutoBuilder.followPath(depotPath),
-          AutoBuilder.followPath(scorePath).deadlineFor(shooter.runVelocity(5000)),
+          AutoBuilder.followPath(scorePath).deadlineFor(shooter.runVelocity(200)),
           Commands.waitSeconds(6),
           AutoBuilder.followPath(climbPath).deadlineFor(shooter.runVelocity(0)));
 
