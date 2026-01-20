@@ -7,6 +7,7 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -22,6 +23,7 @@ import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
 import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
 import java.util.Optional;
@@ -123,6 +125,10 @@ public class RobotContainer {
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     addPeriodic.accept(() -> {}, 0.5);
+
+    SmartDashboard.putData(
+        "auto rotate",
+        drivetrain.setRotationCommand(RotationTarget.TST)); // fix rotate wobble when stop
   }
 
   /**
@@ -175,6 +181,13 @@ public class RobotContainer {
     DogLog.log("Current Robot", getRobot().toString());
     DogLog.log("Match Timer", DriverStation.getMatchTime());
 
+    Pose2d r1 = drivetrain.getState().Pose;
+    Pose2d r2 = drivetrain.getPose(0.2);
+    Translation2d t = FieldConstants.RED_HUB;
+    Pose2d rt = EagleUtil.calcAimpoint(r1, r2, t);
+
+    DogLog.log("aimpoint", rt);
+    DogLog.log("estPos", r2);
     // log object
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
