@@ -64,9 +64,9 @@ public class RobotContainer {
     }
   }
 
-  @SuppressWarnings("unused")
   private ObjectDetectionCam objDecCam;
 
+  @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
 
   private final CANBus rioCanbus = new CANBus("rio");
@@ -142,6 +142,19 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+
+    drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
+    drivetrain
+        .isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnOutpostSide)
+        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
+    drivetrain
+        .isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnDepotSide)
+        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+    // output = lower depot = upper
   }
 
   public Command getAutonomousCommand() {
