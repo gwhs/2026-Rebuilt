@@ -5,4 +5,7 @@
 package frc.robot.subsystems.Indexer;
 
 /** Add your docs here. */
-public class IndexerConstants {}
+public class IndexerConstants {
+  public static final int MOTOR_1_ID = 29;
+  public static final int MOTOR_2_ID = 30;
+}

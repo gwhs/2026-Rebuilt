@@ -5,4 +5,4 @@
 package frc.robot.subsystems.Indexer;
 
 /** Add your docs here. */
-public class IndexerIO {}
+public interface IndexerIO {}
