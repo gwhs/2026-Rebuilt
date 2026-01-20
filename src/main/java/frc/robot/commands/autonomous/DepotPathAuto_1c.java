@@ -7,10 +7,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.EagleUtil;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class DepotPathAuto_1c extends SequentialCommandGroup {
-  public DepotPathAuto_1c(ShooterSubsystem shooter) {
+  public DepotPathAuto_1c(SwerveSubsystem drivetrain, ShooterSubsystem shooter) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -27,13 +29,24 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
       Pose2d startingPose =
           new Pose2d(
               startingPath.getPoint(0).position, startingPath.getIdealStartingState().rotation());
+      Pose2d score;
+      if (!EagleUtil.isRedAlliance()) {
+        score =
+            new Pose2d(
+                climbPath.mirrorPath().getPoint(0).position,
+                climbPath.mirrorPath().getIdealStartingState().rotation());
+      } else {
+        score =
+            new Pose2d(
+                climbPath.getPoint(0).position, climbPath.getIdealStartingState().rotation());
+      }
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           AutoBuilder.followPath(startingPath),
           AutoBuilder.followPath(depotPath),
           AutoBuilder.followPath(scorePath).deadlineFor(shooter.runVelocity(80)),
-          Commands.waitSeconds(6),
+          Commands.waitSeconds(6).deadlineFor(drivetrain.driveToPose(() -> score)),
           AutoBuilder.followPath(climbPath).deadlineFor(shooter.runVelocity(0)));
 
     } catch (Exception e) {

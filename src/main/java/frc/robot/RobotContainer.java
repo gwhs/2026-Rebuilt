@@ -150,7 +150,7 @@ public class RobotContainer {
   }
 
   private void configureAutonomous() {
-    autoChooser.addOption("Depot Auto", new DepotPathAuto_1c(shooter));
+    autoChooser.addOption("Depot Auto", new DepotPathAuto_1c(drivetrain, shooter));
 
     SmartDashboard.putData("autonomous", autoChooser);
   }
