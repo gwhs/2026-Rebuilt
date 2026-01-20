@@ -59,7 +59,7 @@ public class EagleUtil {
     }
     return robotPose.getY() > FieldConstants.FIELDWIDTH / 2;
   }
-  
+
   public static double getRobotTargetAngle(Pose2d robotpose, Pose2d target) {
     return target.getTranslation().minus(robotpose.getTranslation()).getAngle().getDegrees();
   }
