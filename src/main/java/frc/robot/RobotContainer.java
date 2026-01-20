@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,7 +35,8 @@ public class RobotContainer {
     DEV,
     COMP,
     ANEMONE,
-    KITBOT
+    KITBOT, 
+    SIM
   }
 
   private final SwerveSubsystem drivetrain;
@@ -45,18 +47,21 @@ public class RobotContainer {
   // TODO: update serial numbers
   @SuppressWarnings("resource")
   public static Robot getRobot() {
-    if (RobotController.getSerialNumber().equals("032414F0")) {
+    final String serialNumber = RobotController.getSerialNumber();
+    if (RobotBase.isSimulation()) {
+      return Robot.SIM;
+    } else if (serialNumber.equals("032414F0")) {
       return Robot.ANEMONE;
-    } else if (RobotController.getSerialNumber().equals("03223849")) {
+    } else if (serialNumber.equals("03223849")) {
       return Robot.DEV;
-    } else if (RobotController.getSerialNumber().equals("1234")) {
+    } else if (serialNumber.equals("1234")) {
       return Robot.COMP;
-    } else if (RobotController.getSerialNumber().equals("123")) {
+    } else if (serialNumber.equals("123")) {
       return Robot.KITBOT;
     } else {
       new Alert(
               "roborio unrecognized. here is the serial number:"
-                  + RobotController.getSerialNumber(),
+                  + serialNumber,
               Alert.AlertType.kError)
           .set(true);
       ;
@@ -78,8 +83,7 @@ public class RobotContainer {
   private final RobotVisualizer robovisual = new RobotVisualizer();
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-  private final ShooterSubsystem shooter =
-      new ShooterSubsystem(rioCanbus, canivoreCanbus, signalList);
+  private final ShooterSubsystem shooter;
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -96,18 +100,27 @@ public class RobotContainer {
     switch (getRobot()) {
       case COMP:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createDisabled();
         break;
       case KITBOT:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createDisabled();
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
+        shooter = ShooterSubsystem.createDisabled();
+        break;
+      case SIM:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createSim();
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createDisabled();
         break;
     }
 

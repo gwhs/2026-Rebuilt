@@ -4,12 +4,24 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class ShooterSubsystem extends SubsystemBase {
+
+  public static ShooterSubsystem createSim() {
+      return new ShooterSubsystem(new ShooterIOSim());
+  }
+
+  public static ShooterSubsystem createDisabled() {
+    return new ShooterSubsystem(new ShooterIODisabled());
+  }
+
+  public static ShooterSubsystem createReal(CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
+    return new ShooterSubsystem(new ShooterIOReal(rioCanbus, canivoreCanbus, signal));
+  }
+
   private ShooterIO shooterIO;
 
   private double velocityGoal;
@@ -19,13 +31,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public final Trigger isAtGoalVelocity_Hub =
       new Trigger(() -> MathUtil.isNear(velocityGoal, shooterIO.getVelocity(), 5));
 
-  public ShooterSubsystem(CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
-
-    if (RobotBase.isSimulation()) {
-      shooterIO = new ShooterIOSim();
-    } else {
-      shooterIO = new ShooterIOReal(rioCanbus, canivoreCanbus, signal);
-    }
+  public ShooterSubsystem(ShooterIO shooterIO) {
+    this.shooterIO = shooterIO;
   }
 
   public Command runVelocity(double rotationsPerSecond) {
