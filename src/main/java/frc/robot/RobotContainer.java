@@ -153,10 +153,10 @@ public class RobotContainer {
 
   private void configureAutonomous() {
     autoChooser.addOption("Template", new Template());
-    autoChooser.addOption("Trench 1 Cycle", new Trench_1c(shooter, false));
-    autoChooser.addOption("Trench 2 Cycle", new Trench_2c(shooter, false));
-    autoChooser.addOption("Trench 1 Cycle Mirrored", new Trench_1c(shooter, true));
-    autoChooser.addOption("Trench 2 Cycle Mirrored", new Trench_2c(shooter, true));
+    autoChooser.addOption("Trench 1 Cycle", new Trench_1c(drivetrain, shooter, false));
+    autoChooser.addOption("Trench 2 Cycle", new Trench_2c(drivetrain, shooter, false));
+    autoChooser.addOption("Trench 1 Cycle Mirrored", new Trench_1c(drivetrain, shooter, true));
+    autoChooser.addOption("Trench 2 Cycle Mirrored", new Trench_2c(drivetrain, shooter, true));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
