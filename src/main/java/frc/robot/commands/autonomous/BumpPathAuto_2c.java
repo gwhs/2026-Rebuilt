@@ -7,10 +7,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.EagleUtil;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class BumpPathAuto_2c extends SequentialCommandGroup {
-  public BumpPathAuto_2c(ShooterSubsystem shooter, boolean mirror) {
+  public BumpPathAuto_2c(SwerveSubsystem drivetrain, ShooterSubsystem shooter, boolean mirror) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -25,16 +27,25 @@ public class BumpPathAuto_2c extends SequentialCommandGroup {
 
       Pose2d startingPose =
           new Pose2d(cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
+      Pose2d score;
+      if (!EagleUtil.isRedAlliance()) {
+        score =
+            new Pose2d(
+                cyclePath.flipPath().getPoint(0).position,
+                cyclePath.flipPath().getIdealStartingState().rotation());
+      } else {
+        score =
+            new Pose2d(
+                cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
+      }
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(cyclePath),
-          shooter.runVelocity(80),
-          Commands.waitSeconds(6.0), // score
+          AutoBuilder.followPath(cyclePath).alongWith(shooter.runVelocity(80)),
+          Commands.waitSeconds(6.0).deadlineFor(drivetrain.driveToPose(() -> score)), // score
           shooter.runVelocity(0),
-          AutoBuilder.followPath(cycle2Path),
-          shooter.runVelocity(80),
-          Commands.waitSeconds(7.0), // score
+          AutoBuilder.followPath(cycle2Path).alongWith(shooter.runVelocity(80)),
+          Commands.waitSeconds(6.0).deadlineFor(drivetrain.driveToPose(() -> score)), // score
           shooter.runVelocity(0),
           AutoBuilder.followPath(cycle2Path));
 
