@@ -11,14 +11,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class ShooterSubsystem extends SubsystemBase {
 
   public static ShooterSubsystem createSim() {
-      return new ShooterSubsystem(new ShooterIOSim());
+    return new ShooterSubsystem(new ShooterIOSim());
   }
 
   public static ShooterSubsystem createDisabled() {
     return new ShooterSubsystem(new ShooterIODisabled());
   }
 
-  public static ShooterSubsystem createReal(CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
+  public static ShooterSubsystem createReal(
+      CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
     return new ShooterSubsystem(new ShooterIOReal(rioCanbus, canivoreCanbus, signal));
   }
 

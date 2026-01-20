@@ -35,7 +35,7 @@ public class RobotContainer {
     DEV,
     COMP,
     ANEMONE,
-    KITBOT, 
+    KITBOT,
     SIM
   }
 
@@ -60,8 +60,7 @@ public class RobotContainer {
       return Robot.KITBOT;
     } else {
       new Alert(
-              "roborio unrecognized. here is the serial number:"
-                  + serialNumber,
+              "roborio unrecognized. here is the serial number:" + serialNumber,
               Alert.AlertType.kError)
           .set(true);
       ;
