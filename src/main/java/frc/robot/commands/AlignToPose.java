@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 public class AlignToPose extends Command {
 
-  Supplier<Pose2d> targetPose;
+  private final Supplier<Pose2d> targetPose;
   private final double ELEVATOR_UP_SLEW_RATE = 1;
 
   private final SlewRateLimiter angularVelocityLimiter = new SlewRateLimiter(ELEVATOR_UP_SLEW_RATE);
@@ -55,10 +55,16 @@ public class AlignToPose extends Command {
           .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   public AlignToPose(
-      Supplier<Pose2d> Pose,
+      Supplier<Pose2d> poseSupplier,
       SwerveSubsystem drivetrain,
       DoubleSupplier elevatorHeight,
       CommandXboxController driverController) {
+
+    this.drivetrain = drivetrain;
+    this.targetPose = poseSupplier;
+    this.driverController = driverController;
+    this.elevatorHeight = elevatorHeight;
+
     addRequirements(drivetrain);
     startTime = System.currentTimeMillis();
     Pose2d tp = targetPose.get();
@@ -77,10 +83,6 @@ public class AlignToPose extends Command {
     PID_Y.setGoal(tp.getY());
     PID_Rotation.setSetpoint(tp.getRotation().getDegrees());
     DogLog.log("Align/Target Pose", targetPose.get());
-    this.drivetrain = drivetrain;
-    this.targetPose = Pose;
-    this.driverController = driverController;
-    this.elevatorHeight = elevatorHeight;
   }
 
   /**
