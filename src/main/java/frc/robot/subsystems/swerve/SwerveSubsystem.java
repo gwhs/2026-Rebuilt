@@ -26,6 +26,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.EagleUtil;
+import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToPose;
 import java.util.function.Supplier;
 
@@ -38,16 +41,26 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public enum RotationTarget {
     NORMAL,
-    FORTY_FIVE
+    FORTY_FIVE,
+    PASSING_DEPOT_SIDE,
+    PASSING_OUTPOST_SIDE,
+    TOWER,
+    HUB,
+    TST,
   }
 
+  private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
   private CommandXboxController controller;
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
-
   private final Telemetry logger = new Telemetry();
+
+  public Trigger isInAllianceZone = new Trigger(() -> EagleUtil.isInAllianceZone(getState().Pose));
+  public Trigger isInOpponentAllianceZone =
+      new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getState().Pose));
+  public Trigger isInNeutralZone = new Trigger(() -> EagleUtil.isInNeutralZone(getState().Pose));
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -79,10 +92,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(TalonFX::new, TalonFX::new, CANcoder::new, drivetrainConstants, modules);
     this.controller = controller;
+
     if (Utils.isSimulation()) {
       startSimThread();
     }
-
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
   }
@@ -154,6 +167,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
+
+    DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
+    DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
+    DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
+    DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -188,6 +206,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return slowMode;
   }
 
+  public boolean getdisableAutoRotate() {
+    return disableAutoRotate;
+  }
+
   public Command setRotationCommand(RotationTarget rotationTarget) {
     return Commands.runOnce(
         () -> {
@@ -201,13 +223,38 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public double getGoalHeading() {
     switch (this.rotationTarget) {
-      case FORTY_FIVE:
-        return 45.0;
       case NORMAL:
         return 0;
+      case PASSING_DEPOT_SIDE:
+        if (EagleUtil.isRedAlliance()) {
+          return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.RED_DEPOT_PASSING);
+        } else {
+          return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.BLUE_DEPOT_PASSING);
+        }
+      case PASSING_OUTPOST_SIDE:
+        if (EagleUtil.isRedAlliance()) {
+          return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.RED_OUTPOST_PASSING);
+        } else {
+          return EagleUtil.getRobotTargetAngle(
+              getState().Pose, FieldConstants.BLUE_OUTPOST_PASSING);
+        }
+      case TOWER:
+        return 0;
+      case HUB:
+        return EagleUtil.getRotationalHub(getState().Pose);
+      case TST: // test case for shoot on move
+        return EagleUtil.getRobotTargetAngle(
+            getState().Pose,
+            EagleUtil.calcAimpoint(
+                getState().Pose, getPose(0.2), FieldConstants.RED_HUB, getState().Speeds));
       default:
         return 0;
     }
+  }
+
+  public boolean isDrivingToFuel() {
+    ChassisSpeeds currRobotSpeed = getState().Speeds;
+    return currRobotSpeed.vxMetersPerSecond > 0.1;
   }
 
   public Pose2d getPose(double timeSeconds) {
@@ -235,5 +282,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
           return 0.0;
         },
         this.controller);
+  }
+
+  /*
+   * the idea behind this command is that it:
+   * 1. saves current rotation target,
+   * 2. resets the rotation target to normal
+   * 3. does whatever inbetween thing needs to be done while we aren't aligning
+   * 4. set the target back to the previous target.
+   */
+  public Command temporarilyDisableRotation() {
+    return Commands.run(
+            () -> {
+              this.disableAutoRotate = true;
+            })
+        .finallyDo(
+            () -> {
+              this.disableAutoRotate = false;
+            });
   }
 }
