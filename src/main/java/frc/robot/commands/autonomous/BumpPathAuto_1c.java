@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.EagleUtil;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
@@ -36,9 +37,18 @@ public class BumpPathAuto_1c extends SequentialCommandGroup {
       Pose2d startingPose =
           new Pose2d(
               score_neutral.getPoint(0).position, score_neutral.getIdealStartingState().rotation());
-      Pose2d score =
-          new Pose2d(
-              score_neutral.getPoint(0).position, score_neutral.getIdealStartingState().rotation());
+      Pose2d score;
+      if (!EagleUtil.isRedAlliance()) {
+        score =
+            new Pose2d(
+                score_neutral.flipPath().getPoint(0).position,
+                score_neutral.flipPath().getIdealStartingState().rotation());
+      } else {
+        score =
+            new Pose2d(
+                score_neutral.getPoint(0).position,
+                score_neutral.getIdealStartingState().rotation());
+      }
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
@@ -46,7 +56,7 @@ public class BumpPathAuto_1c extends SequentialCommandGroup {
           AutoBuilder.followPath(neutral),
           AutoBuilder.followPath(neutral_score),
           shooter.runVelocity(80),
-          Commands.waitSeconds(6.0).alongWith(drivetrain.driveToPose(() -> score)),
+          Commands.waitSeconds(6.0).deadlineFor(drivetrain.driveToPose(() -> score)),
           shooter.runVelocity(0),
           AutoBuilder.followPath(climb),
           // stow/protect ground intake
