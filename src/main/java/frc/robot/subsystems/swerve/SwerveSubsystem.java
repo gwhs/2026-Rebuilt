@@ -46,6 +46,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     PASSING_OUTPOST_SIDE,
     TOWER,
     HUB,
+    TST,
   }
 
   private boolean disableAutoRotate = false;
@@ -246,6 +247,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 0;
       case HUB:
         return EagleUtil.getRotationalHub(getState().Pose);
+      case TST: // test case for shoot on move
+        return EagleUtil.getRobotTargetAngle(
+            getState().Pose,
+            EagleUtil.calcAimpoint(
+                getState().Pose, getPose(0.2), FieldConstants.RED_HUB, getState().Speeds));
       default:
         return 0;
     }
