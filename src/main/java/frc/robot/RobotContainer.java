@@ -4,7 +4,6 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import com.pathplanner.lib.commands.PathfindingCommand;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,16 +22,11 @@ import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
 import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
-import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
-
-import static edu.wpi.first.units.Units.Rotation;
-
 import java.util.Optional;
 import java.util.function.BiConsumer;
-
-import javax.lang.model.util.ElementScanner14;
 
 public class RobotContainer {
   public enum Robot {
@@ -145,14 +139,24 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
-    // EagleUtil.isInAllianceZone(null)
+    drivetrain
+        .isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnOutpostSide)
+        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
+    drivetrain
+        .isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnDepotSide)
+        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+    // output = lower depot = upper
   }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
 
-  public void configureAutonomous() {
+  private void configureAutonomous() {
     SmartDashboard.putData("autonomous", autoChooser);
   }
 

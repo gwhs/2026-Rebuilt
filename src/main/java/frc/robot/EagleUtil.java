@@ -44,6 +44,20 @@ public class EagleUtil {
         && robotPose.getX() <= FieldConstants.ALLIANCE_ZONE_LINE_RED);
   }
 
+  public static boolean isOnOutpostSide(Pose2d robotPose) {
+    if (isRedAlliance()) {
+      return robotPose.getY() > FieldConstants.FIELDWIDTH / 2;
+    }
+    return robotPose.getY() < FieldConstants.FIELDWIDTH / 2;
+  }
+
+  public static boolean isOnDepotSide(Pose2d robotPose) {
+    if (isRedAlliance()) {
+      return robotPose.getY() < FieldConstants.FIELDWIDTH / 2;
+    }
+    return robotPose.getY() > FieldConstants.FIELDWIDTH / 2;
+  }
+
   public static double getRobotTargetAngle(Pose2d robotpose, Translation2d target) {
     return target.minus(robotpose.getTranslation()).getAngle().getDegrees();
   }

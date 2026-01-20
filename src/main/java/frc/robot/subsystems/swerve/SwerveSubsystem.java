@@ -61,6 +61,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getState().Pose));
   public Trigger isInNeutralZone = new Trigger(() -> EagleUtil.isInNeutralZone(getState().Pose));
 
+  public Trigger isOnDepotSide = new Trigger(() -> EagleUtil.isOnDepotSide(getState().Pose));
+  public Trigger isOnOutpostSide = new Trigger(() -> EagleUtil.isOnOutpostSide(getState().Pose));
+
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
   /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -170,6 +173,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
+    DogLog.log("Current Zone/On Depot Side", isOnDepotSide.getAsBoolean());
+    DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
   }
 
