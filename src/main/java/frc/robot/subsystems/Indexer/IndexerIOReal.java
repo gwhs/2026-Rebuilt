@@ -142,4 +142,12 @@ public class IndexerIOReal implements IndexerIO {
     motor1NotConnectedAlert.set(!motor1.isConnected());
     motor2NotConnectedAlert.set(!motor2.isConnected());
   }
-}
+
+  @Override
+  public void runVoltage(double voltage) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'runVoltage'");
+  }
+
+  }
+

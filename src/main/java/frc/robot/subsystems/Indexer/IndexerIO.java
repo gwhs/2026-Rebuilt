@@ -5,4 +5,9 @@
 package frc.robot.subsystems.Indexer;
 
 /** Add your docs here. */
-public interface IndexerIO {}
+public interface IndexerIO {
+
+public void runVoltage(double voltage);
+
+public void periodic();
+}
