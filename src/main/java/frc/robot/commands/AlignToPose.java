@@ -66,23 +66,6 @@ public class AlignToPose extends Command {
     this.elevatorHeight = elevatorHeight;
 
     addRequirements(drivetrain);
-    startTime = System.currentTimeMillis();
-    Pose2d tp = targetPose.get();
-    ChassisSpeeds currentSpeed =
-        ChassisSpeeds.fromRobotRelativeSpeeds(
-            drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
-
-    double predicted_X =
-        (tp.getX() - drivetrain.getState().Pose.getX()) * 0.3 + drivetrain.getState().Pose.getX();
-    double predicted_Y =
-        (tp.getY() - drivetrain.getState().Pose.getY()) * 0.3 + drivetrain.getState().Pose.getY();
-
-    PID_X.reset(predicted_X, currentSpeed.vxMetersPerSecond * 0.4);
-    PID_Y.reset(predicted_Y, currentSpeed.vyMetersPerSecond * 0.4);
-    PID_X.setGoal(tp.getX());
-    PID_Y.setGoal(tp.getY());
-    PID_Rotation.setSetpoint(tp.getRotation().getDegrees());
-    DogLog.log("Align/Target Pose", targetPose.get());
   }
 
   /**
@@ -114,6 +97,26 @@ public class AlignToPose extends Command {
       return true;
     }
     return false;
+  }
+
+  @Override 
+  public void initialize() {    startTime = System.currentTimeMillis();
+    Pose2d tp = targetPose.get();
+    ChassisSpeeds currentSpeed =
+        ChassisSpeeds.fromRobotRelativeSpeeds(
+            drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
+
+    double predicted_X =
+        (tp.getX() - drivetrain.getState().Pose.getX()) * 0.3 + drivetrain.getState().Pose.getX();
+    double predicted_Y =
+        (tp.getY() - drivetrain.getState().Pose.getY()) * 0.3 + drivetrain.getState().Pose.getY();
+
+    PID_X.reset(predicted_X, currentSpeed.vxMetersPerSecond * 0.4);
+    PID_Y.reset(predicted_Y, currentSpeed.vyMetersPerSecond * 0.4);
+    PID_X.setGoal(tp.getX());
+    PID_Y.setGoal(tp.getY());
+    PID_Rotation.setSetpoint(tp.getRotation().getDegrees());
+    DogLog.log("Align/Target Pose", targetPose.get());
   }
 
   @Override
