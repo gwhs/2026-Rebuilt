@@ -33,8 +33,8 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
       if (!EagleUtil.isRedAlliance()) {
         score =
             new Pose2d(
-                climbPath.mirrorPath().getPoint(0).position,
-                climbPath.mirrorPath().getIdealStartingState().rotation());
+                climbPath.flipPath().getPoint(0).position,
+                climbPath.flipPath().getIdealStartingState().rotation());
       } else {
         score =
             new Pose2d(
