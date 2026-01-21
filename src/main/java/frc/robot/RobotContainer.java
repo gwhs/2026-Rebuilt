@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
 import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
@@ -124,6 +123,14 @@ public class RobotContainer {
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     addPeriodic.accept(() -> {}, 0.5);
+
+    SmartDashboard.putData(
+        "Cruise Control",
+        shooter.runVelocity(
+            () ->
+                ShotCalculator.getShootVelocity(
+                    EagleUtil.getRobotTargetDistance(
+                        drivetrain.getState().Pose, FieldConstants.RED_HUB))));
   }
 
   /**

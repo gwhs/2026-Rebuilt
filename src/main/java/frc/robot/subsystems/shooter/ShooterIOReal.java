@@ -51,7 +51,6 @@ public class ShooterIOReal implements ShooterIO {
     motor1 = new TalonFX(ShooterConstants.MOTOR_1_ID, rioCanbus);
     motor2 = new TalonFX(ShooterConstants.MOTOR_2_ID, rioCanbus);
 
-
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
     motor1Velocity = motor1.getVelocity();
@@ -118,7 +117,9 @@ public class ShooterIOReal implements ShooterIO {
       if (status.isOK()) break;
     }
     if (!status.isOK()) {
-      new Alert("Shooter/Motor 1: Could not configure device. Error:" + status.toString(), AlertType.kError)
+      new Alert(
+              "Shooter/Motor 1: Could not configure device. Error:" + status.toString(),
+              AlertType.kError)
           .set(true);
     }
 
@@ -130,10 +131,11 @@ public class ShooterIOReal implements ShooterIO {
       if (status.isOK()) break;
     }
     if (!status.isOK()) {
-      new Alert("Shooter/Motor 2: Could not configure device. Error:" + status.toString(), AlertType.kError)
+      new Alert(
+              "Shooter/Motor 2: Could not configure device. Error:" + status.toString(),
+              AlertType.kError)
           .set(true);
     }
-
   }
 
   public void runVoltage(double voltage) {

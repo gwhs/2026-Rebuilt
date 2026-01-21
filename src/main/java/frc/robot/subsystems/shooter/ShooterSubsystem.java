@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.function.Supplier;
 
 public class ShooterSubsystem extends SubsystemBase {
   private ShooterIO shooterIO;
@@ -43,6 +44,14 @@ public class ShooterSubsystem extends SubsystemBase {
         });
   }
 
+  public Command runVelocity(Supplier<Double> rotationsPerSecond) {
+    return this.run(
+        () -> {
+          velocityGoal = rotationsPerSecond.get();
+          shooterIO.runVelocity(velocityGoal);
+        });
+  }
+
   @Override
   public void periodic() {
     shooterIO.periodic();
@@ -51,7 +60,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * @return the climb's position
+   * @return the shooter's rps
    */
   public double getVelocity() {
     return shooterIO.getVelocity();
