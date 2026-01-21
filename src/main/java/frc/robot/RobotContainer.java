@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -67,9 +68,9 @@ public class RobotContainer {
     }
   }
 
-  @SuppressWarnings("unused")
   private ObjectDetectionCam objDecCam;
 
+  @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
 
   private final CANBus rioCanbus = new CANBus("rio");
@@ -127,7 +128,8 @@ public class RobotContainer {
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-    addPeriodic.accept(() -> {}, 0.5);
+
+    DogLog.log("Current Robot", getRobot().toString());
 
     SmartDashboard.putData(
         "auto rotate",
@@ -145,6 +147,19 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+
+    drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
+    drivetrain
+        .isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnOutpostSide)
+        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
+    drivetrain
+        .isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnDepotSide)
+        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+    // output = lower depot = upper
   }
 
   public Command getAutonomousCommand() {
@@ -161,12 +176,6 @@ public class RobotContainer {
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
-    startTime = HALUtil.getFPGATime();
-
-    if (DriverStation.getAlliance().isPresent()) {
-      DogLog.log("Alliance", DriverStation.getAlliance().get());
-    }
-
     if (objDecCam != null) {
       objDecCam.updateDetection();
     }
@@ -175,16 +184,15 @@ public class RobotContainer {
         "Loop Time/Robot Container/objectDetection Cam",
         (HALUtil.getFPGATime() - startTime) / 1000);
 
-    signalList.refreshAll();
+    if (RobotBase.isReal()) {
+      signalList.refreshAll();
+    }
 
-    // 2
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
     robovisual.update();
     startTime = HALUtil.getFPGATime();
 
-    // Log Triggers
-    DogLog.log("Current Robot", getRobot().toString());
     DogLog.log("Match Timer", DriverStation.getMatchTime());
 
     Pose2d r1 = drivetrain.getState().Pose;
@@ -194,6 +202,7 @@ public class RobotContainer {
 
     DogLog.log("aimpoint", rt);
     DogLog.log("estPos", r2);
+
     // log object
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
