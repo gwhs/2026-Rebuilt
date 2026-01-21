@@ -12,19 +12,6 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class DepotPathAuto_1c extends SequentialCommandGroup {
-  private Pose2d getScorePose(PathPlannerPath path) {
-    Pose2d score;
-    if (EagleUtil.isRedAlliance()) {
-      score =
-          new Pose2d(
-              path.flipPath().getPoint(0).position,
-              path.flipPath().getIdealStartingState().rotation());
-    } else {
-      score = new Pose2d(path.getPoint(0).position, path.getIdealStartingState().rotation());
-    }
-    return score;
-  }
-
   public DepotPathAuto_1c(SwerveSubsystem drivetrain, ShooterSubsystem shooter) {
 
     /* All your code should go inside this try-catch block */
@@ -55,5 +42,18 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
     }
+  }
+
+  private Pose2d getScorePose(PathPlannerPath path) {
+    Pose2d score;
+    if (EagleUtil.isRedAlliance()) {
+      score =
+          new Pose2d(
+              path.flipPath().getPoint(0).position,
+              path.flipPath().getIdealStartingState().rotation());
+    } else {
+      score = new Pose2d(path.getPoint(0).position, path.getIdealStartingState().rotation());
+    }
+    return score;
   }
 }
