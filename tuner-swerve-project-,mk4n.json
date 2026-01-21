@@ -39,10 +39,10 @@
           "StatorCurrentLimit": 60
         }
       },
-      "IsEncoderInverted": true,
-      "IsSteerInverted": false,
+      "IsEncoderInverted": false,
+      "IsSteerInverted": true,
       "SelectedEncoderType": "CANcoder",
-      "EncoderOffset": 0.4609375,
+      "EncoderOffset": 0.451904296875,
       "DriveMotorSelectionState": 1,
       "SteerMotorSelectionState": 1,
       "SteerEncoderSelectionState": 1,
@@ -88,10 +88,10 @@
           "StatorCurrentLimit": 60
         }
       },
-      "IsEncoderInverted": true,
-      "IsSteerInverted": false,
+      "IsEncoderInverted": false,
+      "IsSteerInverted": true,
       "SelectedEncoderType": "CANcoder",
-      "EncoderOffset": -0.067626953125,
+      "EncoderOffset": -0.0869140625,
       "DriveMotorSelectionState": 1,
       "SteerMotorSelectionState": 1,
       "SteerEncoderSelectionState": 1,
@@ -137,10 +137,10 @@
           "StatorCurrentLimit": 60
         }
       },
-      "IsEncoderInverted": true,
-      "IsSteerInverted": false,
+      "IsEncoderInverted": false,
+      "IsSteerInverted": true,
       "SelectedEncoderType": "CANcoder",
-      "EncoderOffset": -0.121337890625,
+      "EncoderOffset": -0.134765625,
       "DriveMotorSelectionState": 1,
       "SteerMotorSelectionState": 1,
       "SteerEncoderSelectionState": 1,
@@ -186,10 +186,10 @@
           "StatorCurrentLimit": 60
         }
       },
-      "IsEncoderInverted": true,
-      "IsSteerInverted": false,
+      "IsEncoderInverted": false,
+      "IsSteerInverted": true,
       "SelectedEncoderType": "CANcoder",
-      "EncoderOffset": -0.40576171875,
+      "EncoderOffset": -0.4150390625,
       "DriveMotorSelectionState": 1,
       "SteerMotorSelectionState": 1,
       "SteerEncoderSelectionState": 1,
@@ -209,8 +209,8 @@
       "SelectedMotorType": null
     },
     "IsValidGyroCANbus": true,
-    "VerticalTrackSizeInches": 28.0,
-    "HorizontalTrackSizeInches": 26.0,
+    "VerticalTrackSizeInches": 22.75,
+    "HorizontalTrackSizeInches": 20.75,
     "WheelRadiusInches": 2.0,
     "IsLeftSideInverted": false,
     "IsRightSideInverted": true,
@@ -227,6 +227,6 @@
     "HasVerifiedDrive": true,
     "IsValidConfiguration": true
   },
-  "TeamNumber": 5507,
+  "TeamNumber": 0,
   "schema_version": "1"
 }
