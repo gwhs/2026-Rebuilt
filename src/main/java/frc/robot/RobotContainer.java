@@ -124,13 +124,6 @@ public class RobotContainer {
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     addPeriodic.accept(() -> {}, 0.5);
 
-    SmartDashboard.putData(
-        "Cruise Control",
-        shooter.runVelocity(
-            () ->
-                ShotCalculator.getShootVelocity(
-                    EagleUtil.getRobotTargetDistance(
-                        drivetrain.getState().Pose, FieldConstants.RED_HUB))));
   }
 
   /**
