@@ -12,6 +12,19 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class DepotPathAuto_1c extends SequentialCommandGroup {
+  private Pose2d getScorePose(PathPlannerPath path) {
+    Pose2d score;
+    if (EagleUtil.isRedAlliance()) {
+      score =
+          new Pose2d(
+              path.flipPath().getPoint(0).position,
+              path.flipPath().getIdealStartingState().rotation());
+    } else {
+      score = new Pose2d(path.getPoint(0).position, path.getIdealStartingState().rotation());
+    }
+    return score;
+  }
+
   public DepotPathAuto_1c(SwerveSubsystem drivetrain, ShooterSubsystem shooter) {
 
     /* All your code should go inside this try-catch block */
@@ -30,23 +43,13 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
           new Pose2d(
               startingPath.getPoint(0).position, startingPath.getIdealStartingState().rotation());
       Pose2d score;
-      if (!EagleUtil.isRedAlliance()) {
-        score =
-            new Pose2d(
-                climbPath.flipPath().getPoint(0).position,
-                climbPath.flipPath().getIdealStartingState().rotation());
-      } else {
-        score =
-            new Pose2d(
-                climbPath.getPoint(0).position, climbPath.getIdealStartingState().rotation());
-      }
-
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           AutoBuilder.followPath(startingPath),
           AutoBuilder.followPath(depotPath),
           AutoBuilder.followPath(scorePath).deadlineFor(shooter.runVelocity(80)),
-          Commands.waitSeconds(6).deadlineFor(drivetrain.driveToPose(() -> score)),
+          Commands.waitSeconds(6)
+              .deadlineFor(drivetrain.driveToPose(() -> getScorePose(climbPath))),
           AutoBuilder.followPath(climbPath).deadlineFor(shooter.runVelocity(0)));
 
     } catch (Exception e) {
