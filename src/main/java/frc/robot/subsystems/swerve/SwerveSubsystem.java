@@ -320,13 +320,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   }
 
   public Command goToShootingRange() {
-
     return this.driveToPose(
         () -> {
           Translation2d HUB =
               EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
           return EagleUtil.getCircleLineIntersectionPoint(
-              getState().Pose.getTranslation(),
+              getState().Pose,
               HUB,
               EagleUtil.calculateMidpoint(getState().Pose.getTranslation(), HUB),
               2.0);

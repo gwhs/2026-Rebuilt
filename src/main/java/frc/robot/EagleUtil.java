@@ -101,7 +101,7 @@ public class EagleUtil {
   }
 
   public static Pose2d getCircleLineIntersectionPoint(
-      Translation2d pointA, Translation2d pointB, Translation2d center, double radius) {
+      Pose2d pointA, Translation2d pointB, Translation2d center, double radius) {
     double baX = pointB.getX() - pointA.getX();
     double baY = pointB.getY() - pointA.getY();
     double caX = center.getX() - pointA.getX();
@@ -119,7 +119,7 @@ public class EagleUtil {
         new Pose2d(
             pointA.getX() - baX * abScalingFactor,
             pointA.getY() - baY * abScalingFactor,
-            Rotation2d.kZero);
+            Rotation2d.fromDegrees(getRotationalHub(pointA)));
     return p1;
   }
 
