@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import java.util.function.Supplier;
 
 public class BumpPathAuto_2c extends SequentialCommandGroup {
   public BumpPathAuto_2c(SwerveSubsystem drivetrain, ShooterSubsystem shooter, boolean mirror) {
@@ -16,40 +17,49 @@ public class BumpPathAuto_2c extends SequentialCommandGroup {
     /* All your code should go inside this try-catch block */
     try {
 
-      PathPlannerPath cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle");
-      PathPlannerPath cycle2Path = PathPlannerPath.fromChoreoTrajectory("Cycle2");
+      PathPlannerPath cyclePath;
+      PathPlannerPath cycle2Path;
 
       if (mirror) {
-        cyclePath = cyclePath.mirrorPath();
-        cycle2Path = cycle2Path.mirrorPath();
+        cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle").mirrorPath();
+        cycle2Path = PathPlannerPath.fromChoreoTrajectory("Cycle2").mirrorPath();
+      } else {
+        cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle");
+        cycle2Path = PathPlannerPath.fromChoreoTrajectory("Cycle2");
       }
 
       Pose2d startingPose =
           new Pose2d(cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
-      Pose2d score;
-      if (!EagleUtil.isRedAlliance()) {
-        score =
-            new Pose2d(
-                cyclePath.flipPath().getPoint(0).position,
-                cyclePath.flipPath().getIdealStartingState().rotation());
-      } else {
-        score =
-            new Pose2d(
-                cyclePath.getPoint(0).position, cyclePath.getIdealStartingState().rotation());
-      }
 
       addCommands(
           AutoBuilder.resetOdom(startingPose),
           AutoBuilder.followPath(cyclePath).alongWith(shooter.runVelocity(80)),
-          Commands.waitSeconds(6.0).deadlineFor(drivetrain.driveToPose(() -> score)), // score
+          Commands.waitSeconds(6.0)
+              .deadlineFor(drivetrain.driveToPose(() -> getScorePose(() -> cyclePath))), // score
           shooter.runVelocity(0),
           AutoBuilder.followPath(cycle2Path).alongWith(shooter.runVelocity(80)),
-          Commands.waitSeconds(6.0).deadlineFor(drivetrain.driveToPose(() -> score)), // score
+          Commands.waitSeconds(6.0)
+              .deadlineFor(drivetrain.driveToPose(() -> getScorePose(() -> cyclePath))), // score
           shooter.runVelocity(0),
           AutoBuilder.followPath(cycle2Path));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
     }
+  }
+
+  private Pose2d getScorePose(Supplier<PathPlannerPath> path) {
+    Pose2d score;
+    if (EagleUtil.isRedAlliance()) {
+      score =
+          new Pose2d(
+              path.get().flipPath().getPoint(0).position,
+              path.get().flipPath().getIdealStartingState().rotation());
+    } else {
+      score =
+          new Pose2d(
+              path.get().getPoint(0).position, path.get().getIdealStartingState().rotation());
+    }
+    return score;
   }
 }
