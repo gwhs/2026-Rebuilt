@@ -59,8 +59,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private Alert frontRightTurnConnectedAlert = new Alert("Front right turn motor is not connected!", AlertType.kError);
   private Alert backRightDriveConnectedAlert = new Alert("Back right drive motor is not connected!", AlertType.kError);
   private Alert backRightTurnConnectedAlert = new Alert("Back right turn motor is not connected!", AlertType.kError);
-
-
   private TalonFX frontLeftDrive = this.getModule(0).getDriveMotor();
   private TalonFX frontLeftTurn = this.getModule(0).getSteerMotor();
   private TalonFX frontRightDrive = this.getModule(1).getDriveMotor();
