@@ -74,13 +74,11 @@ public class RobotContainer {
   private final CANBus canivoreCanbus = new CANBus("CANivore");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
-  //
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-  private final ShooterSubsystem shooter =
-      new ShooterSubsystem(rioCanbus, canivoreCanbus, signalList);
+  private final ShooterSubsystem shooter;
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -112,6 +110,14 @@ public class RobotContainer {
         break;
     }
 
+    shooter =
+      new ShooterSubsystem(
+          rioCanbus,
+          canivoreCanbus,
+          signalList,
+          () -> drivetrain.getState().Pose,
+          () -> drivetrain.getState().Speeds);
+
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
     objDecCam =
@@ -132,6 +138,8 @@ public class RobotContainer {
         "auto rotate",
         drivetrain.setRotationCommand(RotationTarget.TST)); // fix rotate wobble when stop
   }
+
+  
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
