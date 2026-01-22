@@ -17,11 +17,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -101,6 +103,13 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
+    SmartDashboard.putData("go to range", goToShootingRange());
+    SmartDashboard.putData(
+        "ATP works?",
+        driveToPose(
+            () -> {
+              return new Pose2d(0.0, 0.0, Rotation2d.kZero);
+            }));
   }
 
   private void configureAutoBuilder() {
@@ -171,12 +180,15 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
               });
     }
 
+    Translation2d HUB =
+        EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
     DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
     DogLog.log("Current Zone/On Depot Side", isOnDepotSide.getAsBoolean());
     DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
+    DogLog.log("Dist to hub", HUB.getDistance(getState().Pose.getTranslation()));
   }
 
   private double defualtSlowFactor = 0.25;
@@ -305,5 +317,19 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
             () -> {
               this.disableAutoRotate = false;
             });
+  }
+
+  public Command goToShootingRange() {
+
+    return this.driveToPose(
+        () -> {
+          Translation2d HUB =
+              EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
+          return EagleUtil.getCircleLineIntersectionPoint(
+              getState().Pose.getTranslation(),
+              HUB,
+              EagleUtil.calculateMidpoint(getState().Pose.getTranslation(), HUB),
+              2.0);
+        });
   }
 }
