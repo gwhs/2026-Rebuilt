@@ -30,12 +30,13 @@ public class GroundIntakePivotSubsystem extends SubsystemBase {
   private final SysIdRoutine m_sysIdRoutine =
       new SysIdRoutine(
           new SysIdRoutine.Config(
-              null, // default ramp rate
-              Units.Volts.of(4), // Reduce dynamic step voltage
-              null, // default timeout
-              state -> SignalLogger.writeString("state", state.toString())),
+              null, // Use default ramp rate (1 V/s)
+              Units.Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
+              null, // Use default timeout (10 s)
+              // Log state with Phoenix SignalLogger class
+              (state) -> SignalLogger.writeString("state", state.toString())),
           new SysIdRoutine.Mechanism(
-              volts -> groundIntakePivotIO.setVoltage(volts.in(Volts)), null, this));
+              (volts) -> groundIntakePivotIO.setVoltage(volts.in(Volts)), null, this));
 
   public GroundIntakePivotSubsystem() {
     if (RobotBase.isSimulation()) {
@@ -45,61 +46,163 @@ public class GroundIntakePivotSubsystem extends SubsystemBase {
     }
   }
 
-  /** Drives the groundIntakePivot to a given angle (degrees) */
-  public Command setAngle(double angle) {
-    double clampedAngle =
-        MathUtil.clamp(
-            angle,
-            GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
-            GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND);
+ public Trigger AT_GOAL_HEIGHT =
+      new Trigger(
+          () ->
+              MathUtil.isNear(0, groundIntakePivotIO.getRotation() - metersToRotations(groundIntakePivotGoal), 0.9));
 
-    return this.runOnce(
-            () -> {
-              groundIntakePivotIO.setAngle(clampedAngle);
-              groundIntakePivotGoal = clampedAngle;
-            })
-        .andThen(
-            Commands.waitUntil(
-                () -> MathUtil.isNear(clampedAngle, groundIntakePivotIO.getPosition(), 1.0)));
-  }
 
-  /** Drives the groundIntakePivot based on a supplier (degrees) */
-  public Command setAngleSupplier(DoubleSupplier angleSupplier) {
-    return this.runOnce(
-            () -> {
-              double clampedAngle =
-                  MathUtil.clamp(
-                      angleSupplier.getAsDouble(),
-                      GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
-                      GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND);
-              groundIntakePivotIO.setAngle(clampedAngle); // FIXED typo here
-              groundIntakePivotGoal = clampedAngle;
-            })
-        .andThen(
-            Commands.waitUntil(
-                () -> {
-                  double clampedAngle =
-                      MathUtil.clamp(
-                          angleSupplier.getAsDouble(),
-                          GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_LOWER_BOUND,
-                          GroundIntakePivotConstants.GROUND_INTAKE_PIVOT_UPPER_BOUND);
-                  return MathUtil.isNear(clampedAngle, groundIntakePivotIO.getPosition(), 1.0);
-                }));
-  }
+
+
 
   @Override
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
     groundIntakePivotIO.update();
 
-    DogLog.log("GroundIntakePivot/angle", groundIntakePivotIO.getPosition());
-    DogLog.log("LoopTime/GroundIntakePivot", (HALUtil.getFPGATime() - startTime) / 1000.0);
+   DogLog.log("GroundIntakePivot/rotation", groundIntakePivotIO.getRotation());
+    DogLog.log("GroundIntakePivot/meters", rotationsToMeters(groundIntakePivotIO.getRotation()));
+    DogLog.log("GroundIntakePivot/Limit Switch Value (Reverse)", groundIntakePivotIO.getReverseLimit());
+    DogLog.log("GroundIntakePivot/Limit Switch Value (Forward)", groundIntakePivotIO.getForwardLimit());
+
+    DogLog.log("GroundIntakePivot/Max Height (meter)", GroundIntakePivotConstants.TOP_METER);
+
+    DogLog.log("Loop Time/GroundIntakePivot", (HALUtil.getFPGATime() - startTime) / 1000);
+  }
+
+    public Command setHeight(double meters) {
+    double clampedMeters = MathUtil.clamp(meters, 0, GroundIntakePivotConstants.TOP_METER);
+    return this.runOnce(
+            () -> {
+              groundIntakePivotIO.setRotation(metersToRotations(clampedMeters));
+              groundIntakePivotGoal = clampedMeters;
+            })
+        .andThen(
+            Commands.waitUntil(
+                () ->
+                    MathUtil.isNear(
+                        clampedMeters, rotationsToMeters(groundIntakePivotIO.getRotation()), 0.1)));
+  }
+
+  public Command setHeightSupplier(DoubleSupplier meters) {
+    return this.runOnce(
+            () -> {
+              double clampedMeters =
+                  MathUtil.clamp(meters.getAsDouble(), 0, GroundIntakePivotConstants.TOP_METER);
+              groundIntakePivotIO.setRotation(metersToRotations(clampedMeters));
+              groundIntakePivotGoal = clampedMeters;
+            })
+        .andThen(
+            Commands.waitUntil(
+                () -> {
+                  double clampedMeters =
+                      MathUtil.clamp(meters.getAsDouble(), 0, GroundIntakePivotConstants.TOP_METER);
+                  return MathUtil.isNear(
+                      clampedMeters, rotationsToMeters(groundIntakePivotIO.getRotation()), 0.1);
+                }));
   }
 
   /**
-   * @return the current angle (degrees)
+   * @return run the command
    */
-  public double getAngle() {
-    return groundIntakePivotIO.getPosition();
+  public Command homingCommand() {
+    Command whenNotAtBottom =
+        this.runOnce(
+                () -> {
+                  groundIntakePivotIO.setPosition(metersToRotations(GroundIntakePivotConstants.TOP_METER));
+                  ;
+                  groundIntakePivotIO.setVoltage(-3);
+                })
+            .andThen(
+                Commands.waitUntil(() -> groundIntakePivotIO.getReverseLimit()),
+                Commands.runOnce(
+                    () -> {
+                      groundIntakePivotIO.setVoltage(0);
+                      groundIntakePivotIO.setPosition(0);
+                    }));
+
+    Command whenAtBottom =
+        Commands.runOnce(
+            () -> {
+              groundIntakePivotIO.setPosition(0);
+            });
+
+    return Commands.either(whenNotAtBottom, whenAtBottom, () -> !groundIntakePivotIO.getReverseLimit());
+  }
+
+  /**
+   * @param rotations the amount of rotations
+   * @return the rotations in equivalent meters
+   */
+  public static double rotationsToMeters(double rotations) {
+    return rotations
+        / GroundIntakePivotConstants.GEAR_RATIO
+        * (GroundIntakePivotConstants.SPROCKET_DIAMETER * Math.PI)
+        * 1;
+  }
+
+  /**
+   * @param meters the amount of meters
+   * @return the meters in equivalent rotations
+   */
+  public static double metersToRotations(double meters) {
+    return meters
+        / (GroundIntakePivotConstants.SPROCKET_DIAMETER * Math.PI)
+        * GroundIntakePivotConstants.GEAR_RATIO
+        / 1;
+  }
+
+  /**
+   * @return the height in meters
+   */
+  public double getHeightMeters() {
+    return rotationsToMeters(groundIntakePivotIO.getRotation());
+  }
+
+  /**
+   * @param mode the mode to go to
+   */
+  public void setNeutralMode(NeutralModeValue mode) {
+    groundIntakePivotIO.setNeutralMode(mode);
+  }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
+  }
+
+  /**
+   * @param meters the amount of meters to add
+   * @return run the command
+   */
+  public Command increaseHeight(double meters) {
+    return Commands.runOnce(
+        () ->
+            groundIntakePivotIO.setRotation(
+                metersToRotations(
+                    MathUtil.clamp(getHeightMeters() + meters, 0, GroundIntakePivotConstants.TOP_METER))));
+  }
+
+  /**
+   * @param meters the amount of meters to remove
+   * @return run the command
+   */
+  public Command decreaseHeight(double meters) {
+    return Commands.runOnce(
+        () ->
+            groundIntakePivotIO.setRotation(
+                metersToRotations(
+                    MathUtil.clamp(getHeightMeters() - meters, 0, GroundIntakePivotConstants.TOP_METER))));
+  }
+
+  public Command engageEmergencyMode() {
+    return Commands.runOnce(() -> groundIntakePivotIO.setEmergencyMode(true));
+  }
+
+  public Command exitEmergencyMode() {
+    return Commands.runOnce(() -> groundIntakePivotIO.setEmergencyMode(false));
   }
 }
