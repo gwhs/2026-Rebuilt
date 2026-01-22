@@ -169,7 +169,7 @@ public class RobotContainer {
   private void configureAutonomous() {
     autoChooser.addOption("Template", new Template());
     autoChooser.addOption("Bump 1 Cycle", new BumpPathAuto_1c(drivetrain, shooter, false));
-    autoChooser.addOption("Bump 2 Cycle", new BumpPathAuto_2c(drivetrain, shooter, true));
+    autoChooser.addOption("Bump 2 Cycle", new BumpPathAuto_2c(drivetrain, shooter, false));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
