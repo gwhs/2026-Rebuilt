@@ -13,8 +13,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.logging.Handler;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.estimation.TargetModel;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -105,10 +103,10 @@ public class ObjectDetectionCam {
     }
 
     for (PhotonPipelineResult result : results) {
-      if(!result.hasTargets()) {
+      if (!result.hasTargets()) {
         continue;
       }
-      
+
       PhotonTrackedTarget targets = result.getBestTarget();
       if (targets == null) {
         continue;
