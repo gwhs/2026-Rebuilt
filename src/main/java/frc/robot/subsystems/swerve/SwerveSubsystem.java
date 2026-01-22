@@ -18,16 +18,17 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.EagleUtil;
+import edu.wpi.first.wpilibj2.command.button.Trigger; import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToPose;
 import java.util.function.Supplier;
@@ -49,6 +50,27 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     TST,
   }
 
+
+  private Alert frontLeftDriveConnectedAlert = new Alert("Front left drive motor is not connected!", AlertType.kError);
+  private Alert frontLeftTurnConnectedAlert = new Alert("Front left turn motor is not connected!", AlertType.kError);
+  private Alert backLeftDriveConnectedAlert = new Alert("back left drive motor is not connected!", AlertType.kError);
+  private Alert backLeftTurnConnectedAlert = new Alert("back left turn motor is not connected!", AlertType.kError);
+  private Alert frontRightDriveConnectedAlert = new Alert("Front right drive motor is not connected!", AlertType.kError);
+  private Alert frontRightTurnConnectedAlert = new Alert("Front right turn motor is not connected!", AlertType.kError);
+  private Alert backRightDriveConnectedAlert = new Alert("Back right drive motor is not connected!", AlertType.kError);
+  private Alert backRightTurnConnectedAlert = new Alert("Back right turn motor is not connected!", AlertType.kError);
+
+
+  private TalonFX frontLeftDrive = this.getModule(0).getDriveMotor();
+  private TalonFX frontLeftTurn = this.getModule(0).getSteerMotor();
+  private TalonFX frontRightDrive = this.getModule(1).getDriveMotor();
+  private TalonFX frontRightTurn = this.getModule(1).getSteerMotor();
+  private TalonFX backLeftDrive = this.getModule(2).getDriveMotor();
+  private TalonFX backLeftTurn = this.getModule(2).getSteerMotor();
+  private TalonFX backRightDrive = this.getModule(3).getDriveMotor();
+  private TalonFX backRightTurn = this.getModule(3).getSteerMotor();
+  
+  
   private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
   private CommandXboxController controller;
@@ -135,7 +157,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   private void startSimThread() {
     m_lastSimTime = Utils.getCurrentTimeSeconds();
-
     /* Run simulation at a faster rate so PID gains behave more reasonably */
     m_simNotifier =
         new Notifier(
@@ -170,13 +191,21 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
-
     DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
     DogLog.log("Current Zone/On Depot Side", isOnDepotSide.getAsBoolean());
     DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
+
+    frontLeftDriveConnectedAlert.set(!frontLeftDrive.isConnected());
+    frontLeftTurnConnectedAlert.set(!frontLeftTurn.isConnected());
+    backLeftDriveConnectedAlert.set(!backLeftDrive.isConnected());
+    backLeftTurnConnectedAlert.set(!backLeftTurn.isConnected());
+    frontRightDriveConnectedAlert.set(!frontRightDrive.isConnected());
+    frontRightTurnConnectedAlert.set(!frontRightTurn.isConnected());
+    backRightDriveConnectedAlert.set(!backRightDrive.isConnected());
+    backRightTurnConnectedAlert.set(!backRightTurn.isConnected());
   }
 
   private double defualtSlowFactor = 0.25;
