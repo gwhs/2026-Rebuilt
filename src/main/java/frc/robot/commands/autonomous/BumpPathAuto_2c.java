@@ -40,7 +40,7 @@ public class BumpPathAuto_2c extends SequentialCommandGroup {
       }
 
       addCommands(
-          AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
+          AutoBuilder.resetOdom(startingPose),
           AutoBuilder.followPath(cyclePath).alongWith(shooter.runVelocity(80)),
           Commands.waitSeconds(6.0).deadlineFor(drivetrain.driveToPose(() -> score)), // score
           shooter.runVelocity(0),
