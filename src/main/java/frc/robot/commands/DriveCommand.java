@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
@@ -54,10 +53,10 @@ public class DriveCommand extends Command {
     xInput = MathUtil.applyDeadband(xInput, deadband);
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationalInput = MathUtil.applyDeadband(rotationalInput, deadband);
-    
+
     xInput = Math.pow(xInput, 1.5) * Math.signum(xInput);
     yInput = Math.pow(yInput, 1.5) * Math.signum(yInput);
-    rotationalInput = Math.pow (rotationalInput, 1.5) * Math.signum(rotationalInput);
+    rotationalInput = Math.pow(rotationalInput, 1.5) * Math.signum(rotationalInput);
 
     boolean hasRotationInput = Math.abs(rotationalInput) > 0.1;
     if (drivetrain.getRotationTarget() != RotationTarget.NORMAL
