@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -55,26 +56,41 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       new Alert("Front left drive motor is not connected!", AlertType.kError);
   private Alert frontLeftTurnConnectedAlert =
       new Alert("Front left turn motor is not connected!", AlertType.kError);
+  private Alert frontLeftEncoderConnectedAlert =
+      new Alert("Back right encoder is not connected!", AlertType.kError);
   private Alert backLeftDriveConnectedAlert =
       new Alert("back left drive motor is not connected!", AlertType.kError);
   private Alert backLeftTurnConnectedAlert =
       new Alert("back left turn motor is not connected!", AlertType.kError);
+  private Alert backleftEncoderConnectedAlert =
+      new Alert("Back right encoder is not connected!", AlertType.kError);
   private Alert frontRightDriveConnectedAlert =
       new Alert("Front right drive motor is not connected!", AlertType.kError);
   private Alert frontRightTurnConnectedAlert =
       new Alert("Front right turn motor is not connected!", AlertType.kError);
+  private Alert frontrightEncoderConnectedAlert =
+      new Alert("Back right encoder is not connected!", AlertType.kError);
   private Alert backRightDriveConnectedAlert =
       new Alert("Back right drive motor is not connected!", AlertType.kError);
   private Alert backRightTurnConnectedAlert =
       new Alert("Back right turn motor is not connected!", AlertType.kError);
+  private Alert backRightEncoderConnectedAlert =
+      new Alert("Back right encoder is not connected!", AlertType.kError);
+  private Alert pigeonConnectedAlert = new Alert("Pigeon is not connected", AlertType.kError);
+
   private TalonFX frontLeftDrive = this.getModule(0).getDriveMotor();
   private TalonFX frontLeftTurn = this.getModule(0).getSteerMotor();
+  private CANcoder frontLeftEncoder = this.getModule(0).getEncoder();
   private TalonFX frontRightDrive = this.getModule(1).getDriveMotor();
   private TalonFX frontRightTurn = this.getModule(1).getSteerMotor();
+  private CANcoder frontRightEncoder = this.getModule(1).getEncoder();
   private TalonFX backLeftDrive = this.getModule(2).getDriveMotor();
   private TalonFX backLeftTurn = this.getModule(2).getSteerMotor();
+  private CANcoder backLeftEncoder = this.getModule(2).getEncoder();
   private TalonFX backRightDrive = this.getModule(3).getDriveMotor();
   private TalonFX backRightTurn = this.getModule(3).getSteerMotor();
+  private CANcoder backRightEncoder = this.getModule(3).getEncoder();
+  private Pigeon2 pigeon = this.getPigeon2();
 
   private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
@@ -211,6 +227,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     frontRightTurnConnectedAlert.set(!frontRightTurn.isConnected());
     backRightDriveConnectedAlert.set(!backRightDrive.isConnected());
     backRightTurnConnectedAlert.set(!backRightTurn.isConnected());
+    frontLeftEncoderConnectedAlert.set(!frontLeftEncoder.isConnected());
+    backleftEncoderConnectedAlert.set(!backLeftEncoder.isConnected());
+    frontrightEncoderConnectedAlert.set(!frontRightEncoder.isConnected());
+    backRightEncoderConnectedAlert.set(!backRightEncoder.isConnected());
+    pigeonConnectedAlert.set(!pigeon.isConnected());
   }
 
   private double defualtSlowFactor = 0.25;
