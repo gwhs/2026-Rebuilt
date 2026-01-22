@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
 import frc.robot.commands.AlignToPose;
 import java.util.function.Supplier;
@@ -50,6 +51,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
   private final Telemetry logger = new Telemetry();
+
+  public Trigger isOnBump = new Trigger(() -> EagleUtil.isOnBump(getState().Pose));
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -156,6 +159,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
+
+    DogLog.log("is on bump", isOnBump.getAsBoolean());
   }
 
   private double defualtSlowFactor = 0.25;
