@@ -8,4 +8,7 @@ package frc.robot.subsystems.Indexer;
 public class IndexerConstants {
   public static final int MOTOR_1_ID = 29;
   public static final int MOTOR_2_ID = 30;
+
+  public static final double INDEXING_VOLTAGE = 5;
+  public static final double UNJAM_VOLTAGE = -6;
 }

@@ -68,8 +68,8 @@ public class IndexerIOReal implements IndexerIO {
     motor2ClosedLoopGoal = motor2.getClosedLoopReference();
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
-    
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 80;
+
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 0;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -81,17 +81,25 @@ public class IndexerIOReal implements IndexerIO {
     talonFXConfig.Slot0.kP = 0.5;
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
-    
+
     talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    
-     StatusCode status = StatusCode.StatusCodeNotInitialized;
+
+    StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
       status = motor1.getConfigurator().apply(talonFXConfig);
+      if (status.isOK()) break;
+    }
+    if (!status.isOK()) {
+      new Alert("Indexer: Could not configure Motor 1. Error" + status.toString(), AlertType.kError)
+          .set(true);
+    }
+
+    for (int i = 0; i <= 5; i++) {
       status = motor2.getConfigurator().apply(talonFXConfig);
       if (status.isOK()) break;
     }
     if (!status.isOK()) {
-      new Alert("Indexer: Could not configure device. Error:" + status.toString(), AlertType.kError)
+      new Alert("Indexer: Could not configure Motor 2. Error" + status.toString(), AlertType.kError)
           .set(true);
     }
 
@@ -109,7 +117,7 @@ public class IndexerIOReal implements IndexerIO {
         motor2Acceleration,
         motor2ClosedLoopGoal);
 
-        BaseStatusSignal.setUpdateFrequencyForAll(
+    BaseStatusSignal.setUpdateFrequencyForAll(
         50,
         motor1Voltage,
         motor1StatorCurrent,
@@ -126,28 +134,25 @@ public class IndexerIOReal implements IndexerIO {
   }
 
   public void periodic() {
-    DogLog.log("Indexer/Motor 1 Voltage: ", motor1Voltage.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Stator Current: ", motor1StatorCurrent.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Velocity: ", motor1Velocity.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Temperature: ", motor1Temp.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Acceleration: ", motor1Acceleration.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Closed Loop Goal: ", motor1ClosedLoopGoal.getValueAsDouble());
-    DogLog.log("Indexer/Motor 2 Voltage: ", motor2Voltage.getValueAsDouble());
-    DogLog.log("Indexer/Motor 2 Stator Current: ", motor2StatorCurrent.getValueAsDouble());
-    DogLog.log("Indexer/Motor 2 Velocity: ", motor2Velocity.getValueAsDouble());
-    DogLog.log("Indexer/Motor 2 Temperature: ", motor2Temp.getValueAsDouble());
-    DogLog.log("Indexer/Motor 2 Acceleration: ", motor2Acceleration.getValueAsDouble());
-    DogLog.log("Indexer/Motor 2 Closed Loop Goal: ", motor2ClosedLoopGoal.getValueAsDouble());
+    DogLog.log("Indexer/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
+    DogLog.log("Indexer/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
+    DogLog.log("Indexer/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
+    DogLog.log("Indexer/Motor 1 Temperature", motor1Temp.getValueAsDouble());
+    DogLog.log("Indexer/Motor 1 Acceleration", motor1Acceleration.getValueAsDouble());
+    DogLog.log("Indexer/Motor 1 Closed Loop Goal", motor1ClosedLoopGoal.getValueAsDouble());
+    DogLog.log("Indexer/Motor 2 Voltage", motor2Voltage.getValueAsDouble());
+    DogLog.log("Indexer/Motor 2 Stator Current", motor2StatorCurrent.getValueAsDouble());
+    DogLog.log("Indexer/Motor 2 Velocity", motor2Velocity.getValueAsDouble());
+    DogLog.log("Indexer/Motor 2 Temperature", motor2Temp.getValueAsDouble());
+    DogLog.log("Indexer/Motor 2 Acceleration", motor2Acceleration.getValueAsDouble());
+    DogLog.log("Indexer/Motor 2 Closed Loop Goal", motor2ClosedLoopGoal.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
     motor2NotConnectedAlert.set(!motor2.isConnected());
   }
 
-  @Override
   public void runVoltage(double voltage) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'runVoltage'");
+    motor1.setVoltage(voltage);
+    motor2.setVoltage(voltage);
   }
-
-  }
-
+}

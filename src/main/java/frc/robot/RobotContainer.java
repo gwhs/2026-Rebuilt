@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.Indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
 import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
@@ -81,6 +82,9 @@ public class RobotContainer {
   private final ShooterSubsystem shooter =
       new ShooterSubsystem(rioCanbus, canivoreCanbus, signalList);
 
+  private final IndexerSubsystem indexer =
+      new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
+
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
     this.addPeriodic = addPeriodic;
@@ -142,6 +146,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+    controller.rightBumper().whileTrue(indexer.index());
   }
 
   public Command getAutonomousCommand() {

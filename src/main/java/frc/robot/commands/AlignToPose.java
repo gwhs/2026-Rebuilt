@@ -99,8 +99,9 @@ public class AlignToPose extends Command {
     return false;
   }
 
-  @Override 
-  public void initialize() {    startTime = System.currentTimeMillis();
+  @Override
+  public void initialize() {
+    startTime = System.currentTimeMillis();
     Pose2d tp = targetPose.get();
     ChassisSpeeds currentSpeed =
         ChassisSpeeds.fromRobotRelativeSpeeds(

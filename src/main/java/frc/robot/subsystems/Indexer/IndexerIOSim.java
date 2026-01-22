@@ -5,11 +5,11 @@
 package frc.robot.subsystems.Indexer;
 
 /** Add your docs here. */
-public class IndexerIOSim implements IndexerIO{
-    
-    @Override
+public class IndexerIOSim implements IndexerIO {
+
+  @Override
   public void runVoltage(double voltage) {}
 
-    @Override
-    public void periodic() {}
+  @Override
+  public void periodic() {}
 }
