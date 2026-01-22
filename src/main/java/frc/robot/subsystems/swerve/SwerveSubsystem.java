@@ -19,16 +19,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger; import frc.robot.EagleUtil;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToPose;
 import java.util.function.Supplier;
@@ -50,15 +51,22 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     TST,
   }
 
-
-  private Alert frontLeftDriveConnectedAlert = new Alert("Front left drive motor is not connected!", AlertType.kError);
-  private Alert frontLeftTurnConnectedAlert = new Alert("Front left turn motor is not connected!", AlertType.kError);
-  private Alert backLeftDriveConnectedAlert = new Alert("back left drive motor is not connected!", AlertType.kError);
-  private Alert backLeftTurnConnectedAlert = new Alert("back left turn motor is not connected!", AlertType.kError);
-  private Alert frontRightDriveConnectedAlert = new Alert("Front right drive motor is not connected!", AlertType.kError);
-  private Alert frontRightTurnConnectedAlert = new Alert("Front right turn motor is not connected!", AlertType.kError);
-  private Alert backRightDriveConnectedAlert = new Alert("Back right drive motor is not connected!", AlertType.kError);
-  private Alert backRightTurnConnectedAlert = new Alert("Back right turn motor is not connected!", AlertType.kError);
+  private Alert frontLeftDriveConnectedAlert =
+      new Alert("Front left drive motor is not connected!", AlertType.kError);
+  private Alert frontLeftTurnConnectedAlert =
+      new Alert("Front left turn motor is not connected!", AlertType.kError);
+  private Alert backLeftDriveConnectedAlert =
+      new Alert("back left drive motor is not connected!", AlertType.kError);
+  private Alert backLeftTurnConnectedAlert =
+      new Alert("back left turn motor is not connected!", AlertType.kError);
+  private Alert frontRightDriveConnectedAlert =
+      new Alert("Front right drive motor is not connected!", AlertType.kError);
+  private Alert frontRightTurnConnectedAlert =
+      new Alert("Front right turn motor is not connected!", AlertType.kError);
+  private Alert backRightDriveConnectedAlert =
+      new Alert("Back right drive motor is not connected!", AlertType.kError);
+  private Alert backRightTurnConnectedAlert =
+      new Alert("Back right turn motor is not connected!", AlertType.kError);
   private TalonFX frontLeftDrive = this.getModule(0).getDriveMotor();
   private TalonFX frontLeftTurn = this.getModule(0).getSteerMotor();
   private TalonFX frontRightDrive = this.getModule(1).getDriveMotor();
@@ -67,8 +75,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private TalonFX backLeftTurn = this.getModule(2).getSteerMotor();
   private TalonFX backRightDrive = this.getModule(3).getDriveMotor();
   private TalonFX backRightTurn = this.getModule(3).getSteerMotor();
-  
-  
+
   private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
   private CommandXboxController controller;

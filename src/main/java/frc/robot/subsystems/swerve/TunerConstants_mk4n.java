@@ -274,7 +274,8 @@ public class TunerConstants_mk4n {
       super(
           TalonFX::new,
           TalonFX::new,
-          CANcoder::new, drivetrainConstants,
+          CANcoder::new,
+          drivetrainConstants,
           odometryUpdateFrequency,
           modules);
     }
