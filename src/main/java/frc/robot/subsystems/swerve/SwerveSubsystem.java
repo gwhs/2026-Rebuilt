@@ -324,11 +324,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         () -> {
           Translation2d HUB =
               EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
-          return EagleUtil.getCircleLineIntersectionPoint(
-              getState().Pose,
-              HUB,
-              EagleUtil.calculateMidpoint(getState().Pose.getTranslation(), HUB),
-              2.0);
+	  Translation2d nst = getState().Pose.getTranslation().nearest(FieldConstants.HUB_RANGE);
+	  return new Pose2d(nst.getX(), nst.getY(), Rotation2d.fromDegrees(EagleUtil.getRotationalHub(getState().Pose) ));
         });
   }
 }

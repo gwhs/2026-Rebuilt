@@ -27,6 +27,8 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -93,7 +95,7 @@ public class RobotContainer {
           DogLog.log("Canivore/Status Code on Canivore", status.Status.toString());
         },
         0.5);
-
+    
     switch (getRobot()) {
       case COMP:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -131,6 +133,9 @@ public class RobotContainer {
     SmartDashboard.putData(
         "auto rotate",
         drivetrain.setRotationCommand(RotationTarget.TST)); // fix rotate wobble when stop
+    
+    Translation2d HUB = EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
+    FieldConstants.HUB_RANGE.addAll(EagleUtil.generateHalfCirclePoints(HUB.getX(), HUB.getY(), 4.0, 10.0));
   }
 
   /**

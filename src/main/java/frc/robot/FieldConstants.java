@@ -1,5 +1,8 @@
 package frc.robot;
 
+import java.util.List;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -36,4 +39,6 @@ public class FieldConstants {
       new Translation2d(RED_OUTPOST_PASSING_X, RED_OUTPOST_PASSING_Y);
   public static Translation2d BLUE_OUTPOST_PASSING =
       new Translation2d(BLUE_OUTPOST_PASSING_X, BLUE_OUTPOST_PASSING_Y);
+
+  public static List<Translation2d> HUB_RANGE = List.of();
 }
