@@ -1,14 +1,13 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EagleUtil {
 
@@ -103,20 +102,19 @@ public class EagleUtil {
     return robot.vyMetersPerSecond * distanceToTarget / FieldConstants.fuelSpeed;
   }
 
+  public static List<Translation2d> generateHubRangePoints(
+      double centerX, double centerY, double radius, double angleStep) {
+    List<Translation2d> points = new ArrayList<>();
 
+    for (double angle = 0; angle <= 180; angle += angleStep) {
+      double angleInRadians = Math.toRadians(angle);
 
-    public static List<Translation2d> generateHalfCirclePoints(double centerX, double centerY, double radius, double angleStep) {
-        List<Translation2d> points = new ArrayList<>();
-        
-	for (double angle = 0; angle <= 180; angle += angleStep) {
-            double angleInRadians = Math.toRadians(angle);
+      // Calculate point coordinates
+      double x = centerX + radius * Math.cos(angleInRadians);
+      double y = centerY + radius * Math.sin(angleInRadians);
 
-            // Calculate point coordinates
-            double x = centerX + radius * Math.cos(angleInRadians);
-            double y = centerY + radius * Math.sin(angleInRadians);
-
-            points.add(new Translation2d(x, y));
-        }
-        return points;
-    } }
-
+      points.add(new Translation2d(x, y));
+    }
+    return points;
+  }
+}

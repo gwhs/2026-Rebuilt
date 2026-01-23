@@ -322,10 +322,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Command goToShootingRange() {
     return this.driveToPose(
         () -> {
-          Translation2d HUB =
-              EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
-	  Translation2d nst = getState().Pose.getTranslation().nearest(FieldConstants.HUB_RANGE);
-	  return new Pose2d(nst.getX(), nst.getY(), Rotation2d.fromDegrees(EagleUtil.getRotationalHub(getState().Pose) ));
+          Translation2d nearest =
+              getState().Pose.getTranslation().nearest(FieldConstants.HUB_RANGE);
+          return new Pose2d(
+              nearest.getX(),
+              nearest.getY(),
+              Rotation2d.fromDegrees(EagleUtil.getRotationalHub(getState().Pose)));
         });
   }
 }
