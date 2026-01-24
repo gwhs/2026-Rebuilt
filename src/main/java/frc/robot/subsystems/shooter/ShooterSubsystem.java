@@ -81,7 +81,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * @return the climb's position
+   * @return the shooter's rps
    */
   public double getVelocity() {
     return shooterIO.getVelocity();
