@@ -65,8 +65,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Trigger isOnDepotSide = new Trigger(() -> EagleUtil.isOnDepotSide(getState().Pose));
   public Trigger isOnOutpostSide = new Trigger(() -> EagleUtil.isOnOutpostSide(getState().Pose));
 
-  public Trigger isFacingGoal = new Trigger (() -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 5));
-  public Trigger isFacingGoalPassing = new Trigger (() -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 7.5));
+  public Trigger isFacingGoal =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 5));
+  public Trigger isFacingGoalPassing =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 7.5));
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
