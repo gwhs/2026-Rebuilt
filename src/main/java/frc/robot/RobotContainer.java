@@ -162,7 +162,6 @@ public class RobotContainer {
         .or(drivetrain.isInOpponentAllianceZone)
         .and(drivetrain.isOnDepotSide)
         .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
-    // output = lower depot = upper
   }
 
   public Command getAutonomousCommand() {
