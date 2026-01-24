@@ -111,12 +111,12 @@ public class RobotContainer {
     }
 
     shooter =
-      new ShooterSubsystem(
-          rioCanbus,
-          canivoreCanbus,
-          signalList,
-          () -> drivetrain.getState().Pose,
-          () -> drivetrain.getState().Speeds);
+        new ShooterSubsystem(
+            rioCanbus,
+            canivoreCanbus,
+            signalList,
+            () -> drivetrain.getState().Pose,
+            () -> drivetrain.getState().Speeds);
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
@@ -138,8 +138,6 @@ public class RobotContainer {
         "auto rotate",
         drivetrain.setRotationCommand(RotationTarget.TST)); // fix rotate wobble when stop
   }
-
-  
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
