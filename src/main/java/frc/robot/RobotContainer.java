@@ -130,11 +130,6 @@ public class RobotContainer {
     SmartDashboard.putData(
         "auto rotate",
         drivetrain.setRotationCommand(RotationTarget.TST)); // fix rotate wobble when stop
-
-    Translation2d HUB =
-        EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
-    FieldConstants.HUB_RANGE.addAll(
-        EagleUtil.generateHubRangePoints(HUB.getX(), HUB.getY(), 4.0, 10.0));
   }
 
   /**

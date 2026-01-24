@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
- * be used in command-based projects.
+ * be used in command-based projects. = pose
  */
 public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     implements Subsystem {
@@ -51,6 +51,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     TST,
   }
 
+  private Pose2d shootPose;
   private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
   private CommandXboxController controller;
@@ -182,6 +183,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
     Translation2d HUB =
         EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
+    this.shootPose =
+        EagleUtil.getCircleLineIntersectionPoint(
+            getState().Pose.getTranslation(),
+            HUB,
+            EagleUtil.calculateMidpoint(getState().Pose.getTranslation(), HUB),
+            2.0);
     DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
@@ -189,6 +196,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
     DogLog.log("Dist to hub", HUB.getDistance(getState().Pose.getTranslation()));
+    DogLog.log("Shooty Pose", this.shootPose);
   }
 
   private double defualtSlowFactor = 0.25;
@@ -320,14 +328,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   }
 
   public Command goToShootingRange() {
+
     return this.driveToPose(
         () -> {
-          Translation2d nearest =
-              getState().Pose.getTranslation().nearest(FieldConstants.HUB_RANGE);
-          return new Pose2d(
-              nearest.getX(),
-              nearest.getY(),
-              Rotation2d.fromDegrees(EagleUtil.getRotationalHub(getState().Pose)));
+          return this.shootPose;
         });
   }
 }

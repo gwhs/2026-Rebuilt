@@ -6,8 +6,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EagleUtil {
 
@@ -102,19 +100,32 @@ public class EagleUtil {
     return robot.vyMetersPerSecond * distanceToTarget / FieldConstants.fuelSpeed;
   }
 
-  public static List<Translation2d> generateHubRangePoints(
-      double centerX, double centerY, double radius, double angleStep) {
-    List<Translation2d> points = new ArrayList<>();
+  public static Pose2d getCircleLineIntersectionPoint(
+      Translation2d pointA, Translation2d pointB, Translation2d center, double radius) {
+    double baX = pointB.getX() - pointA.getX();
+    double baY = pointB.getY() - pointA.getY();
+    double caX = center.getX() - pointA.getX();
+    double caY = center.getY() - pointA.getY();
+    double a = baX * baX + baY * baY;
+    double bBy2 = baX * caX + baY * caY;
+    double c = caX * caX + caY * caY - radius * radius;
+    double pBy2 = bBy2 / a;
+    double q = c / a;
+    double disc = pBy2 * pBy2 - q;
+    double tmpSqrt = Math.sqrt(disc);
+    double abScalingFactor = -pBy2 + tmpSqrt;
 
-    for (double angle = 0; angle <= 180; angle += angleStep) {
-      double angleInRadians = Math.toRadians(angle);
+    Pose2d p1 =
+        new Pose2d(
+            pointA.getX() - baX * abScalingFactor,
+            pointA.getY() - baY * abScalingFactor,
+            Rotation2d.kZero);
+    return p1;
+  }
 
-      // Calculate point coordinates
-      double x = centerX + radius * Math.cos(angleInRadians);
-      double y = centerY + radius * Math.sin(angleInRadians);
-
-      points.add(new Translation2d(x, y));
-    }
-    return points;
+  public static Translation2d calculateMidpoint(Translation2d p1, Translation2d p2) {
+    double midX = (p1.getX() + p2.getX()) / 2.0;
+    double midY = (p1.getY() + p2.getY()) / 2.0;
+    return new Translation2d(midX, midY);
   }
 }
