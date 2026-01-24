@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.Indexer;
+package frc.robot.subsystems.indexer;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -69,7 +69,7 @@ public class IndexerIOReal implements IndexerIO {
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 0;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 40;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -82,7 +82,7 @@ public class IndexerIOReal implements IndexerIO {
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
@@ -94,6 +94,9 @@ public class IndexerIOReal implements IndexerIO {
           .set(true);
     }
 
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
       status = motor2.getConfigurator().apply(talonFXConfig);
       if (status.isOK()) break;
