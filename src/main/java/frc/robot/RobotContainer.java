@@ -19,9 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.autonomous.BumpPathAuto_1c;
-import frc.robot.commands.autonomous.BumpPathAuto_2c;
-import frc.robot.commands.autonomous.Template;
+import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
 import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
@@ -84,6 +82,9 @@ public class RobotContainer {
 
   private final ShooterSubsystem shooter =
       new ShooterSubsystem(rioCanbus, canivoreCanbus, signalList);
+
+  private final IndexerSubsystem indexer =
+      new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -159,7 +160,6 @@ public class RobotContainer {
         .or(drivetrain.isInOpponentAllianceZone)
         .and(drivetrain.isOnDepotSide)
         .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
-    // output = lower depot = upper
   }
 
   public Command getAutonomousCommand() {
