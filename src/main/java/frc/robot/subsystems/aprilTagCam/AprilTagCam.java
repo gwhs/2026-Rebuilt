@@ -73,11 +73,7 @@ public class AprilTagCam {
 
     visionNotConnected = new Alert(name + " NOT CONNECTED", AlertType.kError);
 
-    photonEstimator =
-        new PhotonPoseEstimator(
-            aprilTagFieldLayout,
-            PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-            robotToCam);
+    photonEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, robotToCam);
 
     ntKey = "/Vision/" + name + "/";
 
@@ -111,7 +107,7 @@ public class AprilTagCam {
     }
 
     for (PhotonPipelineResult targetPose : results) {
-      optionalEstimPose = photonEstimator.update(targetPose);
+      optionalEstimPose = photonEstimator.estimateCoprocMultiTagPose(targetPose);
 
       if (optionalEstimPose.isEmpty()) {
         continue;
