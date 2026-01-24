@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
@@ -148,6 +149,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+    controller.rightTrigger().whileTrue(shoot());
+    controller.b().whileTrue(indexer.reverse()); // verify
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain
@@ -168,6 +171,27 @@ public class RobotContainer {
 
   private void configureAutonomous() {
     SmartDashboard.putData("autonomous", autoChooser);
+  }
+
+  public Command shoot() {
+    return
+    Commands.sequence(
+      drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE).onlyIf(
+        drivetrain.isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnOutpostSide)),
+      drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE).onlyIf(
+        drivetrain.isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnDepotSide)),
+      drivetrain.setRotationCommand(RotationTarget.HUB).onlyIf(
+        drivetrain.isInAllianceZone),
+      Commands.parallel(
+        shooter.runVelocity(60), // ballpark estimate, verify
+        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub) /* and [if facing hub] */.onlyIf(drivetrain.isInAllianceZone),
+        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Passing).onlyIf(drivetrain.isInAllianceZone.negate())        
+      )
+    );
   }
 
   public void periodic() {
