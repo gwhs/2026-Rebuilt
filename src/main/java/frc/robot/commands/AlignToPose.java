@@ -10,7 +10,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -23,7 +22,7 @@ import java.util.function.Supplier;
 
 public class AlignToPose extends Command {
 
-  Supplier<Pose2d> targetPose;
+  private final Supplier<Pose2d> targetPose;
   private final double ELEVATOR_UP_SLEW_RATE = 1;
 
   private final SlewRateLimiter angularVelocityLimiter = new SlewRateLimiter(ELEVATOR_UP_SLEW_RATE);
@@ -56,31 +55,17 @@ public class AlignToPose extends Command {
           .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   public AlignToPose(
-      Supplier<Pose2d> Pose,
+      Supplier<Pose2d> poseSupplier,
       SwerveSubsystem drivetrain,
       DoubleSupplier elevatorHeight,
       CommandXboxController driverController) {
-    addRequirements(drivetrain);
-    startTime = System.currentTimeMillis();
-    Pose2d tp = targetPose.get();
-    ChassisSpeeds currentSpeed =
-        ChassisSpeeds.fromRobotRelativeSpeeds(drivetrain.getState().Speeds, getRotation());
 
-    double predicted_X =
-        (tp.getX() - drivetrain.getPose(0.0).getX()) * 0.3 + drivetrain.getPose(0.0).getX();
-    double predicted_Y =
-        (tp.getY() - drivetrain.getPose(0.0).getY()) * 0.3 + drivetrain.getPose(0.0).getY();
-
-    PID_X.reset(predicted_X, currentSpeed.vxMetersPerSecond * 0.4);
-    PID_Y.reset(predicted_Y, currentSpeed.vyMetersPerSecond * 0.4);
-    PID_X.setGoal(tp.getX());
-    PID_Y.setGoal(tp.getY());
-    PID_Rotation.setSetpoint(tp.getRotation().getDegrees());
-    DogLog.log("Align/Target Pose", targetPose.get());
     this.drivetrain = drivetrain;
-    this.targetPose = Pose;
+    this.targetPose = poseSupplier;
     this.driverController = driverController;
     this.elevatorHeight = elevatorHeight;
+
+    addRequirements(drivetrain);
   }
 
   /**
@@ -114,8 +99,25 @@ public class AlignToPose extends Command {
     return false;
   }
 
-  public Rotation2d getRotation() {
-    return drivetrain.getPose(0.0).getRotation();
+  @Override
+  public void initialize() {
+    startTime = System.currentTimeMillis();
+    Pose2d tp = targetPose.get();
+    ChassisSpeeds currentSpeed =
+        ChassisSpeeds.fromRobotRelativeSpeeds(
+            drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
+
+    double predicted_X =
+        (tp.getX() - drivetrain.getState().Pose.getX()) * 0.3 + drivetrain.getState().Pose.getX();
+    double predicted_Y =
+        (tp.getY() - drivetrain.getState().Pose.getY()) * 0.3 + drivetrain.getState().Pose.getY();
+
+    PID_X.reset(predicted_X, currentSpeed.vxMetersPerSecond * 0.4);
+    PID_Y.reset(predicted_Y, currentSpeed.vyMetersPerSecond * 0.4);
+    PID_X.setGoal(tp.getX());
+    PID_Y.setGoal(tp.getY());
+    PID_Rotation.setSetpoint(tp.getRotation().getDegrees());
+    DogLog.log("Align/Target Pose", targetPose.get());
   }
 
   @Override
