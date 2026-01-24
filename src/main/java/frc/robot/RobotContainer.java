@@ -188,7 +188,7 @@ public class RobotContainer {
         drivetrain.isInAllianceZone),
       Commands.parallel(
         shooter.runVelocity(60), // ballpark estimate, verify
-        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub) /* and [if facing hub] */.onlyIf(drivetrain.isInAllianceZone),
+        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal)).onlyIf(drivetrain.isInAllianceZone),
         indexer.index().onlyWhile(shooter.isAtGoalVelocity_Passing).onlyIf(drivetrain.isInAllianceZone.negate())        
       )
     );
