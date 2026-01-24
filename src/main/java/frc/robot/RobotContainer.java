@@ -54,7 +54,7 @@ public class RobotContainer {
       return Robot.DEV;
     } else if (RobotController.getSerialNumber().equals("1234")) {
       return Robot.COMP;
-    } else if (RobotController.getSerialNumber().equals("123")) {
+    } else if (RobotController.getSerialNumber().equals("03282BB2")) {
       return Robot.KITBOT;
     } else {
       new Alert(
