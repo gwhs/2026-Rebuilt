@@ -59,9 +59,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private Alert frontLeftEncoderConnectedAlert =
       new Alert("Front left encoder is not connected!", AlertType.kError);
   private Alert backLeftDriveConnectedAlert =
-      new Alert("back left drive motor is not connected!", AlertType.kError);
+      new Alert("Back left drive motor is not connected!", AlertType.kError);
   private Alert backLeftTurnConnectedAlert =
-      new Alert("back left turn motor is not connected!", AlertType.kError);
+      new Alert("Back left turn motor is not connected!", AlertType.kError);
   private Alert backleftEncoderConnectedAlert =
       new Alert("Back left encoder is not connected!", AlertType.kError);
   private Alert frontRightDriveConnectedAlert =

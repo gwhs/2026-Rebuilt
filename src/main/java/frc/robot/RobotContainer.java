@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.autonomous.Template;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
@@ -168,7 +167,6 @@ public class RobotContainer {
   }
 
   private void configureAutonomous() {
-    autoChooser.addOption("Template", new Template());
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
