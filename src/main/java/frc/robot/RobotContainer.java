@@ -26,6 +26,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
+import frc.robot.subsystems.swerve.TunerConstants_Mk4i;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -102,7 +103,7 @@ public class RobotContainer {
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         break;
       case KITBOT:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        drivetrain = TunerConstants_Mk4i.createDrivetrain();
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
