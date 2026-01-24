@@ -16,7 +16,7 @@ public class ShotCalculator {
     shootVelocityMap.put(1.0, 3600.0);
     shootVelocityMap.put(1.2, 3800.0);
     shootVelocityMap.put(2.0, 4000.0);
-    //^^ placeholder/testing data, add real control points later
+    // ^^ placeholder/testing data, add real control points later
   }
 
   public static double getShootVelocity(double distance) {

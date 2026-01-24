@@ -135,7 +135,6 @@ public class RobotContainer {
     SmartDashboard.putData(
         "auto rotate",
         drivetrain.setRotationCommand(RotationTarget.TST)); // fix rotate wobble when stop
-
   }
 
   /**
