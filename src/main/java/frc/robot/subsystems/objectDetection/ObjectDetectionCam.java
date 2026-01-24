@@ -103,6 +103,10 @@ public class ObjectDetectionCam {
     }
 
     for (PhotonPipelineResult result : results) {
+      if (!result.hasTargets()) {
+        continue;
+      }
+
       PhotonTrackedTarget targets = result.getBestTarget();
       if (targets == null) {
         continue;
