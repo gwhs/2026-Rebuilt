@@ -153,19 +153,19 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   public void periodic() {
-    DogLog.log("Shooter/Motor 1 Voltage: ", motor1Voltage.getValueAsDouble());
-    DogLog.log("Shooter/Motor 1 Stator Current: ", motor1StatorCurrent.getValueAsDouble());
-    DogLog.log("Shooter/Motor 1 Velocity: ", motor1Velocity.getValueAsDouble());
-    DogLog.log("Shooter/Motor 1 Temperature: ", motor1Temp.getValueAsDouble());
-    DogLog.log("Shooter/Motor 1 Acceleration: ", motor1Acceleration.getValueAsDouble());
-    DogLog.log("Shooter/Motor 1 Closed Loop Goal: ", motor1ClosedLoopGoal.getValueAsDouble());
+    DogLog.log("Shooter/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
+    DogLog.log("Shooter/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
+    DogLog.log("Shooter/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
+    DogLog.log("Shooter/Motor 1 Temperature", motor1Temp.getValueAsDouble());
+    DogLog.log("Shooter/Motor 1 Acceleration", motor1Acceleration.getValueAsDouble());
+    DogLog.log("Shooter/Motor 1 Closed Loop Goal", motor1ClosedLoopGoal.getValueAsDouble());
 
-    DogLog.log("Shooter/Motor 2 Voltage: ", motor1Voltage.getValueAsDouble());
-    DogLog.log("Shooter/Motor 2 Stator Current: ", motor1StatorCurrent.getValueAsDouble());
-    DogLog.log("Shooter/Motor 2 Velocity: ", motor1Velocity.getValueAsDouble());
-    DogLog.log("Shooter/Motor 2 Temperature: ", motor1Temp.getValueAsDouble());
-    DogLog.log("Shooter/Motor 2 Acceleration: ", motor1Acceleration.getValueAsDouble());
-    DogLog.log("Shooter/Motor 2 Closed Loop Goal: ", motor1ClosedLoopGoal.getValueAsDouble());
+    DogLog.log("Shooter/Motor 2 Voltage", motor2Voltage.getValueAsDouble());
+    DogLog.log("Shooter/Motor 2 Stator Current", motor2StatorCurrent.getValueAsDouble());
+    DogLog.log("Shooter/Motor 2 Velocity", motor2Velocity.getValueAsDouble());
+    DogLog.log("Shooter/Motor 2 Temperature", motor2Temp.getValueAsDouble());
+    DogLog.log("Shooter/Motor 2 Acceleration", motor2Acceleration.getValueAsDouble());
+    DogLog.log("Shooter/Motor 2 Closed Loop Goal", motor2ClosedLoopGoal.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
     motor2NotConnectedAlert.set(!motor2.isConnected());
