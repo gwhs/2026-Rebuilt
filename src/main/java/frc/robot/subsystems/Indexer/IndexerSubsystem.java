@@ -43,6 +43,15 @@ public class IndexerSubsystem extends SubsystemBase {
             });
   }
 
+  public Command reverse() {
+    return Commands.sequence(runVoltage(IndexerConstants.UNJAM_VOLTAGE), Commands.idle())
+    .finallyDo(
+      () -> {
+        indexerIO.runVoltage(0);
+        indexerVoltage = 0;
+      });
+  }
+
   @Override
   public void periodic() {
     indexerIO.periodic();
