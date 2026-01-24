@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
 import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
@@ -72,7 +73,7 @@ public class RobotContainer {
   private final BiConsumer<Runnable, Double> addPeriodic;
 
   private final CANBus rioCanbus = new CANBus("rio");
-  private final CANBus canivoreCanbus = new CANBus("CANivore");
+  private final CANBus canivoreCanbus = new CANBus("CAN_Network");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
   //
@@ -82,6 +83,9 @@ public class RobotContainer {
 
   private final ShooterSubsystem shooter =
       new ShooterSubsystem(rioCanbus, canivoreCanbus, signalList);
+
+  private final IndexerSubsystem indexer =
+      new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
