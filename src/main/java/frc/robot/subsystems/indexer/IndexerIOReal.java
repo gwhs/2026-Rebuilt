@@ -82,7 +82,7 @@ public class IndexerIOReal implements IndexerIO {
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
