@@ -54,9 +54,9 @@ public class DriveCommand extends Command {
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationalInput = MathUtil.applyDeadband(rotationalInput, deadband);
 
-    xInput = Math.pow(xInput, 1.5) * Math.signum(xInput);
-    yInput = Math.pow(yInput, 1.5) * Math.signum(yInput);
-    rotationalInput = Math.pow(rotationalInput, 1.5) * Math.signum(rotationalInput);
+    xInput = Math.pow(xInput, 1.5) * Math.signum(xInput) * Math.abs(xInput);
+    yInput = Math.pow(yInput, 1.5) * Math.signum(yInput) * Math.abs(yInput);
+    rotationalInput = Math.pow(rotationalInput, 1.5) * Math.signum(rotationalInput) * Math.abs(rotationalInput);
 
     boolean hasRotationInput = Math.abs(rotationalInput) > 0.1;
     if (drivetrain.getRotationTarget() != RotationTarget.NORMAL
