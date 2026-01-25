@@ -29,3 +29,15 @@ The roborio has a serial number that we use to configure the drivetrain and othe
 * Test the robot gets created with all the correct setup.
 
 
+
+
+## Need to disable a subsystem quickly
+ When a subsystem needs to be removed because it is non-functiona, the code needs to change.
+### Diagnose
+A non functional subsystem cannot be commented out, as this will cause compile errors.
+### What to do
+* identify the subsystem to remove.
+* in the subsystem constructor, find the place the subsystem IO class is created
+* replace the constructor of `SystemIOReal` with `SystemIODisabled`
+* if there is no Disabled version, copy the `SystemIOSim` class and remove all the simulation code and logic
+
