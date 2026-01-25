@@ -189,10 +189,9 @@ public class RobotContainer {
         .and(drivetrain.isOnDepotSide)
         .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
     controller
-    .rightBumper()
-    .onTrue(drivetrain.setSlowMode(true))
-    .onFalse(drivetrain.setSlowMode(false));
-
+        .rightBumper()
+        .onTrue(drivetrain.setSlowMode(true))
+        .onFalse(drivetrain.setSlowMode(false));
   }
 
   public Command getAutonomousCommand() {
@@ -298,8 +297,7 @@ public class RobotContainer {
 
   private Command disableHandler() {
     return Commands.sequence(
-    shooter.runVoltage(0.0),
-    drivetrain.setRotationCommand(RotationTarget.NORMAL)
-    ).ignoringDisable(true);
+            shooter.runVoltage(0.0), drivetrain.setRotationCommand(RotationTarget.NORMAL))
+        .ignoringDisable(true);
   }
 }
