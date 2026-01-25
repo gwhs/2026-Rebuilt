@@ -28,6 +28,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
+import frc.robot.subsystems.swerve.TunerConstants_Mk4i;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -54,7 +55,7 @@ public class RobotContainer {
       return Robot.DEV;
     } else if (RobotController.getSerialNumber().equals("1234")) {
       return Robot.COMP;
-    } else if (RobotController.getSerialNumber().equals("123")) {
+    } else if (RobotController.getSerialNumber().equals("03282BB2")) {
       return Robot.KITBOT;
     } else {
       new Alert(
@@ -76,13 +77,11 @@ public class RobotContainer {
   private final CANBus canivoreCanbus = new CANBus("CAN_Network");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
-  //
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-  private final ShooterSubsystem shooter =
-      new ShooterSubsystem(rioCanbus, canivoreCanbus, signalList);
+  private final ShooterSubsystem shooter;
 
   private final IndexerSubsystem indexer =
       new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
@@ -107,7 +106,7 @@ public class RobotContainer {
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         break;
       case KITBOT:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        drivetrain = TunerConstants_Mk4i.createDrivetrain();
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
@@ -116,6 +115,14 @@ public class RobotContainer {
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         break;
     }
+
+    shooter =
+        new ShooterSubsystem(
+            rioCanbus,
+            canivoreCanbus,
+            signalList,
+            () -> drivetrain.getState().Pose,
+            () -> drivetrain.getState().Speeds);
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
