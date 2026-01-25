@@ -64,7 +64,8 @@ public class DriveCommand extends Command {
       robotHeadingController.setSetpoint(drivetrain.getGoalHeading());
 
       double pidOutput = robotHeadingController.calculate(currentRobotHeading);
-      rotationalInput = pidOutput;
+      
+      rotationalInput = MathUtil.clamp(pidOutput, -0.5, 0.5);
 
       DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
       DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
