@@ -103,6 +103,10 @@ public class ObjectDetectionCam {
     }
 
     for (PhotonPipelineResult result : results) {
+      if (!result.hasTargets()) {
+        continue;
+      }
+
       PhotonTrackedTarget targets = result.getBestTarget();
       if (targets == null) {
         continue;
@@ -168,7 +172,7 @@ public class ObjectDetectionCam {
 
   public boolean filterResults(Pose3d detectedTargetPose) {
 
-    // If vision’s detected target is below the ground/above tolerable height
+    // If vision's detected target is below the ground/above tolerable height
     // double upperZBound = ObjectDetectionConstants.UPPER_Z_TOLERANCE;
     // double lowerZBound = ObjectDetectionConstants.LOWER_Z_TOLERANCE;
     // if (detectedTargetPose.getZ() > upperZBound
