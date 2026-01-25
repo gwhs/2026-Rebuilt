@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.nio.file.DirectoryNotEmptyException;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -15,7 +17,6 @@ public class FieldConstants {
   public static final double ALLIANCE_ZONE_LINE_BLUE = 3.977894;
   public static final double ALLIANCE_ZONE_LINE_RED = 12.535154;
 
-  public static double fuelSpeed = 9.144;
   public static double BLUE_DEPOT_PASSING_X = 1.160;
   public static double BLUE_DEPOT_PASSING_Y = 6.896;
   public static double RED_OUTPOST_PASSING_X = 13.986;
@@ -33,4 +34,11 @@ public class FieldConstants {
       new Translation2d(RED_OUTPOST_PASSING_X, RED_OUTPOST_PASSING_Y);
   public static Translation2d BLUE_OUTPOST_PASSING =
       new Translation2d(BLUE_OUTPOST_PASSING_X, BLUE_OUTPOST_PASSING_Y);
+
+  public static final double shooterAngle = 60;
+  public static final double hubHeight = 1.8;
+  public static final double gravitationalAcc = 9.80665;
+  public static final double shooterHeight = 0.635;
+  public static final double motorToFlywheelGearRatio = 0.739;
+  public static final double flywheelDiameter = 0.0762;
 }

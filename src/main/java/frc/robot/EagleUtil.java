@@ -1,11 +1,14 @@
 package frc.robot;
 
+import java.util.Vector;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.subsystems.shooter.ShooterIOReal;
 
 public class EagleUtil {
 
@@ -69,20 +72,35 @@ public class EagleUtil {
     return aimpoint;
   }
 
-  public static Pose2d calcAimpoint(
-      Pose2d robotPose, Pose2d newRobotPose, Translation2d target, ChassisSpeeds robot) {
-    double dis = getRobotTargetDistance(newRobotPose, target);
-    double x = robotPose.getX() + target.getX() - newRobotPose.getX() + getFuelDx(robot, dis);
-    double y = robotPose.getY() + target.getY() - newRobotPose.getY() + getFuelDy(robot, dis);
-    Pose2d aimpoint = new Pose2d(x, y, Rotation2d.kZero);
-    return aimpoint;
+  public static double getShooterVelocity(double distanceToTarget)
+  {
+    double v = Math.sqrt((FieldConstants.gravitationalAcc * distanceToTarget * distanceToTarget) 
+    / (2 * Math.cos(FieldConstants.shooterAngle) * Math.cos(FieldConstants.shooterAngle) 
+    * (distanceToTarget * Math.tan(FieldConstants.shooterAngle) - (FieldConstants.hubHeight - FieldConstants.shooterHeight))));
+    return v;
   }
 
-  public static double getFuelDx(ChassisSpeeds robot, double distanceToTarget) {
-    return robot.vxMetersPerSecond * distanceToTarget / FieldConstants.fuelSpeed;
+  public static double rpmToVelocity(double rpm)
+  {
+    double flywheelRPM = rpm * FieldConstants.motorToFlywheelGearRatio;
+    return Math.PI * FieldConstants.flywheelDiameter * flywheelRPM;
   }
 
-  public static double getFuelDy(ChassisSpeeds robot, double distanceToTarget) {
-    return robot.vyMetersPerSecond * distanceToTarget / FieldConstants.fuelSpeed;
+  public static double velocityToRPM(double v)
+  {
+    double flywheelRPM = v / Math.PI / FieldConstants.flywheelDiameter;
+    return flywheelRPM / FieldConstants.motorToFlywheelGearRatio;
+  }
+
+  public static double sotfVector(Translation2d target, Pose2d robotPosFuture)
+  {
+    Translation2d tar = target.minus(robotPosFuture.getTranslation());
+    double dist = tar.getNorm();
+    double shootVelocity = getShooterVelocity(dist);
+    Translation2d tarVec = tar.div(dist).times(shootVelocity);
+    Translation2d robotVelocityFieldCentric = new Translation2d(0, 0);
+    Translation2d shotVec = tarVec.minus(robotVelocityFieldCentric);
+    double shooterRPM = 0; //update
+    return shooterRPM;
   }
 }
