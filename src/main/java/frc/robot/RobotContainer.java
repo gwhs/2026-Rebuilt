@@ -75,13 +75,11 @@ public class RobotContainer {
   private final CANBus canivoreCanbus = new CANBus("CAN_Network");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
-  //
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-  private final ShooterSubsystem shooter =
-      new ShooterSubsystem(rioCanbus, canivoreCanbus, signalList);
+  private final ShooterSubsystem shooter;
 
   private final IndexerSubsystem indexer =
       new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
@@ -115,6 +113,14 @@ public class RobotContainer {
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         break;
     }
+
+    shooter =
+        new ShooterSubsystem(
+            rioCanbus,
+            canivoreCanbus,
+            signalList,
+            () -> drivetrain.getState().Pose,
+            () -> drivetrain.getState().Speeds);
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
