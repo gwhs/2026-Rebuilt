@@ -199,7 +199,7 @@ public class RobotContainer {
   public Command shootHub() {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
-        shooter.runVelocity(60), // verify
+        shooter.runVelocity(80), // verify
         indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal)));
   }
 
