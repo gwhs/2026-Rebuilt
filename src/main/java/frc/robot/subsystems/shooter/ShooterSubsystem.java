@@ -78,6 +78,9 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterIO.periodic();
     DogLog.log("Shooter/ Current Velocity", shooterIO.getVelocity());
     DogLog.log("Shooter/Goal Velocity", velocityGoal);
+    DogLog.log("Shooter/At Goal Velocity Hub", this.isAtGoalVelocity_Hub.getAsBoolean());
+    DogLog.log("Shooter/At Goal Velocity Passing", this.isAtGoalVelocity_Passing.getAsBoolean());
+    
   }
 
   /**

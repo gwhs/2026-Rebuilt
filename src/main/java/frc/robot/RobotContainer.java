@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
@@ -155,6 +156,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    RobotModeTriggers.disabled().onTrue(disableHandler());
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
     controller
@@ -186,6 +188,11 @@ public class RobotContainer {
         .or(drivetrain.isInOpponentAllianceZone)
         .and(drivetrain.isOnDepotSide)
         .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+    controller
+    .rightBumper()
+    .onTrue(drivetrain.setSlowMode(true))
+    .onFalse(drivetrain.setSlowMode(false));
+
   }
 
   public Command getAutonomousCommand() {
@@ -287,5 +294,12 @@ public class RobotContainer {
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
+  }
+
+  private Command disableHandler() {
+    return Commands.sequence(
+    shooter.runVoltage(0.0),
+    drivetrain.setRotationCommand(RotationTarget.NORMAL)
+    ).ignoringDisable(true);
   }
 }
