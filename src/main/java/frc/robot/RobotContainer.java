@@ -73,7 +73,7 @@ public class RobotContainer {
   private final BiConsumer<Runnable, Double> addPeriodic;
 
   private final CANBus rioCanbus = new CANBus("rio");
-  private final CANBus canivoreCanbus = new CANBus("CANivore");
+  private final CANBus canivoreCanbus = new CANBus("CAN_Network");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
   //

@@ -18,7 +18,6 @@ public class IndexerSubsystem extends SubsystemBase {
   private double indexerVoltage;
 
   public IndexerSubsystem(CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
-
     if (RobotBase.isSimulation()) {
       indexerIO = new IndexerIOSim();
     } else {
