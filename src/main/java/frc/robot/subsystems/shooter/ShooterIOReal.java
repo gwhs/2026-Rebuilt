@@ -48,8 +48,8 @@ public class ShooterIOReal implements ShooterIO {
 
   public ShooterIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {
-    motor1 = new TalonFX(ShooterConstants.MOTOR_1_ID, rioCanbus);
-    motor2 = new TalonFX(ShooterConstants.MOTOR_2_ID, rioCanbus);
+    motor1 = new TalonFX(ShooterConstants.MOTOR_1_ID, canivoreCanbus);
+    motor2 = new TalonFX(ShooterConstants.MOTOR_2_ID, canivoreCanbus);
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
