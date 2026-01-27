@@ -213,7 +213,28 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                         : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
               });
+              
     }
+    DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
+    DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
+    DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
+    DogLog.log("Current Zone/On Depot Side", isOnDepotSide.getAsBoolean());
+    DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
+    DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
+
+    frontLeftDriveConnectedAlert.set(!frontLeftDrive.isConnected());
+    frontLeftTurnConnectedAlert.set(!frontLeftTurn.isConnected());
+    backLeftDriveConnectedAlert.set(!backLeftDrive.isConnected());
+    backLeftTurnConnectedAlert.set(!backLeftTurn.isConnected());
+    frontRightDriveConnectedAlert.set(!frontRightDrive.isConnected());
+    frontRightTurnConnectedAlert.set(!frontRightTurn.isConnected());
+    backRightDriveConnectedAlert.set(!backRightDrive.isConnected());
+    backRightTurnConnectedAlert.set(!backRightTurn.isConnected());
+    frontLeftEncoderConnectedAlert.set(!frontLeftEncoder.isConnected());
+    backleftEncoderConnectedAlert.set(!backLeftEncoder.isConnected());
+    frontrightEncoderConnectedAlert.set(!frontRightEncoder.isConnected());
+    backRightEncoderConnectedAlert.set(!backRightEncoder.isConnected());
+    pigeonConnectedAlert.set(!pigeon.isConnected());
   }
 
   private double defualtSlowFactor = 0.25;
