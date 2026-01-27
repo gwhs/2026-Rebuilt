@@ -114,7 +114,6 @@ public class RobotContainer {
         break;
     }
 
-
     shooter =
         new ShooterSubsystem(
             rioCanbus,
