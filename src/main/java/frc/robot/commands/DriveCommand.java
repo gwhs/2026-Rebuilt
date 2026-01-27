@@ -58,6 +58,10 @@ public class DriveCommand extends Command {
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationalInput = MathUtil.applyDeadband(rotationalInput, deadband);
 
+    xInput = Math.pow(Math.abs(xInput), 1.5) * Math.signum(xInput);
+    yInput = Math.pow(Math.abs(yInput), 1.5) * Math.signum(yInput);
+    rotationalInput = Math.pow(Math.abs(rotationalInput), 1.5) * Math.signum(rotationalInput);
+
     boolean hasRotationInput = Math.abs(rotationalInput) > 0.1;
     if (drivetrain.getRotationTarget() != RotationTarget.NORMAL
         && !hasRotationInput
@@ -68,7 +72,8 @@ public class DriveCommand extends Command {
       robotHeadingController.setSetpoint(drivetrain.getGoalHeading());
 
       double pidOutput = robotHeadingController.calculate(currentRobotHeading);
-      rotationalInput = pidOutput;
+
+      rotationalInput = MathUtil.clamp(pidOutput, -0.5, 0.5);
 
       DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
       DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
