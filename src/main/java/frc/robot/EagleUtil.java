@@ -83,6 +83,30 @@ public class EagleUtil {
     return aimpoint;
   }
 
+  public static Translation2d getRobotTarget(Pose2d robotPose) {
+    if (isRedAlliance()) {
+      if (isInAllianceZone(robotPose)) {
+        return FieldConstants.RED_HUB;
+      } else {
+        if (isOnOutpostSide(robotPose)) {
+          return FieldConstants.RED_OUTPOST_PASSING;
+        } else {
+          return FieldConstants.RED_DEPOT_PASSING;
+        }
+      }
+    } else {
+      if (isInAllianceZone(robotPose)) {
+        return FieldConstants.BLUE_HUB;
+      } else {
+        if (isOnOutpostSide(robotPose)) {
+          return FieldConstants.BLUE_OUTPOST_PASSING;
+        } else {
+          return FieldConstants.BLUE_DEPOT_PASSING;
+        }
+      }
+    }
+  }
+
   public static Pose2d calcAimpoint(
       Pose2d robotPose, Pose2d newRobotPose, Translation2d target, ChassisSpeeds robot) {
     double dis = getRobotTargetDistance(newRobotPose, target);
