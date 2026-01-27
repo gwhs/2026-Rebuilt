@@ -50,6 +50,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     TST,
   }
 
+  private Translation2d hub =
+      EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
+
+  public Trigger IN_SHOOTING_RANGE = new Trigger(
+            () -> {return !goingToShootingRange() && getState().Pose.getTranslation().getDistance(hub) == 2.0;}
+	      );
   private Pose2d shootPose;
   private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
