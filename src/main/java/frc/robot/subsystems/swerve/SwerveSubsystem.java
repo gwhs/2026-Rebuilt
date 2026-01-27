@@ -52,13 +52,13 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     TST,
   }
 
-
+private double HUB_RADIUS = 2.0;
 
 public Trigger IN_SHOOTING_RANGE =
       new Trigger(
           () -> {
             return !goingToShootingRange()
-                && Math.floor(getState().Pose.getTranslation().getDistance(EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB)) == 2.0;
+                && Math.floor(getState().Pose.getTranslation().getDistance(EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB)) == HUB_RADIUS;
           });
 
 private Alert frontLeftDriveConnectedAlert =
