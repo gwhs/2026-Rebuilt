@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.nio.file.DirectoryNotEmptyException;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 

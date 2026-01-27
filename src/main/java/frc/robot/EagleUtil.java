@@ -1,14 +1,10 @@
 package frc.robot;
 
-import java.util.Vector;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.subsystems.shooter.ShooterIOReal;
 
 public class EagleUtil {
 
@@ -72,35 +68,25 @@ public class EagleUtil {
     return aimpoint;
   }
 
-  public static double getShooterVelocity(double distanceToTarget)
-  {
-    double v = Math.sqrt((FieldConstants.gravitationalAcc * distanceToTarget * distanceToTarget) 
-    / (2 * Math.cos(FieldConstants.shooterAngle) * Math.cos(FieldConstants.shooterAngle) 
-    * (distanceToTarget * Math.tan(FieldConstants.shooterAngle) - (FieldConstants.hubHeight - FieldConstants.shooterHeight))));
+  public static double getShooterVelocity(double distanceToTarget) {
+    double v =
+        Math.sqrt(
+            (FieldConstants.gravitationalAcc * distanceToTarget * distanceToTarget)
+                / (2
+                    * Math.cos(FieldConstants.shooterAngle)
+                    * Math.cos(FieldConstants.shooterAngle)
+                    * (distanceToTarget * Math.tan(FieldConstants.shooterAngle)
+                        - (FieldConstants.hubHeight - FieldConstants.shooterHeight))));
     return v;
   }
 
-  public static double rpmToVelocity(double rpm)
-  {
+  public static double rpmToVelocity(double rpm) {
     double flywheelRPM = rpm * FieldConstants.motorToFlywheelGearRatio;
     return Math.PI * FieldConstants.flywheelDiameter * flywheelRPM;
   }
 
-  public static double velocityToRPM(double v)
-  {
+  public static double velocityToRPM(double v) {
     double flywheelRPM = v / Math.PI / FieldConstants.flywheelDiameter;
     return flywheelRPM / FieldConstants.motorToFlywheelGearRatio;
-  }
-
-  public static double sotfVector(Translation2d target, Pose2d robotPosFuture)
-  {
-    Translation2d tar = target.minus(robotPosFuture.getTranslation());
-    double dist = tar.getNorm();
-    double shootVelocity = getShooterVelocity(dist);
-    Translation2d tarVec = tar.div(dist).times(shootVelocity);
-    Translation2d robotVelocityFieldCentric = new Translation2d(0, 0);
-    Translation2d shotVec = tarVec.minus(robotVelocityFieldCentric);
-    double shooterRPM = 0; //update
-    return shooterRPM;
   }
 }

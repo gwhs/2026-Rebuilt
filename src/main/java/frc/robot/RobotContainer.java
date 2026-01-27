@@ -8,6 +8,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
@@ -119,6 +121,7 @@ public class RobotContainer {
 
     configureBindings();
     configureAutonomous();
+    configureFuelSim();
     drivetrain.setDefaultCommand(defualtDriveCommand);
 
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
@@ -129,6 +132,13 @@ public class RobotContainer {
     SmartDashboard.putData(
         "auto rotate",
         drivetrain.setRotationCommand(RotationTarget.TST)); // fix rotate wobble when stop
+    SmartDashboard.putData(
+        Commands.runOnce(
+                () -> {
+                  FuelSim.getInstance().clearFuel();
+                })
+            .withName("Reset Fuel")
+            .ignoringDisable(true));
   }
 
   /**
@@ -142,6 +152,35 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+    controller
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  Translation3d initPosition =
+                      new Translation3d(
+                          drivetrain.getState().Pose.getX(),
+                          drivetrain.getState().Pose.getY(),
+                          0.635);
+                  double dst =
+                      EagleUtil.getRobotTargetDistance(
+                          drivetrain.getState().Pose, FieldConstants.RED_HUB);
+                  double d = EagleUtil.getShooterVelocity(dst);
+                  DogLog.log("velocity of fuel", d);
+                  DogLog.log("distance to tar", dst);
+
+                  double a = drivetrain.getState().Pose.getRotation().getRadians();
+                  Translation3d initVelocity =
+                      new Translation3d(
+                          d * Math.cos(Math.PI / 3) * Math.cos(a),
+                          d * Math.cos(Math.PI / 3) * Math.sin(a),
+                          d * Math.sin(Math.PI / 3) * Math.sin(Math.PI / 3));
+                  FuelSim.getInstance()
+                      .spawnFuel(
+                          initPosition,
+                          initVelocity); // spawns a fuel with a given position and velocity (both
+                  // field centric, represented as vectors by Translation3d)
+                }));
   }
 
   public Command getAutonomousCommand() {
@@ -150,6 +189,21 @@ public class RobotContainer {
 
   private void configureAutonomous() {
     SmartDashboard.putData("autonomous", autoChooser);
+  }
+
+  private void configureFuelSim() {
+    FuelSim instance = FuelSim.getInstance();
+    // instance.spawnStartingFuel();
+    instance.registerRobot(
+        0.660, // from left to right
+        0.711, // from front to back
+        0.127, // from floor to top of bumpers
+        () -> drivetrain.getState().Pose, // Supplier<Pose2d> of robot pose
+        () ->
+            drivetrain.getState()
+                .Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+
+    instance.start();
   }
 
   public void periodic() {
@@ -196,5 +250,7 @@ public class RobotContainer {
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
+
+    FuelSim.getInstance().updateSim();
   }
 }
