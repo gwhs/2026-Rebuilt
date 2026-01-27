@@ -10,10 +10,8 @@ public class GroundIntakeLinearExtensionIOSim implements GroundIntakeLinearExten
   public void runPosition(double rotation) {}
 
   public double getRotation() {
-      return 0;
+    return 0;
   }
 
-    public void setPosition(double newValue) {
-  }
-
+  public void setPosition(double newValue) {}
 }

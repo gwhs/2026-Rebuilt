@@ -10,7 +10,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -35,15 +34,13 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0).withEnableFOC(true);
 
-  private final Alert motorNotConnectedAlert = 
-  new Alert("Motor 1 Not Connected", AlertType.kError);
+  private final Alert motorNotConnectedAlert = new Alert("Motor 1 Not Connected", AlertType.kError);
 
   @SuppressWarnings("resource")
   public GroundIntakeLinearExtensionIOReal(
       CANBus rioCanbus, CANBus canivoreCanBus, StatusSignalCollection statusSignalCollection) {
     motor = new TalonFX(GroundIntakeLinearExtensionConstants.MOTOR_ID);
 
-    
     motorVoltage = motor.getMotorVoltage();
     motorStatorCurrent = motor.getStatorCurrent();
     motorVelocity = motor.getVelocity();
@@ -70,7 +67,6 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
         motorAcceleration,
         motorClosedLoopGoal,
         motorPosition);
-
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
@@ -101,7 +97,7 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
     talonFXConfig.Slot0.kG = 0;
     talonFXConfig.Slot0.kA = 0;
     talonFXConfig.Slot0.kV = 0.1125;
-    
+
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
       status = motor.getConfigurator().apply(talonFXConfig);
@@ -119,17 +115,20 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
   @Override
   public void periodic() {
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Voltage", motorVoltage.getValueAsDouble());
-    DogLog.log("GroundIntakeLinearExtension/Motor 1 Stator Current", motorStatorCurrent.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakeLinearExtension/Motor 1 Stator Current",
+        motorStatorCurrent.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Velocity", motorVelocity.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Temperature", motorTemp.getValueAsDouble());
-    DogLog.log("GroundIntakeLinearExtension/Motor 1 Acceleration", motorAcceleration.getValueAsDouble());
-    DogLog.log("GroundIntakeLinearExtension/Motor 1 Closed Loop Goal", motorClosedLoopGoal.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakeLinearExtension/Motor 1 Acceleration", motorAcceleration.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakeLinearExtension/Motor 1 Closed Loop Goal",
+        motorClosedLoopGoal.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Position", motorPosition.getValueAsDouble());
 
     motorNotConnectedAlert.set(!motor.isConnected());
-
   }
-
 
   @Override
   public void runVoltage(double volts) {
@@ -140,7 +139,7 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
     motor.setControl(request.withPosition(rotation));
   }
 
-  public double getRotation(){
+  public double getRotation() {
     return motorPosition.getValueAsDouble();
   }
 

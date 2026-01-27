@@ -3,6 +3,7 @@ package frc.robot.subsystems.GroundIntakeLinearExtension;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
@@ -24,5 +25,21 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     groundIntakeLinearExtensionIO.periodic();
+  }
+
+  public Command extend() {
+    return this.runOnce(
+        () -> {
+          groundIntakeLinearExtensionIO.runPosition(
+              GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
+        });
+  }
+
+  public Command retract() {
+    return this.runOnce(
+        () -> {
+          groundIntakeLinearExtensionIO.runPosition(
+              GroundIntakeLinearExtensionConstants.RETRACT_ROTATION);
+        });
   }
 }

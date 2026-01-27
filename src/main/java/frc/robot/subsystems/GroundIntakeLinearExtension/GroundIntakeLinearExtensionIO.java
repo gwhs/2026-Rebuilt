@@ -14,5 +14,4 @@ public interface GroundIntakeLinearExtensionIO {
   public double getRotation();
 
   public void setPosition(double newValue);
-
 }
