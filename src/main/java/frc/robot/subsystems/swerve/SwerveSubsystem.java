@@ -82,6 +82,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double translationSlowFactor = 1;
   private double rotationalSlowFactor = 1;
   private boolean slowMode = false;
+  private boolean shootingRange = false;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -104,13 +105,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
-    SmartDashboard.putData("go to range", goToShootingRange());
-    SmartDashboard.putData(
-        "ATP works?",
-        driveToPose(
-            () -> {
-              return new Pose2d(0.0, 0.0, Rotation2d.kZero);
-            }));
+    SmartDashboard.putData("go to shooting range", setShootingRange(true));
+    SmartDashboard.putData("stop going to shooting range", setShootingRange(false));
   }
 
   private void configureAutoBuilder() {
@@ -183,12 +179,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
     Translation2d HUB =
         EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
-    this.shootPose =
-        EagleUtil.getCircleLineIntersectionPoint(
-            getState().Pose.getTranslation(),
-            HUB,
-            EagleUtil.calculateMidpoint(getState().Pose.getTranslation(), HUB),
-            2.0);
     DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
@@ -219,6 +209,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         });
   }
 
+  public Command setShootingRange(boolean enable) {
+
+    return Commands.runOnce(
+        () -> {
+          this.shootingRange = enable;
+        });
+  }
+
   public double getTranslationSlowFactor() {
     return translationSlowFactor;
   }
@@ -229,6 +227,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public boolean isSlowMode() {
     return slowMode;
+  }
+
+  public boolean goingToShootingRange() {
+    return shootingRange;
   }
 
   public boolean getdisableAutoRotate() {
@@ -267,7 +269,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 0;
       case HUB:
         return EagleUtil.getRotationalHub(getState().Pose);
-      case TST: // test case for shoot on move
+      case TST:
         return EagleUtil.getRobotTargetAngle(
             getState().Pose,
             EagleUtil.calcAimpoint(
@@ -309,13 +311,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         this.controller);
   }
 
-  /*
-   * the idea behind this command is that it:
-   * 1. saves current rotation target,
-   * 2. resets the rotation target to normal
-   * 3. does whatever inbetween thing needs to be done while we aren't aligning
-   * 4. set the target back to the previous target.
-   */
   public Command temporarilyDisableRotation() {
     return Commands.run(
             () -> {
@@ -325,13 +320,5 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
             () -> {
               this.disableAutoRotate = false;
             });
-  }
-
-  public Command goToShootingRange() {
-
-    return this.driveToPose(
-        () -> {
-          return this.shootPose;
-        });
   }
 }

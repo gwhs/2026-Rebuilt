@@ -195,7 +195,6 @@ public class RobotContainer {
     DogLog.log("aimpoint", rt);
     DogLog.log("estPos", r2);
 
-    // log object
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
     if (obj.isPresent()) {

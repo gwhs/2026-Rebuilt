@@ -8,8 +8,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.EagleUtil;
+import frc.robot.FieldConstants;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 
@@ -28,6 +31,7 @@ public class DriveCommand extends Command {
   private final double deadband = 0.1;
 
   public final PIDController robotHeadingController = new PIDController(0.05, 0, 0);
+  public final PIDController shootingRangeDistance = new PIDController(0.3, 0, 0);
 
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -69,6 +73,27 @@ public class DriveCommand extends Command {
       DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
       DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
       DogLog.log("Drive Command/Current Robot Heading (degree)", currentRobotHeading);
+    }
+
+    if (drivetrain.goingToShootingRange()) {
+      Translation2d hub =
+          EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
+      Translation2d robotToHub = hub.minus(drivetrain.getState().Pose.getTranslation());
+      shootingRangeDistance.setSetpoint(2.0);
+
+      double shootingDistPIDOut =
+          shootingRangeDistance.calculate(
+              EagleUtil.getRobotTargetDistance(drivetrain.getState().Pose, hub));
+      Translation2d unitVec = robotToHub.div(robotToHub.getNorm());
+      Translation2d goalVel = unitVec.times(shootingDistPIDOut);
+
+      if (!EagleUtil.isRedAlliance()) {
+        xInput -= goalVel.getX();
+        yInput -= goalVel.getY();
+      } else {
+        xInput += goalVel.getX();
+        yInput += goalVel.getY();
+      }
     }
 
     if (drivetrain.isSlowMode()) {
