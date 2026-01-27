@@ -20,11 +20,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -52,16 +52,24 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     TST,
   }
 
-private double HUB_RADIUS = 2.0;
+  private double HUB_RADIUS = 2.0;
 
-public Trigger IN_SHOOTING_RANGE =
+  public Trigger IN_SHOOTING_RANGE =
       new Trigger(
           () -> {
             return !goingToShootingRange()
-                && Math.floor(getState().Pose.getTranslation().getDistance(EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB)) == HUB_RADIUS;
+                && Math.floor(
+                        getState()
+                            .Pose
+                            .getTranslation()
+                            .getDistance(
+                                EagleUtil.isRedAlliance() == true
+                                    ? FieldConstants.RED_HUB
+                                    : FieldConstants.BLUE_HUB))
+                    == HUB_RADIUS;
           });
 
-private Alert frontLeftDriveConnectedAlert =
+  private Alert frontLeftDriveConnectedAlert =
       new Alert("Front left drive motor is not connected!", AlertType.kError);
   private Alert frontLeftTurnConnectedAlert =
       new Alert("Front left turn motor is not connected!", AlertType.kError);
@@ -100,7 +108,6 @@ private Alert frontLeftDriveConnectedAlert =
   private TalonFX backRightTurn = this.getModule(3).getSteerMotor();
   private CANcoder backRightEncoder = this.getModule(3).getEncoder();
   private Pigeon2 pigeon = this.getPigeon2();
-
 
   private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
@@ -244,7 +251,6 @@ private Alert frontLeftDriveConnectedAlert =
     frontrightEncoderConnectedAlert.set(!frontRightEncoder.isConnected());
     backRightEncoderConnectedAlert.set(!backRightEncoder.isConnected());
     pigeonConnectedAlert.set(!pigeon.isConnected());
-
   }
 
   private double defualtSlowFactor = 0.25;

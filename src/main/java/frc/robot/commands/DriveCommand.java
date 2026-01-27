@@ -4,9 +4,8 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
-
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -83,15 +82,14 @@ public class DriveCommand extends Command {
     }
 
     if (drivetrain.goingToShootingRange()) {
-      SwerveDriveState state = drivetrain.getState(); 
+      SwerveDriveState state = drivetrain.getState();
       Translation2d hub =
           EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
       Translation2d robotToHub = hub.minus(state.Pose.getTranslation());
       shootingRangeDistance.setSetpoint(2.0);
 
       double shootingDistPIDOut =
-          shootingRangeDistance.calculate(
-              EagleUtil.getRobotTargetDistance(state.Pose, hub));
+          shootingRangeDistance.calculate(EagleUtil.getRobotTargetDistance(state.Pose, hub));
       Translation2d unitVec = robotToHub.div(robotToHub.getNorm());
       Translation2d goalVel = unitVec.times(shootingDistPIDOut);
 
