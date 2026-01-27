@@ -27,6 +27,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
+import frc.robot.subsystems.swerve.TunerConstants_Mk4i;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -57,7 +58,7 @@ public class RobotContainer {
       return Robot.DEV;
     } else if (serialNumber.equals("1234")) {
       return Robot.COMP;
-    } else if (serialNumber.equals("123")) {
+    } else if (serialNumber.equals("03282BB2")) {
       return Robot.KITBOT;
     } else {
       new Alert(
@@ -78,7 +79,6 @@ public class RobotContainer {
   private final CANBus canivoreCanbus = new CANBus("CAN_Network");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
-  //
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -103,27 +103,27 @@ public class RobotContainer {
     switch (getRobot()) {
       case COMP:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        shooter = ShooterSubsystem.createReal(rioCanbus, canivoreCanbus, signalList, drivetrain);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createDisabled();
+        shooter = ShooterSubsystem.createDisabled(drivetrain);
         break;
       case KITBOT:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createDisabled();
+        drivetrain = TunerConstants_Mk4i.createDrivetrain();
+        shooter = ShooterSubsystem.createDisabled(drivetrain);
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
-        shooter = ShooterSubsystem.createDisabled();
+        shooter = ShooterSubsystem.createDisabled(drivetrain);
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createSim();
+        shooter = ShooterSubsystem.createSim(drivetrain);
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createDisabled();
+        shooter = ShooterSubsystem.createDisabled(drivetrain);
         break;
     }
 
