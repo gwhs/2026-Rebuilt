@@ -2,7 +2,6 @@ package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -20,13 +19,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -108,8 +104,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
-    SmartDashboard.putData("go to shooting range", setShootingRange(true));
-    SmartDashboard.putData("stop going to shooting range", setShootingRange(false));
   }
 
   private void configureAutoBuilder() {
@@ -189,20 +183,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
     DogLog.log("Dist to hub", HUB.getDistance(getState().Pose.getTranslation()));
     DogLog.log("Shooty Pose", this.shootPose);
-
-    frontLeftDriveConnectedAlert.set(!frontLeftDrive.isConnected());
-    frontLeftTurnConnectedAlert.set(!frontLeftTurn.isConnected());
-    backLeftDriveConnectedAlert.set(!backLeftDrive.isConnected());
-    backLeftTurnConnectedAlert.set(!backLeftTurn.isConnected());
-    frontRightDriveConnectedAlert.set(!frontRightDrive.isConnected());
-    frontRightTurnConnectedAlert.set(!frontRightTurn.isConnected());
-    backRightDriveConnectedAlert.set(!backRightDrive.isConnected());
-    backRightTurnConnectedAlert.set(!backRightTurn.isConnected());
-    frontLeftEncoderConnectedAlert.set(!frontLeftEncoder.isConnected());
-    backleftEncoderConnectedAlert.set(!backLeftEncoder.isConnected());
-    frontrightEncoderConnectedAlert.set(!frontRightEncoder.isConnected());
-    backRightEncoderConnectedAlert.set(!backRightEncoder.isConnected());
-    pigeonConnectedAlert.set(!pigeon.isConnected());
   }
 
   private double defualtSlowFactor = 0.25;

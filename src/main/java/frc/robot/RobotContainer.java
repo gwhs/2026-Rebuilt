@@ -116,14 +116,12 @@ public class RobotContainer {
         break;
     }
 
-<<<<<<< HEAD
     IN_SHOOTING_RANGE =
         new Trigger(
             () -> {
               return !drivetrain.goingToShootingRange()
                   && drivetrain.getState().Pose.getTranslation().getDistance(hub) == 2.0;
             });
-=======
     shooter =
         new ShooterSubsystem(
             rioCanbus,
@@ -132,7 +130,6 @@ public class RobotContainer {
             () -> drivetrain.getState().Pose,
             () -> drivetrain.getState().Speeds);
 
->>>>>>> 8395ff8c4254822a5c38a9de3201a9d4c6c33720
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
     objDecCam =
