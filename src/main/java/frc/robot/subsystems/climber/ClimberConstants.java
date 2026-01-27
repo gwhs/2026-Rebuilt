@@ -5,4 +5,9 @@
 package frc.robot.subsystems.climber;
 
 /** Add your docs here. */
-public class ClimberConstants {}
+public class ClimberConstants {
+
+    public static final int MOTOR_1_ID = 70;
+    public static final int MOTOR_2_ID = 71;
+
+}

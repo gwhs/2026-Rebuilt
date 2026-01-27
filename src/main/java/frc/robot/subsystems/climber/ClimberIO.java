@@ -5,4 +5,4 @@
 package frc.robot.subsystems.climber;
 
 /** Add your docs here. */
-public class ClimberIO {}
+public interface ClimberIO {}
