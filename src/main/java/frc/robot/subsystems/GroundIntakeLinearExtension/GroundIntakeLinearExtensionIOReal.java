@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExtensionIO {
 
@@ -145,5 +146,9 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
 
   public void setPosition(double newValue) {
     motor.setPosition(newValue);
+  }
+
+  public Command homingCommand(){
+    return Commands.sequence(motor.motor.MotionMagicVoltage())
   }
 }
