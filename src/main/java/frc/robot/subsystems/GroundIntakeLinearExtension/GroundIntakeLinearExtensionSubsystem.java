@@ -1,4 +1,4 @@
-package frc.robot.subsystems.groundIntakeLinearExtension;
+package frc.robot.subsystems.GroundIntakeLinearExtension;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;

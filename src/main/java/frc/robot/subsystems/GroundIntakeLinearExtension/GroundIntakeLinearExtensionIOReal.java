@@ -1,4 +1,4 @@
-package frc.robot.subsystems.groundIntakeLinearExtension;
+package frc.robot.subsystems.GroundIntakeLinearExtension;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -34,6 +34,9 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
   private final StatusSignal<Angle> motorPosition;
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0).withEnableFOC(true);
+
+  private final Alert motorNotConnectedAlert = 
+  new Alert("Motor 1 Not Connected", AlertType.kError);
 
   @SuppressWarnings("resource")
   public GroundIntakeLinearExtensionIOReal(
@@ -122,6 +125,8 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Acceleration", motorAcceleration.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Closed Loop Goal", motorClosedLoopGoal.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Position", motorPosition.getValueAsDouble());
+
+    motorNotConnectedAlert.set(!motor.isConnected());
 
   }
 

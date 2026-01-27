@@ -1,4 +1,4 @@
-package frc.robot.subsystems.groundIntakeLinearExtension;
+package frc.robot.subsystems.GroundIntakeLinearExtension;
 
 public interface GroundIntakeLinearExtensionIO {
   // public void setAngle(double angle);
@@ -12,4 +12,7 @@ public interface GroundIntakeLinearExtensionIO {
   public void runPosition(double rotation);
 
   public double getRotation();
+
+  public void setPosition(double newValue);
+
 }

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.groundIntakeLinearExtension;
+package frc.robot.subsystems.GroundIntakeLinearExtension;
 
 public class GroundIntakeLinearExtensionConstants {
   public static final int MOTOR_ID = 32;

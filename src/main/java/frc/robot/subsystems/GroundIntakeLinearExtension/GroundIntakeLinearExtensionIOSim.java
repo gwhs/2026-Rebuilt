@@ -1,4 +1,4 @@
-package frc.robot.subsystems.groundIntakeLinearExtension;
+package frc.robot.subsystems.GroundIntakeLinearExtension;
 
 public class GroundIntakeLinearExtensionIOSim implements GroundIntakeLinearExtensionIO {
 
@@ -13,7 +13,7 @@ public class GroundIntakeLinearExtensionIOSim implements GroundIntakeLinearExten
       return 0;
   }
 
-    public void setPosition() {
+    public void setPosition(double newValue) {
   }
 
 }
