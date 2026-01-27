@@ -40,7 +40,9 @@ public class RobotContainer {
 
   private final SwerveSubsystem drivetrain;
   public static final CommandXboxController controller = new CommandXboxController(0);
-
+  private Translation2d hub =
+      EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
+  private final Trigger IN_SHOOTING_RANGE;
   private final DriveCommand defualtDriveCommand;
 
   @SuppressWarnings("resource")
@@ -111,6 +113,12 @@ public class RobotContainer {
         break;
     }
 
+    IN_SHOOTING_RANGE =
+        new Trigger(
+            () -> {
+              return !drivetrain.goingToShootingRange()
+                  && drivetrain.getState().Pose.getTranslation().getDistance(hub) == 2.0;
+            });
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
     objDecCam =
