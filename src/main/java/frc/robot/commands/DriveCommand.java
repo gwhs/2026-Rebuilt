@@ -16,6 +16,7 @@ import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
+import frc.robot.subsystems.swerve.SwerveSubsystemConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -86,7 +87,7 @@ public class DriveCommand extends Command {
       Translation2d hub =
           EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
       Translation2d robotToHub = hub.minus(state.Pose.getTranslation());
-      shootingRangeDistance.setSetpoint(2.0);
+      shootingRangeDistance.setSetpoint(SwerveSubsystemConstants.HUB_RADIUS);
 
       double shootingDistPIDOut =
           shootingRangeDistance.calculate(EagleUtil.getRobotTargetDistance(state.Pose, hub));

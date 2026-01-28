@@ -112,15 +112,16 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       new Trigger(
           () -> {
             return !goingToShootingRange()
-                && Math.floor(
+                && MathUtil.isNear(
+                        SwerveSubsystemConstants.HUB_RADIUS,
                         getState()
                             .Pose
                             .getTranslation()
                             .getDistance(
                                 EagleUtil.isRedAlliance() == true
                                     ? FieldConstants.RED_HUB
-                                    : FieldConstants.BLUE_HUB))
-                    == SwerveSubsystemConstants.HUB_RADIUS;
+                                    : FieldConstants.BLUE_HUB),
+                        0.1);
           });
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -235,7 +236,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Current Zone/On Depot Side", isOnDepotSide.getAsBoolean());
     DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
-
+    DogLog.log("In shooting range", isInShootingRange.getAsBoolean());
+    DogLog.log("Distance to hub", getState().Pose.getTranslation().getDistance(EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB));
     frontLeftDriveConnectedAlert.set(!frontLeftDrive.isConnected());
     frontLeftTurnConnectedAlert.set(!frontLeftTurn.isConnected());
     backLeftDriveConnectedAlert.set(!backLeftDrive.isConnected());
