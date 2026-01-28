@@ -252,14 +252,14 @@ public class RobotContainer {
   public Command shootHub() {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
-        shooter.runVelocity(80), // verify
+        shooter.cruiseControl(),
         indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal)));
   }
 
   public Command shootDepot() {
     return Commands.sequence(
         drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
-        shooter.runVelocity(60), // verify
+        shooter.cruiseControl(),
         indexer
             .index()
             .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
@@ -268,7 +268,7 @@ public class RobotContainer {
   public Command shootOutpost() {
     return Commands.sequence(
         drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
-        shooter.runVelocity(60), // verify
+        shooter.cruiseControl(),
         indexer
             .index()
             .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
