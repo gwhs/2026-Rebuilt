@@ -274,6 +274,7 @@ public class RobotContainer {
             .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
   }
 
+  // TODO: add ground intake when said subsystem is added
   public Command unStuck() {
     return Commands.parallel(
         indexer.reverse()
