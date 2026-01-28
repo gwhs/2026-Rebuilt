@@ -20,14 +20,13 @@ public class Trench_1c extends SequentialCommandGroup {
       /*
         TODO: Load Paths
       */
-      PathPlannerPath neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
-      PathPlannerPath climb = PathPlannerPath.fromChoreoTrajectory("Score_Climb");
+      PathPlannerPath neutral = PathPlannerPath.fromChoreoTrajectory("T_Neutral");
+      PathPlannerPath climb = PathPlannerPath.fromChoreoTrajectory("T_Score_Climb");
 
       if (mirror) {
         neutral = neutral.mirrorPath();
-        climb = PathPlannerPath.fromChoreoTrajectory("Score_Climb_Mirror");
+        climb = PathPlannerPath.fromChoreoTrajectory("T_Score_Climb_Mirror");
       }
-      // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
 
       Pose2d startingPose =
           new Pose2d(neutral.getPoint(0).position, neutral.getIdealStartingState().rotation());

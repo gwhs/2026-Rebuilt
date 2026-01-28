@@ -20,8 +20,8 @@ public class Trench_2c extends SequentialCommandGroup {
       /*
         TODO: Load Paths
       */
-      PathPlannerPath neutral = PathPlannerPath.fromChoreoTrajectory("Neutral");
-      PathPlannerPath score_neutral = PathPlannerPath.fromChoreoTrajectory("Score_Neutral");
+      PathPlannerPath neutral = PathPlannerPath.fromChoreoTrajectory("T_Neutral");
+      PathPlannerPath score_neutral = PathPlannerPath.fromChoreoTrajectory("T_Score_Neutral");
       if (mirror) {
         neutral = neutral.mirrorPath();
         score_neutral = score_neutral.mirrorPath();
