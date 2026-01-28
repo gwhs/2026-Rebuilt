@@ -31,7 +31,7 @@ public class DriveCommand extends Command {
 
   private final double deadband = 0.1;
 
-  public final PIDController robotHeadingController = new PIDController(0.05, 0, 0);
+  public final PIDController robotHeadingController = new PIDController(0.04, 0, 0);
   public final PIDController shootingRangeDistance = new PIDController(0.3, 0, 0);
 
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {

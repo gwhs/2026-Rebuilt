@@ -52,23 +52,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     TST,
   }
 
-  private double HUB_RADIUS = 2.0;
-
-  public Trigger IN_SHOOTING_RANGE =
-      new Trigger(
-          () -> {
-            return !goingToShootingRange()
-                && Math.floor(
-                        getState()
-                            .Pose
-                            .getTranslation()
-                            .getDistance(
-                                EagleUtil.isRedAlliance() == true
-                                    ? FieldConstants.RED_HUB
-                                    : FieldConstants.BLUE_HUB))
-                    == HUB_RADIUS;
-          });
-
   private Alert frontLeftDriveConnectedAlert =
       new Alert("Front left drive motor is not connected!", AlertType.kError);
   private Alert frontLeftTurnConnectedAlert =
@@ -124,6 +107,21 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public Trigger isOnDepotSide = new Trigger(() -> EagleUtil.isOnDepotSide(getState().Pose));
   public Trigger isOnOutpostSide = new Trigger(() -> EagleUtil.isOnOutpostSide(getState().Pose));
+
+  public Trigger isInShootingRange =
+      new Trigger(
+          () -> {
+            return !goingToShootingRange()
+                && Math.floor(
+                        getState()
+                            .Pose
+                            .getTranslation()
+                            .getDistance(
+                                EagleUtil.isRedAlliance() == true
+                                    ? FieldConstants.RED_HUB
+                                    : FieldConstants.BLUE_HUB))
+                    == SwerveSubsystemConstants.HUB_RADIUS;
+          });
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
