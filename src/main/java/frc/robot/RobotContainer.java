@@ -175,7 +175,8 @@ public class RobotContainer {
                 .or(drivetrain.isInOpponentAllianceZone)
                 .and(drivetrain.isOnOutpostSide))
         .whileTrue(shootOutpost());
-    controller.y().whileTrue(indexer.reverse()); // verify
+
+    controller.y().whileTrue(unStuck()); // verify
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain
@@ -201,59 +202,6 @@ public class RobotContainer {
   private void configureAutonomous() {
     SmartDashboard.putData("autonomous", autoChooser);
   }
-
-  public Command shootHub() {
-    return Commands.parallel(
-        drivetrain.setRotationCommand(RotationTarget.HUB),
-        shooter.runVelocity(80), // verify
-        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal)));
-  }
-
-  public Command shootDepot() {
-    return Commands.sequence(
-        drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
-        shooter.runVelocity(60), // verify
-        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoal)));
-  }
-
-  public Command shootOutpost() {
-    return Commands.sequence(
-        drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
-        shooter.runVelocity(60), // verify
-        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoal)));
-  }
-
-  /*
-  public Command shoot() {
-    return Commands.sequence(
-        drivetrain
-            .setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE)
-            .onlyIf(
-                drivetrain
-                    .isInNeutralZone
-                    .or(drivetrain.isInOpponentAllianceZone)
-                    .and(drivetrain.isOnOutpostSide)),
-        drivetrain
-            .setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE)
-            .onlyIf(
-                drivetrain
-                    .isInNeutralZone
-                    .or(drivetrain.isInOpponentAllianceZone)
-                    .and(drivetrain.isOnDepotSide)),
-        drivetrain.setRotationCommand(RotationTarget.HUB).onlyIf(drivetrain.isInAllianceZone),
-        Commands.sequence(
-            shooter.runVelocity(60), // ballpark estimate, verify
-
-            indexer
-                .index()
-                .onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal))
-                .onlyIf(drivetrain.isInAllianceZone),
-            indexer
-                .index()
-                .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing))
-                .onlyIf(drivetrain.isInAllianceZone.negate())));
-  }
-  */
 
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
@@ -299,5 +247,37 @@ public class RobotContainer {
     return Commands.sequence(
             shooter.runVoltage(0.0), drivetrain.setRotationCommand(RotationTarget.NORMAL))
         .ignoringDisable(true);
+  }
+
+  public Command shootHub() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.HUB),
+        shooter.runVelocity(80), // verify
+        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal)));
+  }
+
+  public Command shootDepot() {
+    return Commands.sequence(
+        drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
+        shooter.runVelocity(60), // verify
+        indexer
+            .index()
+            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
+  }
+
+  public Command shootOutpost() {
+    return Commands.sequence(
+        drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
+        shooter.runVelocity(60), // verify
+        indexer
+            .index()
+            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
+  }
+
+  public Command unStuck() {
+    return Commands.parallel(
+        indexer.reverse()
+        // groundintake
+        );
   }
 }
