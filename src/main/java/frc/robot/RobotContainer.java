@@ -176,7 +176,7 @@ public class RobotContainer {
                 .and(drivetrain.isOnOutpostSide))
         .whileTrue(shootOutpost());
 
-    controller.y().whileTrue(unStuck()); // verify
+    controller.y().whileTrue(unStuck());
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain
