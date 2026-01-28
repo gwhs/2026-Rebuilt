@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -111,17 +112,16 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Trigger isInShootingRange =
       new Trigger(
           () -> {
-            return !goingToShootingRange()
-                && MathUtil.isNear(
-                        SwerveSubsystemConstants.HUB_RADIUS,
-                        getState()
-                            .Pose
-                            .getTranslation()
-                            .getDistance(
-                                EagleUtil.isRedAlliance() == true
-                                    ? FieldConstants.RED_HUB
-                                    : FieldConstants.BLUE_HUB),
-                        0.1);
+            return MathUtil.isNear(
+                SwerveSubsystemConstants.HUB_RADIUS,
+                getState()
+                    .Pose
+                    .getTranslation()
+                    .getDistance(
+                        EagleUtil.isRedAlliance() == true
+                            ? FieldConstants.RED_HUB
+                            : FieldConstants.BLUE_HUB),
+                0.1);
           });
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -161,6 +161,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
+
+    SmartDashboard.putData("go to shooting range", setShootingRange(true));
+    SmartDashboard.putData("stop go to shooting range", setShootingRange(false));
   }
 
   private void configureAutoBuilder() {
@@ -237,7 +240,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
     DogLog.log("In shooting range", isInShootingRange.getAsBoolean());
-    DogLog.log("Distance to hub", getState().Pose.getTranslation().getDistance(EagleUtil.isRedAlliance() == true ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB));
+
+    DogLog.log(
+        "Distance to hub",
+        getState()
+            .Pose
+            .getTranslation()
+            .getDistance(
+                EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB));
     frontLeftDriveConnectedAlert.set(!frontLeftDrive.isConnected());
     frontLeftTurnConnectedAlert.set(!frontLeftTurn.isConnected());
     backLeftDriveConnectedAlert.set(!backLeftDrive.isConnected());
