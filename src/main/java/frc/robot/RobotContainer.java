@@ -177,6 +177,11 @@ public class RobotContainer {
 
     controller.a().whileTrue(unStuck());
 
+    controller
+        .y()
+        .whileTrue(drivetrain.setShootingRange(true))
+        .onFalse(drivetrain.setShootingRange(false));
+
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
 
@@ -190,6 +195,7 @@ public class RobotContainer {
         .or(drivetrain.isInOpponentAllianceZone)
         .and(drivetrain.isOnDepotSide)
         .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+
     controller
         .rightBumper()
         .onTrue(drivetrain.setSlowMode(true))

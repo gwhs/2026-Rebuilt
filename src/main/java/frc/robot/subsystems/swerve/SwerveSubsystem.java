@@ -167,9 +167,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
-
-    SmartDashboard.putData("go to shooting range", setShootingRange(true));
-    SmartDashboard.putData("stop go to shooting range", setShootingRange(false));
   }
 
   private void configureAutoBuilder() {
