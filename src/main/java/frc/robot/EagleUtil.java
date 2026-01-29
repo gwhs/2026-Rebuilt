@@ -95,7 +95,7 @@ public class EagleUtil {
                     * Math.cos(FieldConstants.shooterAngleRadian)
                     * (distanceToTarget * Math.tan(FieldConstants.shooterAngleRadian)
                         - (FieldConstants.hubHeight - FieldConstants.shooterHeight))));
-    double c = 1.025; // constance to fix inefficiency
+    double c = 1.03; // constance to fix inefficiency
     return v * c;
   }
 
@@ -126,7 +126,7 @@ public class EagleUtil {
   public static Pose2d getShooterPos(Pose2d robotPos) {
     double x =
         robotPos.getX()
-            + (FieldConstants.robotCenterShooterDist
+            - (FieldConstants.robotCenterShooterDist
                 * Math.cos(robotPos.getRotation().getRadians()));
     double y = robotPos.getY();
     return new Pose2d(x, y, robotPos.getRotation());
