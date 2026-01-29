@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.autonomous.OneCycle;
+import frc.robot.commands.autonomous.OneCycle.Routine;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
@@ -208,6 +210,31 @@ public class RobotContainer {
   }
 
   private void configureAutonomous() {
+    /*
+    autoChooser.addOption("Trench 1 Cycle", new Trench_1c(drivetrain, shooter, false));
+    autoChooser.addOption("Trench 2 Cycle", new Trench_2c(drivetrain, shooter, false));
+    autoChooser.addOption("Trench 1 Cycle Mirrored", new Trench_1c(drivetrain, shooter, true));
+    autoChooser.addOption("Trench 2 Cycle Mirrored", new Trench_2c(drivetrain, shooter, true));
+    autoChooser.addOption("Bump 1 Cycle", new BumpPathAuto_1c(drivetrain, shooter, false));
+    autoChooser.addOption("Bump 2 Cycle", new BumpPathAuto_2c(drivetrain, shooter, false));
+    autoChooser.addOption("Depot 1 Cycle", new DepotPathAuto_1c(drivetrain, shooter));
+    */
+    autoChooser.addOption(
+        "Trench 1 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.TRENCH, false));
+    autoChooser.addOption(
+        "Trench 1 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.TRENCH, false));
+    autoChooser.addOption(
+        "Trench 2 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.TRENCH, true));
+    autoChooser.addOption(
+        "Trench 2 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.TRENCH, true));
+    autoChooser.addOption(
+        "Bump 1 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.BUMP, false));
+    autoChooser.addOption(
+        "Bump 1 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.BUMP, false));
+    autoChooser.addOption(
+        "Bump 2 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.BUMP, true));
+    autoChooser.addOption(
+        "Bump 2 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.BUMP, true));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 

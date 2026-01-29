@@ -1,0 +1,51 @@
+package frc.robot.commands.autonomous;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.EagleUtil;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
+
+public class DepotPathAuto_1c extends SequentialCommandGroup {
+  public DepotPathAuto_1c(SwerveSubsystem drivetrain, ShooterSubsystem shooter) {
+
+    /* All your code should go inside this try-catch block */
+    try {
+
+      /*
+        TODO: Load Paths
+      */
+      PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("D_Start_Depot");
+      PathPlannerPath climbPath = PathPlannerPath.fromChoreoTrajectory("D_Depot_Climb");
+      // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
+
+      Pose2d startingPose =
+          new Pose2d(
+              startingPath.getPoint(0).position, startingPath.getIdealStartingState().rotation());
+      addCommands(
+          AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
+          AutoBuilder.followPath(startingPath),
+          AutoBuilder.followPath(climbPath).deadlineFor(shooter.runVelocity(60)));
+
+    } catch (Exception e) {
+      DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
+    }
+  }
+
+  private Pose2d getScorePose(PathPlannerPath path) {
+    Pose2d score;
+    if (EagleUtil.isRedAlliance()) {
+      score =
+          new Pose2d(
+              path.flipPath().getPoint(0).position,
+              path.flipPath().getIdealStartingState().rotation());
+    } else {
+      score = new Pose2d(path.getPoint(0).position, path.getIdealStartingState().rotation());
+    }
+    return score;
+  }
+}
