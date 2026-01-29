@@ -188,17 +188,17 @@ public class RobotContainer {
     autoChooser.addOption(
         "Trench 1 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.TRENCH, false));
     autoChooser.addOption(
-        "Trench 1 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.TRENCH, false));
+        "Trench 1 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.TRENCH, false));
     autoChooser.addOption(
-        "Trench 2 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.TRENCH, true));
+        "Trench 2 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.TRENCH, true));
     autoChooser.addOption(
         "Trench 2 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.TRENCH, true));
     autoChooser.addOption(
         "Bump 1 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.BUMP, false));
     autoChooser.addOption(
-        "Bump 1 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.BUMP, false));
+        "Bump 1 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.BUMP, false));
     autoChooser.addOption(
-        "Bump 2 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.BUMP, true));
+        "Bump 2 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.BUMP, true));
     autoChooser.addOption(
         "Bump 2 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.BUMP, true));
     SmartDashboard.putData("autonomous", autoChooser);
