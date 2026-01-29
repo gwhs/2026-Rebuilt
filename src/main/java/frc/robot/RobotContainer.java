@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.BumpPathAuto_1c;
 import frc.robot.commands.autonomous.BumpPathAuto_2c;
-import frc.robot.commands.autonomous.Template;
 import frc.robot.commands.autonomous.Trench_1c;
 import frc.robot.commands.autonomous.Trench_2c;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
