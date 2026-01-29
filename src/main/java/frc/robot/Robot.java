@@ -124,5 +124,9 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic() {
     FuelSim.getInstance().updateSim();
+    int bhs = FuelSim.Hub.BLUE_HUB.getScore(); // get number of fuel scored in blue hub
+    int rhs = FuelSim.Hub.RED_HUB.getScore(); // get number of fuel scored in red hub
+    DogLog.log("blue hub score", bhs);
+    DogLog.log("red hub score", rhs);
   }
 }

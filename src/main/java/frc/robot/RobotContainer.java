@@ -179,9 +179,11 @@ public class RobotContainer {
                   double a = drivetrain.getState().Pose.getRotation().getRadians();
                   Translation3d initVelocity =
                       new Translation3d(
-                          -1 * d * Math.cos(FieldConstants.shooterAngleR) * Math.cos(a),
-                          d * Math.cos(FieldConstants.shooterAngleR) * Math.sin(a),
-                          d * Math.sin(FieldConstants.shooterAngleR) * Math.sin(Math.PI / 3));
+                          d * Math.cos(FieldConstants.shooterAngleRadian) * Math.cos(a),
+                          d * Math.cos(FieldConstants.shooterAngleRadian) * Math.sin(a),
+                          d
+                              * Math.sin(FieldConstants.shooterAngleRadian)
+                              * Math.sin(FieldConstants.shooterAngleRadian));
                   FuelSim.getInstance()
                       .spawnFuel(
                           initPosition,
@@ -262,7 +264,5 @@ public class RobotContainer {
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
-
-    FuelSim.getInstance().updateSim();
   }
 }
