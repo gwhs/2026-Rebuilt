@@ -7,5 +7,7 @@ package frc.robot.subsystems.groundIntakeRoller;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GroundIntakeRollerConstants {
-    
+  public static final int MOTOR_1_ID = 3;
+
+  public static final double DEFAULT_INTAKE_VOLTAGE = 1; //change later
 }

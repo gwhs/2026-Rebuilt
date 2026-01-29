@@ -8,5 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public interface GroundIntakeRollerIO {
 
-  
+ public void runVoltage(double voltage);
+
+ public void periodic();
 }
