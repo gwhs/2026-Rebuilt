@@ -1,33 +1,18 @@
 {
- "name":"choreo-trench",
+ "name":"choreo",
  "version":2,
  "type":"Swerve",
  "variables":{
-  "expressions":{
-   "AccConstraint":{
-    "dimension":"LinAcc",
-    "var":{
-     "exp":"4.5 m / s / s",
-     "val":4.5
-    }
-   },
-   "VelConstraint":{
-    "dimension":"LinVel",
-    "var":{
-     "exp":"4.5 m / s",
-     "val":4.5
-    }
-   }
-  },
+  "expressions":{},
   "poses":{
    "Climb":{
     "x":{
-     "exp":"1.5660611987113953 m",
-     "val":1.5660611987113953
+     "exp":"0.5660611987113953 m",
+     "val":0.5660611987113953
     },
     "y":{
-     "exp":"3.985400152206421 m",
-     "val":3.985400152206421
+     "exp":"3.785400152206421 m",
+     "val":3.785400152206421
     },
     "heading":{
      "exp":"0 rad",
@@ -64,8 +49,8 @@
    },
    "Score":{
     "x":{
-     "exp":"3.5098400592803953 m",
-     "val":3.5098400592803953
+     "exp":"3.7098400592803955 m",
+     "val":3.709840059280395
     },
     "y":{
      "exp":"7.191979885101318 m",
@@ -81,22 +66,22 @@
  "config":{
   "frontLeft":{
    "x":{
-    "exp":"10.85 in",
-    "val":0.27559
+    "exp":"10.875 in",
+    "val":0.276225
    },
    "y":{
-    "exp":"10.85 in",
-    "val":0.27559
+    "exp":"10.875 in",
+    "val":0.276225
    }
   },
   "backLeft":{
    "x":{
-    "exp":"-10.85 in",
-    "val":-0.27559
+    "exp":"-10.875 in",
+    "val":-0.276225
    },
    "y":{
-    "exp":"10.85 in",
-    "val":0.27559
+    "exp":"10.875 in",
+    "val":0.276225
    }
   },
   "mass":{
@@ -108,8 +93,8 @@
    "val":6.0
   },
   "gearing":{
-   "exp":"5.9",
-   "val":5.9
+   "exp":"6.5",
+   "val":6.5
   },
   "radius":{
    "exp":"2 in",

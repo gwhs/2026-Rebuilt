@@ -13,24 +13,24 @@
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":4.5}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxAcceleration", "props":{"max":4.5}}, "enabled":true}],
+    {"from":"first", "to":"last", "data":{"type":"MaxAcceleration", "props":{"max":4.5}}, "enabled":true},
+    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":4.5}}, "enabled":true}],
   "targetDt":0.05
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"Score_pos.x", "val":3.420997858047486}, "y":{"exp":"Score_pos.y", "val":5.412947177886963}, "heading":{"exp":"Score_pos.heading", "val":-0.7853981633974483}, "intervals":26, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"Bump_score.x", "val":3.420997858047486}, "y":{"exp":"Bump_score.y", "val":5.412947177886963}, "heading":{"exp":"Bump_score.heading", "val":-0.7853981633974483}, "intervals":26, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"4.536332607269287 m", "val":4.536332607269287}, "y":{"exp":"5.445009708404541 m", "val":5.445009708404541}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":24, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
-    {"x":{"exp":"Score_pos.y", "val":5.412947177886963}, "y":{"exp":"5.3794097900390625 m", "val":5.3794097900390625}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":39, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"Bump_score.y", "val":5.412947177886963}, "y":{"exp":"5.3794097900390625 m", "val":5.3794097900390625}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":39, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"7.350616931915283 m", "val":7.350616931915283}, "y":{"exp":"6.443345069885254 m", "val":6.443345069885254}, "heading":{"exp":"NeutralA.heading", "val":4.71238898038469}, "intervals":36, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"7.443935394287109 m", "val":7.443935394287109}, "y":{"exp":"4.687257289886475 m", "val":4.687257289886475}, "heading":{"exp":"180 deg", "val":3.141592653589793}, "intervals":38, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"5.40546989440918 m", "val":5.40546989440918}, "y":{"exp":"5.3794097900390625 m", "val":5.3794097900390625}, "heading":{"exp":"180 deg", "val":3.141592653589793}, "intervals":37, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
-    {"x":{"exp":"Score_pos.x", "val":3.420997858047486}, "y":{"exp":"Score_pos.y", "val":5.412947177886963}, "heading":{"exp":"Score_pos.heading", "val":-0.7853981633974483}, "intervals":8, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"Bump_score.x", "val":3.420997858047486}, "y":{"exp":"Bump_score.y", "val":5.412947177886963}, "heading":{"exp":"Bump_score.heading", "val":-0.7853981633974483}, "intervals":8, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"max_vel", "val":4.5}}}, "enabled":true},
-    {"from":"first", "to":"last", "data":{"type":"MaxAcceleration", "props":{"max":{"exp":"max_accel", "val":4.5}}}, "enabled":true}],
+    {"from":"first", "to":"last", "data":{"type":"MaxAcceleration", "props":{"max":{"exp":"max_accel", "val":4.5}}}, "enabled":true},
+    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"max_vel", "val":4.5}}}, "enabled":true}],
   "targetDt":{
    "exp":"0.05 s",
    "val":0.05

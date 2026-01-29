@@ -15,8 +15,8 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"Score_pos.x", "val":3.420997858047486}, "y":{"exp":"Score_pos.y", "val":5.412947177886963}, "heading":{"exp":"Score_pos.heading", "val":-0.7853981633974483}, "intervals":36, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"Climb.x", "val":1.5665059156417849}, "y":{"exp":"4.15 m", "val":4.15}, "heading":{"exp":"Climb.heading", "val":0.0}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"Bump_score.x", "val":3.420997858047486}, "y":{"exp":"Bump_score.y", "val":5.412947177886963}, "heading":{"exp":"Bump_score.heading", "val":-0.7853981633974483}, "intervals":36, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"Climb.x", "val":1.5665059156417849}, "y":{"exp":"Climb.y", "val":4.15}, "heading":{"exp":"Climb.heading", "val":0.0}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
