@@ -6,19 +6,32 @@ import com.ctre.phoenix6.StatusSignalCollection;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.indexer.IndexerSubsystem;
+import frc.robot.subsystems.objectDetection.GamePieceTracker;
+import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
+import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
+import frc.robot.subsystems.swerve.TunerConstants_Mk4i;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public class RobotContainer {
@@ -34,7 +47,6 @@ public class RobotContainer {
 
   private final DriveCommand defualtDriveCommand;
 
-  // TODO: update serial numbers
   @SuppressWarnings("resource")
   public static Robot getRobot() {
     if (RobotController.getSerialNumber().equals("032414F0")) {
@@ -43,7 +55,7 @@ public class RobotContainer {
       return Robot.DEV;
     } else if (RobotController.getSerialNumber().equals("1234")) {
       return Robot.COMP;
-    } else if (RobotController.getSerialNumber().equals("123")) {
+    } else if (RobotController.getSerialNumber().equals("03282BB2")) {
       return Robot.KITBOT;
     } else {
       new Alert(
@@ -56,17 +68,23 @@ public class RobotContainer {
     }
   }
 
+  private ObjectDetectionCam objDecCam;
+
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
 
   private final CANBus rioCanbus = new CANBus("rio");
-  private final CANBus canivoreCanbus = new CANBus("CANivore");
+  private final CANBus canivoreCanbus = new CANBus("CAN_Network");
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
-  //
 
   private final RobotVisualizer robovisual = new RobotVisualizer();
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
+  private final ShooterSubsystem shooter;
+
+  private final IndexerSubsystem indexer =
+      new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -88,7 +106,7 @@ public class RobotContainer {
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         break;
       case KITBOT:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        drivetrain = TunerConstants_Mk4i.createDrivetrain();
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
@@ -98,15 +116,33 @@ public class RobotContainer {
         break;
     }
 
+    shooter =
+        new ShooterSubsystem(
+            rioCanbus,
+            canivoreCanbus,
+            signalList,
+            () -> drivetrain.getState().Pose,
+            () -> drivetrain.getState().Speeds);
+
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
+
+    objDecCam =
+        new ObjectDetectionCam(
+            "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
 
     configureBindings();
     configureAutonomous();
     drivetrain.setDefaultCommand(defualtDriveCommand);
+
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-    addPeriodic.accept(() -> {}, 0.5);
+
+    DogLog.log("Current Robot", getRobot().toString());
+
+    SmartDashboard.putData(
+        "auto rotate",
+        drivetrain.setRotationCommand(RotationTarget.TST)); // fix rotate wobble when stop
   }
 
   /**
@@ -118,7 +154,53 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    RobotModeTriggers.disabled().onTrue(disableHandler());
+    controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+    controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
+    controller
+        .rightTrigger()
+        .and(
+            drivetrain
+                .isInNeutralZone
+                .or(drivetrain.isInOpponentAllianceZone)
+                .and(drivetrain.isOnDepotSide))
+        .whileTrue(shootDepot());
+    controller
+        .rightTrigger()
+        .and(
+            drivetrain
+                .isInNeutralZone
+                .or(drivetrain.isInOpponentAllianceZone)
+                .and(drivetrain.isOnOutpostSide))
+        .whileTrue(shootOutpost());
+
+    controller.a().whileTrue(unStuck());
+
+    controller
+        .y()
+        .whileTrue(drivetrain.setShootingRange(true))
+        .onFalse(drivetrain.setShootingRange(false));
+
+    drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
+    drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
+
+    drivetrain
+        .isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnOutpostSide)
+        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
+    drivetrain
+        .isInNeutralZone
+        .or(drivetrain.isInOpponentAllianceZone)
+        .and(drivetrain.isOnDepotSide)
+        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+
+    controller
+        .rightBumper()
+        .onTrue(drivetrain.setSlowMode(true))
+        .onFalse(drivetrain.setSlowMode(false));
+  }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
@@ -131,18 +213,78 @@ public class RobotContainer {
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
-    startTime = HALUtil.getFPGATime();
+    if (objDecCam != null) {
+      objDecCam.updateDetection();
+    }
 
-    signalList.refreshAll();
+    DogLog.log(
+        "Loop Time/Robot Container/objectDetection Cam",
+        (HALUtil.getFPGATime() - startTime) / 1000);
 
-    // 2
+    if (RobotBase.isReal()) {
+      signalList.refreshAll();
+    }
+
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
     robovisual.update();
     startTime = HALUtil.getFPGATime();
 
-    // Log Triggers
-    DogLog.log("Current Robot", getRobot().toString());
     DogLog.log("Match Timer", DriverStation.getMatchTime());
+
+    Pose2d r1 = drivetrain.getState().Pose;
+    Pose2d r2 = drivetrain.getPose(0.2);
+    Translation2d t = FieldConstants.RED_HUB;
+    Pose2d rt = EagleUtil.calcAimpoint(r1, r2, t);
+
+    DogLog.log("aimpoint", rt);
+    DogLog.log("estPos", r2);
+
+    Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
+
+    if (obj.isPresent()) {
+      DogLog.log("Object Detection/Fuel Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
+    } else {
+      DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
+    }
+  }
+
+  private Command disableHandler() {
+    return Commands.sequence(
+            shooter.runVoltage(0.0), drivetrain.setRotationCommand(RotationTarget.NORMAL))
+        .ignoringDisable(true);
+  }
+
+  public Command shootHub() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.HUB),
+        shooter.cruiseControl(),
+        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal)));
+  }
+
+  public Command shootDepot() {
+    return Commands.sequence(
+        drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
+        shooter.cruiseControl(),
+        indexer
+            .index()
+            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
+  }
+
+  public Command shootOutpost() {
+    return Commands.sequence(
+        drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
+        shooter.cruiseControl(),
+        indexer
+            .index()
+            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
+  }
+
+  // TODO: add ground intake when said subsystem is added
+  public Command unStuck() {
+    return Commands.parallel(
+        indexer.reverse()
+        // groundintake
+        );
   }
 }

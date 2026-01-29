@@ -4,14 +4,19 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.EagleUtil;
+import frc.robot.FieldConstants;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
+import frc.robot.subsystems.swerve.SwerveSubsystemConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -27,7 +32,8 @@ public class DriveCommand extends Command {
 
   private final double deadband = 0.1;
 
-  public final PIDController robotHeadingController = new PIDController(0.05, 0, 0);
+  public final PIDController robotHeadingController = new PIDController(0.04, 0, 0);
+  public final PIDController shootingRangeDistance = new PIDController(0.3, 0, 0);
 
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -54,6 +60,10 @@ public class DriveCommand extends Command {
     yInput = MathUtil.applyDeadband(yInput, deadband);
     rotationalInput = MathUtil.applyDeadband(rotationalInput, deadband);
 
+    xInput = Math.pow(Math.abs(xInput), 1.5) * Math.signum(xInput);
+    yInput = Math.pow(Math.abs(yInput), 1.5) * Math.signum(yInput);
+    rotationalInput = Math.pow(Math.abs(rotationalInput), 1.5) * Math.signum(rotationalInput);
+
     boolean hasRotationInput = Math.abs(rotationalInput) > 0.1;
     if (drivetrain.getRotationTarget() != RotationTarget.NORMAL
         && !hasRotationInput
@@ -64,11 +74,33 @@ public class DriveCommand extends Command {
       robotHeadingController.setSetpoint(drivetrain.getGoalHeading());
 
       double pidOutput = robotHeadingController.calculate(currentRobotHeading);
-      rotationalInput = pidOutput;
+
+      rotationalInput = MathUtil.clamp(pidOutput, -0.5, 0.5);
 
       DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
       DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
       DogLog.log("Drive Command/Current Robot Heading (degree)", currentRobotHeading);
+    }
+
+    if (drivetrain.goingToShootingRange()) {
+      SwerveDriveState state = drivetrain.getState();
+      Translation2d hub =
+          EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
+      Translation2d robotToHub = hub.minus(state.Pose.getTranslation());
+      shootingRangeDistance.setSetpoint(SwerveSubsystemConstants.HUB_RADIUS);
+
+      double shootingDistPIDOut =
+          shootingRangeDistance.calculate(EagleUtil.getRobotTargetDistance(state.Pose, hub));
+      Translation2d unitVec = robotToHub.div(robotToHub.getNorm());
+      Translation2d goalVel = unitVec.times(shootingDistPIDOut);
+
+      if (!EagleUtil.isRedAlliance()) {
+        xInput -= goalVel.getX();
+        yInput -= goalVel.getY();
+      } else {
+        xInput += goalVel.getX();
+        yInput += goalVel.getY();
+      }
     }
 
     if (drivetrain.isSlowMode()) {
