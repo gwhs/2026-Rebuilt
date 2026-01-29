@@ -11,15 +11,13 @@ public interface ClimberIO {
 
     public void runVoltage(double voltage);
 
-    public double getPosition();
-
     public double getMotor1StatorCurrent();
 
     public double getMotor2StatorCurrent();
     
     public double getMotor1Position();
 
-    publci double getMotor2Position;
+    public double getMotor2Position();
 
     public void periodic();
 }

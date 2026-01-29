@@ -5,4 +5,34 @@
 package frc.robot.subsystems.climber;
 
 /** Add your docs here. */
-public class ClimberIOSim {}
+public class ClimberIOSim implements ClimberIO{
+
+    @Override
+  public void runVoltage(double voltage) {}
+
+    @Override
+  public void runVelocity(double rotationsPerSecond) {}
+
+   @Override
+  public void periodic() {}
+
+   @Override
+  public double getMotor1Position() {
+    return 0;
+  }
+
+   @Override
+  public double getMotor2Position() {
+    return 0;
+  }
+
+   @Override
+  public double getMotor1StatorCurrent() {
+    return 0;
+  }
+
+   @Override
+  public double getMotor2StatorCurrent() {
+      return 0;
+    }
+}
