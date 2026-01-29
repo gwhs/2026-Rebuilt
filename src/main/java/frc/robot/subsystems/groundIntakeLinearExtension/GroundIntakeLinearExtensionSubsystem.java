@@ -24,7 +24,8 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
     }
 
     isCurrentSpike =
-        new Trigger(() -> groundIntakeLinearExtensionIO.getStatorCurrent() > 18).debounce(0.12);
+        new Trigger(() -> groundIntakeLinearExtensionIO.getStatorCurrent() > 18)
+            .debounce(0.12); // TODO
   }
 
   @Override
