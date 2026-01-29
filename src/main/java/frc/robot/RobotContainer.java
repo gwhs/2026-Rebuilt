@@ -45,7 +45,6 @@ public class RobotContainer {
 
   private final DriveCommand defualtDriveCommand;
 
-  // TODO: update serial numbers
   @SuppressWarnings("resource")
   public static Robot getRobot() {
     if (RobotController.getSerialNumber().equals("032414F0")) {
@@ -207,7 +206,6 @@ public class RobotContainer {
     DogLog.log("aimpoint", rt);
     DogLog.log("estPos", r2);
 
-    // log object
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
     if (obj.isPresent()) {
