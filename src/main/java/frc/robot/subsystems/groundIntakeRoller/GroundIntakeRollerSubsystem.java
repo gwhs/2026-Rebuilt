@@ -41,6 +41,10 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
     return runVoltage(GroundIntakeRollerConstants.DEFAULT_INTAKE_VOLTAGE);
   }
 
+  public Command reverseIntake() {
+    return runVoltage(GroundIntakeRollerConstants.REVERSE_INTAKE_VOLTAGE);
+  }
+
   @Override
   public void periodic() {
     groundIntakeRollerIO.periodic();
