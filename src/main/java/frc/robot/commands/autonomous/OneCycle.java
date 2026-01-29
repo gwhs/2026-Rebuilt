@@ -5,6 +5,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
@@ -19,7 +20,11 @@ public class OneCycle extends SequentialCommandGroup {
   }
 
   public OneCycle(
-      ShooterSubsystem shooter, SwerveSubsystem drivetrain, boolean mirror, Routine routine) {
+      ShooterSubsystem shooter,
+      SwerveSubsystem drivetrain,
+      boolean mirror,
+      Routine routine,
+      boolean twoCycle) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -47,13 +52,21 @@ public class OneCycle extends SequentialCommandGroup {
       Pose2d startingPose =
           new Pose2d(cycle.getPoint(0).position, cycle.getIdealStartingState().rotation());
 
-      addCommands(
-          AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(cycle).deadlineFor(shooter.runVelocity(80)),
-          Commands.waitSeconds(6)
-              .deadlineFor(drivetrain.driveToPose(() -> getScorePose(() -> cycle))),
-          AutoBuilder.followPath(climb).deadlineFor(shooter.runVelocity(0)),
-          Commands.idle());
+      if (twoCycle) {
+        addCommands(
+            AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
+            cyclePath(cycle, shooter, drivetrain),
+            Commands.waitSeconds(6),
+            cyclePath(cycle, shooter, drivetrain));
+      } else {
+        addCommands(
+            AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
+            cyclePath(cycle, shooter, drivetrain),
+            Commands.waitSeconds(6)
+                .deadlineFor(drivetrain.driveToPose(() -> getScorePose(() -> cycle))),
+            climbPath(climb, shooter, drivetrain),
+            Commands.idle());
+      }
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
@@ -73,5 +86,16 @@ public class OneCycle extends SequentialCommandGroup {
               path.get().getPoint(0).position, path.get().getIdealStartingState().rotation());
     }
     return score;
+  }
+
+  private Command cyclePath(
+      PathPlannerPath path, ShooterSubsystem shooter, SwerveSubsystem drivetrain) {
+    return Commands.sequence(AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(80)));
+  }
+
+  private Command climbPath(
+      PathPlannerPath path, ShooterSubsystem shooter, SwerveSubsystem drivetrain) {
+    return Commands.sequence(
+        AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(0)), Commands.idle());
   }
 }
