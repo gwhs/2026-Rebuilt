@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -109,6 +108,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Trigger isOnDepotSide = new Trigger(() -> EagleUtil.isOnDepotSide(getState().Pose));
   public Trigger isOnOutpostSide = new Trigger(() -> EagleUtil.isOnOutpostSide(getState().Pose));
 
+  public Trigger isFacingGoal =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 5));
+  public Trigger isFacingGoalPassing =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 7.5));
   public Trigger isInShootingRange =
       new Trigger(
           () -> {
@@ -161,9 +166,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
-
-    SmartDashboard.putData("go to shooting range", setShootingRange(true));
-    SmartDashboard.putData("stop go to shooting range", setShootingRange(false));
   }
 
   private void configureAutoBuilder() {
@@ -261,6 +263,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     frontrightEncoderConnectedAlert.set(!frontRightEncoder.isConnected());
     backRightEncoderConnectedAlert.set(!backRightEncoder.isConnected());
     pigeonConnectedAlert.set(!pigeon.isConnected());
+    DogLog.log("Drivetrain/Facing Goal", isFacingGoal.getAsBoolean());
+    DogLog.log("Drivetrain/Facing Passing Goal", isFacingGoalPassing.getAsBoolean());
   }
 
   private double defualtSlowFactor = 0.25;
