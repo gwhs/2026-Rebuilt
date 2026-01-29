@@ -157,14 +157,9 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  Translation3d initPosition =
-                      new Translation3d(
-                          drivetrain.getState().Pose.getX(),
-                          drivetrain.getState().Pose.getY(),
-                          0.635);
-                  double dst =
-                      EagleUtil.getRobotTargetDistance(
-                          drivetrain.getState().Pose, FieldConstants.RED_HUB);
+                  Pose2d stPos = EagleUtil.getShooterPos(drivetrain.getState().Pose);
+                  Translation3d initPosition = new Translation3d(stPos.getX(), stPos.getY(), 0.635);
+                  double dst = EagleUtil.getRobotTargetDistance(stPos, FieldConstants.RED_HUB);
                   double d = EagleUtil.getShooterVelocity(dst);
                   DogLog.log("velocity of fuel", d);
                   DogLog.log("distance to tar", dst);
@@ -172,9 +167,9 @@ public class RobotContainer {
                   double a = drivetrain.getState().Pose.getRotation().getRadians();
                   Translation3d initVelocity =
                       new Translation3d(
-                          d * Math.cos(Math.PI / 3) * Math.cos(a),
-                          d * Math.cos(Math.PI / 3) * Math.sin(a),
-                          d * Math.sin(Math.PI / 3) * Math.sin(Math.PI / 3));
+                          -1 * d * Math.cos(FieldConstants.shooterAngleR) * Math.cos(a),
+                          d * Math.cos(FieldConstants.shooterAngleR) * Math.sin(a),
+                          d * Math.sin(FieldConstants.shooterAngleR) * Math.sin(Math.PI / 3));
                   FuelSim.getInstance()
                       .spawnFuel(
                           initPosition,

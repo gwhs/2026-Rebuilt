@@ -45,8 +45,12 @@ public class EagleUtil {
         && robotPose.getX() <= FieldConstants.ALLIANCE_ZONE_LINE_RED);
   }
 
-  public static double getRobotTargetAngle(Pose2d robotpose, Pose2d target) {
+  public static double getRobotTargetAngleD(Pose2d robotpose, Pose2d target) {
     return target.getTranslation().minus(robotpose.getTranslation()).getAngle().getDegrees();
+  }
+
+  public static double getRobotTargetAngleR(Pose2d robotpose, Pose2d target) {
+    return target.getTranslation().minus(robotpose.getTranslation()).getAngle().getRadians();
   }
 
   public static double getRobotTargetAngle(Pose2d robotpose, Translation2d target) {
@@ -73,11 +77,12 @@ public class EagleUtil {
         Math.sqrt(
             (FieldConstants.gravitationalAcc * distanceToTarget * distanceToTarget)
                 / (2
-                    * Math.cos(FieldConstants.shooterAngle)
-                    * Math.cos(FieldConstants.shooterAngle)
-                    * (distanceToTarget * Math.tan(FieldConstants.shooterAngle)
+                    * Math.cos(FieldConstants.shooterAngleR)
+                    * Math.cos(FieldConstants.shooterAngleR)
+                    * (distanceToTarget * Math.tan(FieldConstants.shooterAngleR)
                         - (FieldConstants.hubHeight - FieldConstants.shooterHeight))));
-    return v;
+    double c = 1.075; // constance to fix inefficiency
+    return v * c;
   }
 
   public static double rpmToVelocity(double rpm) {
@@ -88,5 +93,14 @@ public class EagleUtil {
   public static double velocityToRPM(double v) {
     double flywheelRPM = v / Math.PI / FieldConstants.flywheelDiameter;
     return flywheelRPM / FieldConstants.motorToFlywheelGearRatio;
+  }
+
+  public static Pose2d getShooterPos(Pose2d robotPos) {
+    double x =
+        robotPos.getX()
+            + (FieldConstants.robotCenterShooterDist
+                * Math.cos(robotPos.getRotation().getRadians()));
+    double y = robotPos.getY();
+    return new Pose2d(x, y, robotPos.getRotation());
   }
 }
