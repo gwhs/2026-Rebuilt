@@ -7,14 +7,38 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
 import java.util.function.Supplier;
 
 public class ShooterSubsystem extends SubsystemBase {
+
+  public static ShooterSubsystem createSim(SwerveSubsystem drivetrain) {
+    return new ShooterSubsystem(
+        new ShooterIOSim(), () -> drivetrain.getState().Pose, () -> drivetrain.getState().Speeds);
+  }
+
+  public static ShooterSubsystem createDisabled(SwerveSubsystem drivetrain) {
+    return new ShooterSubsystem(
+        new ShooterIODisabled(),
+        () -> drivetrain.getState().Pose,
+        () -> drivetrain.getState().Speeds);
+  }
+
+  public static ShooterSubsystem createReal(
+      CANBus rioCanbus,
+      CANBus canivoreCanbus,
+      StatusSignalCollection signal,
+      SwerveSubsystem drivetrain) {
+    return new ShooterSubsystem(
+        new ShooterIOReal(rioCanbus, canivoreCanbus, signal),
+        () -> drivetrain.getState().Pose,
+        () -> drivetrain.getState().Speeds);
+  }
+
   private ShooterIO shooterIO;
 
   private double velocityGoal;
@@ -28,20 +52,11 @@ public class ShooterSubsystem extends SubsystemBase {
       new Trigger(() -> MathUtil.isNear(velocityGoal, shooterIO.getVelocity(), 5));
 
   public ShooterSubsystem(
-      CANBus rioCanbus,
-      CANBus canivoreCanbus,
-      StatusSignalCollection signal,
-      Supplier<Pose2d> robotPose,
-      Supplier<ChassisSpeeds> velocity) {
+      ShooterIO shooterIO, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> velocity) {
+    this.shooterIO = shooterIO;
 
     robotPoseSupplier = robotPose;
     robotVelocitySupplier = velocity;
-
-    if (RobotBase.isSimulation()) {
-      shooterIO = new ShooterIOSim();
-    } else {
-      shooterIO = new ShooterIOReal(rioCanbus, canivoreCanbus, signal);
-    }
   }
 
   public Command runVelocity(double rotationsPerSecond) {

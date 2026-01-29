@@ -39,7 +39,8 @@ public class RobotContainer {
     DEV,
     COMP,
     ANEMONE,
-    KITBOT
+    KITBOT,
+    SIM
   }
 
   private final SwerveSubsystem drivetrain;
@@ -49,18 +50,20 @@ public class RobotContainer {
 
   @SuppressWarnings("resource")
   public static Robot getRobot() {
-    if (RobotController.getSerialNumber().equals("032414F0")) {
+    final String serialNumber = RobotController.getSerialNumber();
+    if (RobotBase.isSimulation()) {
+      return Robot.SIM;
+    } else if (serialNumber.equals("032414F0")) {
       return Robot.ANEMONE;
-    } else if (RobotController.getSerialNumber().equals("03223849")) {
+    } else if (serialNumber.equals("03223849")) {
       return Robot.DEV;
-    } else if (RobotController.getSerialNumber().equals("1234")) {
+    } else if (serialNumber.equals("1234")) {
       return Robot.COMP;
-    } else if (RobotController.getSerialNumber().equals("03282BB2")) {
+    } else if (serialNumber.equals("03282BB2")) {
       return Robot.KITBOT;
     } else {
       new Alert(
-              "roborio unrecognized. here is the serial number:"
-                  + RobotController.getSerialNumber(),
+              "roborio unrecognized. here is the serial number:" + serialNumber,
               Alert.AlertType.kError)
           .set(true);
       ;
@@ -101,28 +104,29 @@ public class RobotContainer {
     switch (getRobot()) {
       case COMP:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createReal(rioCanbus, canivoreCanbus, signalList, drivetrain);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createDisabled(drivetrain);
         break;
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
+        shooter = ShooterSubsystem.createDisabled(drivetrain);
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
+        shooter = ShooterSubsystem.createDisabled(drivetrain);
+        break;
+      case SIM:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createSim(drivetrain);
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createDisabled(drivetrain);
         break;
     }
-
-    shooter =
-        new ShooterSubsystem(
-            rioCanbus,
-            canivoreCanbus,
-            signalList,
-            () -> drivetrain.getState().Pose,
-            () -> drivetrain.getState().Speeds);
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
