@@ -45,7 +45,21 @@ public class EagleUtil {
         && robotPose.getX() <= FieldConstants.ALLIANCE_ZONE_LINE_RED);
   }
 
-  public static double getRobotTargetAngleD(Pose2d robotpose, Pose2d target) {
+  public static boolean isOnOutpostSide(Pose2d robotPose) {
+    if (isRedAlliance()) {
+      return robotPose.getY() > FieldConstants.FIELD_WIDTH / 2;
+    }
+    return robotPose.getY() < FieldConstants.FIELD_WIDTH / 2;
+  }
+
+  public static boolean isOnDepotSide(Pose2d robotPose) {
+    if (isRedAlliance()) {
+      return robotPose.getY() < FieldConstants.FIELD_WIDTH / 2;
+    }
+    return robotPose.getY() > FieldConstants.FIELD_WIDTH / 2;
+  }
+
+  public static double getRobotTargetAngle(Pose2d robotpose, Pose2d target) {
     return target.getTranslation().minus(robotpose.getTranslation()).getAngle().getDegrees();
   }
 
@@ -84,15 +98,49 @@ public class EagleUtil {
     double c = 1.075; // constance to fix inefficiency
     return v * c;
   }
+  
+  public static Translation2d getRobotTarget(Pose2d robotPose) {
+    if (isRedAlliance()) {
+      if (isInAllianceZone(robotPose)) {
+        return FieldConstants.RED_HUB;
+      } else {
+        if (isOnOutpostSide(robotPose)) {
+          return FieldConstants.RED_OUTPOST_PASSING;
+        } else {
+          return FieldConstants.RED_DEPOT_PASSING;
+        }
+      }
+    } else {
+      if (isInAllianceZone(robotPose)) {
+        return FieldConstants.BLUE_HUB;
+      } else {
+        if (isOnOutpostSide(robotPose)) {
+          return FieldConstants.BLUE_OUTPOST_PASSING;
+        } else {
+          return FieldConstants.BLUE_DEPOT_PASSING;
+        }
+      }
+    }
+  }
 
-  public static double rpmToVelocity(double rpm) {
-    double flywheelRPM = rpm * FieldConstants.motorToFlywheelGearRatio;
-    return Math.PI * FieldConstants.flywheelDiameter * flywheelRPM;
+  public static Pose2d calcAimpoint(
+      Pose2d robotPose, Pose2d newRobotPose, Translation2d target, ChassisSpeeds robot) {
+    double dis = getRobotTargetDistance(newRobotPose, target);
+    double x = robotPose.getX() + target.getX() - newRobotPose.getX() + getFuelDx(robot, dis);
+    double y = robotPose.getY() + target.getY() - newRobotPose.getY() + getFuelDy(robot, dis);
+    Pose2d aimpoint = new Pose2d(x, y, Rotation2d.kZero);
+    return aimpoint;
   }
 
   public static double velocityToRPM(double v) {
     double flywheelRPM = v / Math.PI / FieldConstants.flywheelDiameter;
     return flywheelRPM / FieldConstants.motorToFlywheelGearRatio;
+  }
+  
+  
+  public static double rpmToVelocity(double rpm) {
+    double flywheelRPM = rpm * FieldConstants.motorToFlywheelGearRatio;
+    return Math.PI * FieldConstants.flywheelDiameter * flywheelRPM;
   }
 
   public static Pose2d getShooterPos(Pose2d robotPos) {

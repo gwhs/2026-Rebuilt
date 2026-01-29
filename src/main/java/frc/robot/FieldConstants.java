@@ -15,6 +15,11 @@ public class FieldConstants {
   public static final double ALLIANCE_ZONE_LINE_BLUE = 3.977894;
   public static final double ALLIANCE_ZONE_LINE_RED = 12.535154;
 
+  public static final double FIELD_WIDTH = 8.042656;
+  public static final double FIELD_HEIGHT = 16.513048;
+
+  public static double fuelSpeed = 9.144;
+
   public static double BLUE_DEPOT_PASSING_X = 1.160;
   public static double BLUE_DEPOT_PASSING_Y = 6.896;
   public static double RED_OUTPOST_PASSING_X = 13.986;
