@@ -5,4 +5,21 @@
 package frc.robot.subsystems.climber;
 
 /** Add your docs here. */
-public interface ClimberIO {}
+public interface ClimberIO {
+
+    public void runVelocity(double rotationsPerSecond);
+
+    public void runVoltage(double voltage);
+
+    public double getPosition();
+
+    public double getMotor1StatorCurrent();
+
+    public double getMotor2StatorCurrent();
+    
+    public double getMotor1Position();
+
+    publci double getMotor2Position;
+
+    public void periodic();
+}
