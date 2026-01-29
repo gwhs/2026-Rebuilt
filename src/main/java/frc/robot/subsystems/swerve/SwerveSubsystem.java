@@ -110,6 +110,27 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public Trigger isOnBump = new Trigger(() -> EagleUtil.isOnBump(getState().Pose));
 
+  public Trigger isFacingGoal =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 5));
+  public Trigger isFacingGoalPassing =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 7.5));
+  public Trigger isInShootingRange =
+      new Trigger(
+          () -> {
+            return MathUtil.isNear(
+                SwerveSubsystemConstants.HUB_RADIUS,
+                getState()
+                    .Pose
+                    .getTranslation()
+                    .getDistance(
+                        EagleUtil.isRedAlliance() == true
+                            ? FieldConstants.RED_HUB
+                            : FieldConstants.BLUE_HUB),
+                0.1);
+          });
+
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
   /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -124,6 +145,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double translationSlowFactor = 1;
   private double rotationalSlowFactor = 1;
   private boolean slowMode = false;
+  private boolean shootingRange = false;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -214,6 +236,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
                 m_hasAppliedOperatorPerspective = true;
               });
     }
+
     DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
@@ -221,7 +244,15 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
     DogLog.log("Current Zone/On Bump", isOnBump.getAsBoolean());
+    DogLog.log("In shooting range", isInShootingRange.getAsBoolean());
 
+    DogLog.log(
+        "Distance to hub",
+        getState()
+            .Pose
+            .getTranslation()
+            .getDistance(
+                EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB));
     frontLeftDriveConnectedAlert.set(!frontLeftDrive.isConnected());
     frontLeftTurnConnectedAlert.set(!frontLeftTurn.isConnected());
     backLeftDriveConnectedAlert.set(!backLeftDrive.isConnected());
@@ -235,6 +266,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     frontrightEncoderConnectedAlert.set(!frontRightEncoder.isConnected());
     backRightEncoderConnectedAlert.set(!backRightEncoder.isConnected());
     pigeonConnectedAlert.set(!pigeon.isConnected());
+    DogLog.log("Drivetrain/Facing Goal", isFacingGoal.getAsBoolean());
+    DogLog.log("Drivetrain/Facing Passing Goal", isFacingGoalPassing.getAsBoolean());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -257,6 +290,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         });
   }
 
+  public Command setShootingRange(boolean enable) {
+
+    return Commands.runOnce(
+        () -> {
+          this.shootingRange = enable;
+        });
+  }
+
   public double getTranslationSlowFactor() {
     return translationSlowFactor;
   }
@@ -267,6 +308,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public boolean isSlowMode() {
     return slowMode;
+  }
+
+  public boolean goingToShootingRange() {
+    return shootingRange;
   }
 
   public boolean getdisableAutoRotate() {
@@ -305,7 +350,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 0;
       case HUB:
         return EagleUtil.getRotationalHub(getState().Pose);
-      case TST: // test case for shoot on move
+      case TST:
         return EagleUtil.getRobotTargetAngle(
             getState().Pose,
             EagleUtil.calcAimpoint(
@@ -347,13 +392,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         this.controller);
   }
 
-  /*
-   * the idea behind this command is that it:
-   * 1. saves current rotation target,
-   * 2. resets the rotation target to normal
-   * 3. does whatever inbetween thing needs to be done while we aren't aligning
-   * 4. set the target back to the previous target.
-   */
   public Command temporarilyDisableRotation() {
     return Commands.run(
             () -> {
