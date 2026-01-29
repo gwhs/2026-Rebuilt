@@ -3,7 +3,6 @@ package frc.robot;
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.HALUtil;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Threads;
@@ -34,14 +33,8 @@ public class Robot extends TimedRobot {
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
-    NetworkTableInstance.getDefault()
-        .getStringTopic("/Metadata/Branch")
-        .publish()
-        .set(BuildConstants.GIT_BRANCH);
-    NetworkTableInstance.getDefault()
-        .getStringTopic("/Metadata/SHA")
-        .publish()
-        .set(BuildConstants.GIT_SHA);
+    DogLog.log("/Metadata/Branch", BuildConstants.GIT_BRANCH);
+    DogLog.log("/Metadata/SHA", BuildConstants.GIT_SHA);
   }
 
   @Override
