@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -18,6 +19,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -46,7 +49,48 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     PASSING_OUTPOST_SIDE,
     TOWER,
     HUB,
+    TST,
   }
+
+  private Alert frontLeftDriveConnectedAlert =
+      new Alert("Front left drive motor is not connected!", AlertType.kError);
+  private Alert frontLeftTurnConnectedAlert =
+      new Alert("Front left turn motor is not connected!", AlertType.kError);
+  private Alert frontLeftEncoderConnectedAlert =
+      new Alert("Front left encoder is not connected!", AlertType.kError);
+  private Alert backLeftDriveConnectedAlert =
+      new Alert("Back left drive motor is not connected!", AlertType.kError);
+  private Alert backLeftTurnConnectedAlert =
+      new Alert("Back left turn motor is not connected!", AlertType.kError);
+  private Alert backleftEncoderConnectedAlert =
+      new Alert("Back left encoder is not connected!", AlertType.kError);
+  private Alert frontRightDriveConnectedAlert =
+      new Alert("Front right drive motor is not connected!", AlertType.kError);
+  private Alert frontRightTurnConnectedAlert =
+      new Alert("Front right turn motor is not connected!", AlertType.kError);
+  private Alert frontrightEncoderConnectedAlert =
+      new Alert("Front right encoder is not connected!", AlertType.kError);
+  private Alert backRightDriveConnectedAlert =
+      new Alert("Back right drive motor is not connected!", AlertType.kError);
+  private Alert backRightTurnConnectedAlert =
+      new Alert("Back right turn motor is not connected!", AlertType.kError);
+  private Alert backRightEncoderConnectedAlert =
+      new Alert("Back right encoder is not connected!", AlertType.kError);
+  private Alert pigeonConnectedAlert = new Alert("Pigeon is not connected", AlertType.kError);
+
+  private TalonFX frontLeftDrive = this.getModule(0).getDriveMotor();
+  private TalonFX frontLeftTurn = this.getModule(0).getSteerMotor();
+  private CANcoder frontLeftEncoder = this.getModule(0).getEncoder();
+  private TalonFX frontRightDrive = this.getModule(1).getDriveMotor();
+  private TalonFX frontRightTurn = this.getModule(1).getSteerMotor();
+  private CANcoder frontRightEncoder = this.getModule(1).getEncoder();
+  private TalonFX backLeftDrive = this.getModule(2).getDriveMotor();
+  private TalonFX backLeftTurn = this.getModule(2).getSteerMotor();
+  private CANcoder backLeftEncoder = this.getModule(2).getEncoder();
+  private TalonFX backRightDrive = this.getModule(3).getDriveMotor();
+  private TalonFX backRightTurn = this.getModule(3).getSteerMotor();
+  private CANcoder backRightEncoder = this.getModule(3).getEncoder();
+  private Pigeon2 pigeon = this.getPigeon2();
 
   private boolean disableAutoRotate = false;
   private RotationTarget rotationTarget = RotationTarget.NORMAL;
@@ -60,6 +104,30 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Trigger isInOpponentAllianceZone =
       new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getState().Pose));
   public Trigger isInNeutralZone = new Trigger(() -> EagleUtil.isInNeutralZone(getState().Pose));
+
+  public Trigger isOnDepotSide = new Trigger(() -> EagleUtil.isOnDepotSide(getState().Pose));
+  public Trigger isOnOutpostSide = new Trigger(() -> EagleUtil.isOnOutpostSide(getState().Pose));
+
+  public Trigger isFacingGoal =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 5));
+  public Trigger isFacingGoalPassing =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 7.5));
+  public Trigger isInShootingRange =
+      new Trigger(
+          () -> {
+            return MathUtil.isNear(
+                SwerveSubsystemConstants.HUB_RADIUS,
+                getState()
+                    .Pose
+                    .getTranslation()
+                    .getDistance(
+                        EagleUtil.isRedAlliance() == true
+                            ? FieldConstants.RED_HUB
+                            : FieldConstants.BLUE_HUB),
+                0.1);
+          });
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -75,6 +143,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double translationSlowFactor = 1;
   private double rotationalSlowFactor = 1;
   private boolean slowMode = false;
+  private boolean shootingRange = false;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -131,7 +200,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   private void startSimThread() {
     m_lastSimTime = Utils.getCurrentTimeSeconds();
-
     /* Run simulation at a faster rate so PID gains behave more reasonably */
     m_simNotifier =
         new Notifier(
@@ -170,7 +238,33 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Current Zone/In Alliance Zone", isInAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Opponent Alliance Zone", isInOpponentAllianceZone.getAsBoolean());
     DogLog.log("Current Zone/In Neutral Zone", isInNeutralZone.getAsBoolean());
+    DogLog.log("Current Zone/On Depot Side", isOnDepotSide.getAsBoolean());
+    DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
+    DogLog.log("In shooting range", isInShootingRange.getAsBoolean());
+
+    DogLog.log(
+        "Distance to hub",
+        getState()
+            .Pose
+            .getTranslation()
+            .getDistance(
+                EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB));
+    frontLeftDriveConnectedAlert.set(!frontLeftDrive.isConnected());
+    frontLeftTurnConnectedAlert.set(!frontLeftTurn.isConnected());
+    backLeftDriveConnectedAlert.set(!backLeftDrive.isConnected());
+    backLeftTurnConnectedAlert.set(!backLeftTurn.isConnected());
+    frontRightDriveConnectedAlert.set(!frontRightDrive.isConnected());
+    frontRightTurnConnectedAlert.set(!frontRightTurn.isConnected());
+    backRightDriveConnectedAlert.set(!backRightDrive.isConnected());
+    backRightTurnConnectedAlert.set(!backRightTurn.isConnected());
+    frontLeftEncoderConnectedAlert.set(!frontLeftEncoder.isConnected());
+    backleftEncoderConnectedAlert.set(!backLeftEncoder.isConnected());
+    frontrightEncoderConnectedAlert.set(!frontRightEncoder.isConnected());
+    backRightEncoderConnectedAlert.set(!backRightEncoder.isConnected());
+    pigeonConnectedAlert.set(!pigeon.isConnected());
+    DogLog.log("Drivetrain/Facing Goal", isFacingGoal.getAsBoolean());
+    DogLog.log("Drivetrain/Facing Passing Goal", isFacingGoalPassing.getAsBoolean());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -193,6 +287,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         });
   }
 
+  public Command setShootingRange(boolean enable) {
+
+    return Commands.runOnce(
+        () -> {
+          this.shootingRange = enable;
+        });
+  }
+
   public double getTranslationSlowFactor() {
     return translationSlowFactor;
   }
@@ -203,6 +305,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public boolean isSlowMode() {
     return slowMode;
+  }
+
+  public boolean goingToShootingRange() {
+    return shootingRange;
   }
 
   public boolean getdisableAutoRotate() {
@@ -241,6 +347,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 0;
       case HUB:
         return EagleUtil.getRotationalHub(getState().Pose);
+      case TST:
+        return EagleUtil.getRobotTargetAngle(
+            getState().Pose,
+            EagleUtil.calcAimpoint(
+                getState().Pose, getPose(0.2), FieldConstants.RED_HUB, getState().Speeds));
       default:
         return 0;
     }
@@ -278,13 +389,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         this.controller);
   }
 
-  /*
-   * the idea behind this command is that it:
-   * 1. saves current rotation target,
-   * 2. resets the rotation target to normal
-   * 3. does whatever inbetween thing needs to be done while we aren't aligning
-   * 4. set the target back to the previous target.
-   */
   public Command temporarilyDisableRotation() {
     return Commands.run(
             () -> {
