@@ -21,11 +21,11 @@ public class BumpPathAuto_2c extends SequentialCommandGroup {
       PathPlannerPath cycle2Path;
 
       if (mirror) {
-        cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle").mirrorPath();
-        cycle2Path = PathPlannerPath.fromChoreoTrajectory("Cycle2").mirrorPath();
+        cyclePath = PathPlannerPath.fromChoreoTrajectory("B_Cycle").mirrorPath();
+        cycle2Path = PathPlannerPath.fromChoreoTrajectory("B_Cycle2").mirrorPath();
       } else {
-        cyclePath = PathPlannerPath.fromChoreoTrajectory("Cycle");
-        cycle2Path = PathPlannerPath.fromChoreoTrajectory("Cycle2");
+        cyclePath = PathPlannerPath.fromChoreoTrajectory("B_Cycle");
+        cycle2Path = PathPlannerPath.fromChoreoTrajectory("B_Cycle2");
       }
 
       Pose2d startingPose =
