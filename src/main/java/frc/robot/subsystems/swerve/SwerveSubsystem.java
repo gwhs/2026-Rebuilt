@@ -108,6 +108,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Trigger isOnDepotSide = new Trigger(() -> EagleUtil.isOnDepotSide(getState().Pose));
   public Trigger isOnOutpostSide = new Trigger(() -> EagleUtil.isOnOutpostSide(getState().Pose));
 
+  public Trigger isOnBump = new Trigger(() -> EagleUtil.isOnBump(getState().Pose));
+
   public Trigger isFacingGoal =
       new Trigger(
           () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 5));
@@ -241,6 +243,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Current Zone/On Depot Side", isOnDepotSide.getAsBoolean());
     DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
+    DogLog.log("Current Zone/On Bump", isOnBump.getAsBoolean());
     DogLog.log("In shooting range", isInShootingRange.getAsBoolean());
 
     DogLog.log(

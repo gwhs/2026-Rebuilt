@@ -157,6 +157,7 @@ public class RobotContainer {
   private void configureBindings() {
     RobotModeTriggers.disabled().onTrue(disableHandler());
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+    drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
     controller
         .rightTrigger()
