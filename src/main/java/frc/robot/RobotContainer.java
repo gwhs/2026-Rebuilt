@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.BumpPathAuto_1c;
 import frc.robot.commands.autonomous.BumpPathAuto_2c;
+import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.Trench_1c;
 import frc.robot.commands.autonomous.Trench_2c;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
@@ -184,6 +185,7 @@ public class RobotContainer {
     autoChooser.addOption("Trench 2 Cycle Mirrored", new Trench_2c(drivetrain, shooter, true));
     autoChooser.addOption("Bump 1 Cycle", new BumpPathAuto_1c(drivetrain, shooter, false));
     autoChooser.addOption("Bump 2 Cycle", new BumpPathAuto_2c(drivetrain, shooter, false));
+    autoChooser.addOption("Depot 1 Cycle", new DepotPathAuto_1c(drivetrain, shooter));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
