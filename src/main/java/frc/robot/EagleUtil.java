@@ -98,7 +98,7 @@ public class EagleUtil {
     double c = 1.075; // constance to fix inefficiency
     return v * c;
   }
-  
+
   public static Translation2d getRobotTarget(Pose2d robotPose) {
     if (isRedAlliance()) {
       if (isInAllianceZone(robotPose)) {
@@ -123,21 +123,11 @@ public class EagleUtil {
     }
   }
 
-  public static Pose2d calcAimpoint(
-      Pose2d robotPose, Pose2d newRobotPose, Translation2d target, ChassisSpeeds robot) {
-    double dis = getRobotTargetDistance(newRobotPose, target);
-    double x = robotPose.getX() + target.getX() - newRobotPose.getX() + getFuelDx(robot, dis);
-    double y = robotPose.getY() + target.getY() - newRobotPose.getY() + getFuelDy(robot, dis);
-    Pose2d aimpoint = new Pose2d(x, y, Rotation2d.kZero);
-    return aimpoint;
-  }
-
   public static double velocityToRPM(double v) {
     double flywheelRPM = v / Math.PI / FieldConstants.flywheelDiameter;
     return flywheelRPM / FieldConstants.motorToFlywheelGearRatio;
   }
-  
-  
+
   public static double rpmToVelocity(double rpm) {
     double flywheelRPM = rpm * FieldConstants.motorToFlywheelGearRatio;
     return Math.PI * FieldConstants.flywheelDiameter * flywheelRPM;

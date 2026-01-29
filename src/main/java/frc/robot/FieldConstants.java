@@ -38,7 +38,7 @@ public class FieldConstants {
   public static Translation2d BLUE_OUTPOST_PASSING =
       new Translation2d(BLUE_OUTPOST_PASSING_X, BLUE_OUTPOST_PASSING_Y);
 
-  public static final double shooterAngleD = 60; //72
+  public static final double shooterAngleD = 60; // 72
   public static final double shooterAngleR = Math.PI / 3;
   public static final double hubHeight = 1.8;
   public static final double gravitationalAcc = 9.80665;
