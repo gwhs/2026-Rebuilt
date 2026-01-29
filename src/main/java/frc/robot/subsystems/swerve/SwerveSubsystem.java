@@ -346,8 +346,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case TST:
         return EagleUtil.getRobotTargetAngle(
             getState().Pose,
-            EagleUtil.calcAimpoint(
-                getState().Pose, getPose(0.2), FieldConstants.RED_HUB, getState().Speeds));
+            EagleUtil.calcAimpoint(getState().Pose, getPose(0.2), FieldConstants.RED_HUB));
       default:
         return 0;
     }
