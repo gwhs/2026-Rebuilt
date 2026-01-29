@@ -19,11 +19,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.autonomous.BumpPathAuto_1c;
-import frc.robot.commands.autonomous.BumpPathAuto_2c;
-import frc.robot.commands.autonomous.DepotPathAuto_1c;
-import frc.robot.commands.autonomous.Trench_1c;
-import frc.robot.commands.autonomous.Trench_2c;
+import frc.robot.commands.autonomous.OneCycle;
+import frc.robot.commands.autonomous.OneCycle.Routine;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
@@ -179,6 +176,7 @@ public class RobotContainer {
   }
 
   private void configureAutonomous() {
+    /*
     autoChooser.addOption("Trench 1 Cycle", new Trench_1c(drivetrain, shooter, false));
     autoChooser.addOption("Trench 2 Cycle", new Trench_2c(drivetrain, shooter, false));
     autoChooser.addOption("Trench 1 Cycle Mirrored", new Trench_1c(drivetrain, shooter, true));
@@ -186,6 +184,14 @@ public class RobotContainer {
     autoChooser.addOption("Bump 1 Cycle", new BumpPathAuto_1c(drivetrain, shooter, false));
     autoChooser.addOption("Bump 2 Cycle", new BumpPathAuto_2c(drivetrain, shooter, false));
     autoChooser.addOption("Depot 1 Cycle", new DepotPathAuto_1c(drivetrain, shooter));
+    */
+    autoChooser.addOption(
+        "Trench 1 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.TRENCH));
+    autoChooser.addOption("Bump 1 Cycle Depot", new OneCycle(shooter, drivetrain, false, Routine.BUMP));
+    autoChooser.addOption(
+        "Trench 1 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.TRENCH));
+    autoChooser.addOption(
+        "Bump 1 Cycle Outpost", new OneCycle(shooter, drivetrain, true, Routine.BUMP));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 

@@ -31,12 +31,12 @@ public class BumpPathAuto_1c extends SequentialCommandGroup {
         neutral = PathPlannerPath.fromChoreoTrajectory("B_Neutral").mirrorPath();
         neutral_score = PathPlannerPath.fromChoreoTrajectory("B_Neutral_Score").mirrorPath();
         score_neutral = PathPlannerPath.fromChoreoTrajectory("B_Score_Neutral").mirrorPath();
-        climb = PathPlannerPath.fromChoreoTrajectory("B_Climb_Mirrored");
+        climb = PathPlannerPath.fromChoreoTrajectory("B_Score_Climb_Mirrored");
       } else {
         neutral = PathPlannerPath.fromChoreoTrajectory("B_Neutral");
         neutral_score = PathPlannerPath.fromChoreoTrajectory("B_Neutral_Score");
         score_neutral = PathPlannerPath.fromChoreoTrajectory("B_Score_Neutral");
-        climb = PathPlannerPath.fromChoreoTrajectory("B_Climb");
+        climb = PathPlannerPath.fromChoreoTrajectory("B_Scroe_Climb");
       }
 
       Pose2d startingPose =
