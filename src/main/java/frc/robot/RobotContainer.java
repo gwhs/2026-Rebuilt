@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
+import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
@@ -82,7 +84,10 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   private final ShooterSubsystem shooter;
-
+  private final GroundIntakeRollerSubsystem groundintakeroller =
+      new GroundIntakeRollerSubsystem(rioCanbus, canivoreCanbus, signalList);
+  private final GroundIntakeLinearExtensionSubsystem groundintakeextension =
+      new GroundIntakeLinearExtensionSubsystem(rioCanbus, canivoreCanbus, signalList);
   private final IndexerSubsystem indexer =
       new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
 
@@ -201,6 +206,9 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(drivetrain.setSlowMode(true))
         .onFalse(drivetrain.setSlowMode(false));
+
+    controller.povDown().whileTrue(deployGroundIntake());
+    controller.povDown().onFalse(groundintakeroller.stopIntake());
   }
 
   public Command getAutonomousCommand() {
@@ -271,7 +279,7 @@ public class RobotContainer {
   }
 
   public Command shootDepot() {
-    return Commands.sequence(
+    return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
         shooter.cruiseControl(),
         indexer
@@ -285,7 +293,7 @@ public class RobotContainer {
   }
 
   public Command shootOutpost() {
-    return Commands.sequence(
+    return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
         shooter.cruiseControl(),
         indexer
@@ -298,11 +306,15 @@ public class RobotContainer {
             .repeatedly());
   }
 
-  // TODO: add ground intake when said subsystem is added
   public Command unStuck() {
     return Commands.parallel(
-        indexer.reverse()
-        // groundintake
-        );
+        indexer.reverse(), groundintakeroller.reverseIntake(), groundintakeextension.extend());
+  }
+
+  public Command deployGroundIntake() {
+    return Commands.parallel(
+        groundintakeroller.startIntake(),
+        groundintakeextension.extend(),
+        drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()));
   }
 }
