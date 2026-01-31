@@ -16,7 +16,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import java.util.function.Supplier;
 
-public class OneCycle extends SequentialCommandGroup {
+public class NeutralAutos extends SequentialCommandGroup {
   public enum Routine {
     BUMP,
     TRENCH
@@ -28,7 +28,7 @@ public class OneCycle extends SequentialCommandGroup {
   private GroundIntakeLinearExtensionSubsystem groundIntakeExtend;
   private GroundIntakeRollerSubsystem groundIntakeRoller;
 
-  public OneCycle(
+  public NeutralAutos(
       SwerveSubsystem drivetrain,
       ShooterSubsystem shooter,
       IndexerSubsystem indexer,
@@ -63,7 +63,7 @@ public class OneCycle extends SequentialCommandGroup {
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb_Mirrored");
       } else {
         cycle = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle");
-        cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2").mirrorPath();
+        cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2");
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb");
       }
 

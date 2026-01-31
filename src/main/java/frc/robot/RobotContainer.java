@@ -22,8 +22,8 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
-import frc.robot.commands.autonomous.OneCycle;
-import frc.robot.commands.autonomous.OneCycle.Routine;
+import frc.robot.commands.autonomous.NeutralAutos;
+import frc.robot.commands.autonomous.NeutralAutos.Routine;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
@@ -230,7 +230,7 @@ public class RobotContainer {
     */
     autoChooser.addOption(
         "Bump 1 Cycle Depot",
-        new OneCycle(
+        new NeutralAutos(
             drivetrain,
             shooter,
             indexer,
@@ -241,7 +241,7 @@ public class RobotContainer {
             false));
     autoChooser.addOption(
         "Bump 1 Cycle Outpost",
-        new OneCycle(
+        new NeutralAutos(
             drivetrain,
             shooter,
             indexer,
@@ -252,7 +252,7 @@ public class RobotContainer {
             false));
     autoChooser.addOption(
         "Bump 2 Cycle Depot",
-        new OneCycle(
+        new NeutralAutos(
             drivetrain,
             shooter,
             indexer,
@@ -263,7 +263,7 @@ public class RobotContainer {
             true));
     autoChooser.addOption(
         "Bump 2 Cycle Outpost",
-        new OneCycle(
+        new NeutralAutos(
             drivetrain,
             shooter,
             indexer,
@@ -274,7 +274,7 @@ public class RobotContainer {
             true));
     autoChooser.addOption(
         "Trench 1 Cycle Depot",
-        new OneCycle(
+        new NeutralAutos(
             drivetrain,
             shooter,
             indexer,
@@ -285,7 +285,7 @@ public class RobotContainer {
             false));
     autoChooser.addOption(
         "Trench 1 Cycle Outpost",
-        new OneCycle(
+        new NeutralAutos(
             drivetrain,
             shooter,
             indexer,
@@ -296,7 +296,7 @@ public class RobotContainer {
             false));
     autoChooser.addOption(
         "Trench 2 Cycle Depot",
-        new OneCycle(
+        new NeutralAutos(
             drivetrain,
             shooter,
             indexer,
@@ -307,7 +307,7 @@ public class RobotContainer {
             true));
     autoChooser.addOption(
         "Trench 2 Cycle Outpost",
-        new OneCycle(
+        new NeutralAutos(
             drivetrain,
             shooter,
             indexer,
