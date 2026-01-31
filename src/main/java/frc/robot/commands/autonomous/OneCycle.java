@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
+import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
+import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -23,17 +25,23 @@ public class OneCycle extends SequentialCommandGroup {
   private SwerveSubsystem drivetrain;
   private ShooterSubsystem shooter;
   private IndexerSubsystem indexer;
+  private GroundIntakeLinearExtensionSubsystem groundIntakeExtend;
+  private GroundIntakeRollerSubsystem groundIntakeRoller;
 
   public OneCycle(
       SwerveSubsystem drivetrain,
       ShooterSubsystem shooter,
       IndexerSubsystem indexer,
+      GroundIntakeLinearExtensionSubsystem groundIntakeExtend,
+      GroundIntakeRollerSubsystem groundIntakeRoller,
       boolean mirror,
       Routine routine,
       boolean twoCycle) {
     this.drivetrain = drivetrain;
     this.shooter = shooter;
     this.indexer = indexer;
+    this.groundIntakeRoller = groundIntakeRoller;
+    this.groundIntakeExtend = groundIntakeExtend;
     try {
       // Load Paths
       PathPlannerPath cycle;
@@ -63,15 +71,18 @@ public class OneCycle extends SequentialCommandGroup {
           new Pose2d(cycle.getPoint(0).position, cycle.getIdealStartingState().rotation());
 
       addCommands(
-          AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          cyclePath(cycle),
-          Commands.waitSeconds(6)
-              .deadlineFor(
-                  drivetrain
-                      .driveToPose(() -> getScorePose(() -> cycle))
-                      .alongWith(Commands.parallel(indexer.index(), shooter.runVelocity(60)))),
-          cyclePath(cycletwo).onlyIf(() -> twoCycle),
-          climbPath(climb).andThen(Commands.idle()).onlyIf(() -> !twoCycle));
+          Commands.sequence(
+                  AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
+                  cyclePath(cycle),
+                  Commands.waitSeconds(6)
+                      .deadlineFor(
+                          drivetrain
+                              .driveToPose(() -> getScorePose(() -> cycle))
+                              .alongWith(
+                                  Commands.parallel(indexer.index(), shooter.runVelocity(60)))),
+                  cyclePath(cycletwo).onlyIf(() -> twoCycle),
+                  climbPath(climb).andThen(Commands.idle()).onlyIf(() -> !twoCycle))
+              .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
@@ -94,7 +105,13 @@ public class OneCycle extends SequentialCommandGroup {
   }
 
   private Command cyclePath(PathPlannerPath path) {
-    return Commands.sequence(AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(0)));
+    return Commands.sequence(
+        AutoBuilder.followPath(path)
+            .deadlineFor(
+                shooter.runVelocity(0),
+                groundIntakeExtend.extend(),
+                groundIntakeRoller.startIntake()),
+        groundIntakeRoller.stopIntake());
   }
 
   private Command climbPath(PathPlannerPath path) {
