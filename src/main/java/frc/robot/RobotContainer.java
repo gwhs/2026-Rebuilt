@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
@@ -48,7 +50,6 @@ public class RobotContainer {
 
   private final DriveCommand defualtDriveCommand;
 
-  // TODO: update serial numbers
   @SuppressWarnings("resource")
   public static Robot getRobot() {
     if (RobotController.getSerialNumber().equals("032414F0")) {
@@ -157,9 +158,37 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    RobotModeTriggers.disabled().onTrue(disableHandler());
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+    drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
+    controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
+    controller
+        .rightTrigger()
+        .and(
+            drivetrain
+                .isInNeutralZone
+                .or(drivetrain.isInOpponentAllianceZone)
+                .and(drivetrain.isOnDepotSide))
+        .whileTrue(shootDepot());
+    controller
+        .rightTrigger()
+        .and(
+            drivetrain
+                .isInNeutralZone
+                .or(drivetrain.isInOpponentAllianceZone)
+                .and(drivetrain.isOnOutpostSide))
+        .whileTrue(shootOutpost());
+
+    controller.a().whileTrue(unStuck());
+
+    controller
+        .y()
+        .whileTrue(drivetrain.setShootingRange(true))
+        .onFalse(drivetrain.setShootingRange(false));
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
+    drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
+
     drivetrain
         .isInNeutralZone
         .or(drivetrain.isInOpponentAllianceZone)
@@ -170,6 +199,11 @@ public class RobotContainer {
         .or(drivetrain.isInOpponentAllianceZone)
         .and(drivetrain.isOnDepotSide)
         .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+
+    controller
+        .rightBumper()
+        .onTrue(drivetrain.setSlowMode(true))
+        .onFalse(drivetrain.setSlowMode(false));
   }
 
   public Command getAutonomousCommand() {
@@ -244,7 +278,6 @@ public class RobotContainer {
     DogLog.log("aimpoint", rt);
     DogLog.log("estPos", r2);
 
-    // log object
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
     if (obj.isPresent()) {
@@ -252,5 +285,61 @@ public class RobotContainer {
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
+  }
+
+  private Command disableHandler() {
+    return Commands.sequence(
+            shooter.runVoltage(0.0), drivetrain.setRotationCommand(RotationTarget.NORMAL))
+        .ignoringDisable(true);
+  }
+
+  public Command shootHub() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.HUB),
+        shooter.cruiseControl(),
+        indexer
+            .index()
+            .onlyWhile(
+                shooter
+                    .isAtGoalVelocity_Hub
+                    .and(drivetrain.isFacingGoal)
+                    .or(controller.leftTrigger()))
+            .repeatedly());
+  }
+
+  public Command shootDepot() {
+    return Commands.sequence(
+        drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
+        shooter.cruiseControl(),
+        indexer
+            .index()
+            .onlyWhile(
+                shooter
+                    .isAtGoalVelocity_Passing
+                    .and(drivetrain.isFacingGoalPassing)
+                    .or(controller.leftTrigger()))
+            .repeatedly());
+  }
+
+  public Command shootOutpost() {
+    return Commands.sequence(
+        drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
+        shooter.cruiseControl(),
+        indexer
+            .index()
+            .onlyWhile(
+                shooter
+                    .isAtGoalVelocity_Passing
+                    .and(drivetrain.isFacingGoalPassing)
+                    .or(controller.leftTrigger()))
+            .repeatedly());
+  }
+
+  // TODO: add ground intake when said subsystem is added
+  public Command unStuck() {
+    return Commands.parallel(
+        indexer.reverse()
+        // groundintake
+        );
   }
 }
