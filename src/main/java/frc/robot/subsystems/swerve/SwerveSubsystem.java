@@ -346,9 +346,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case HUB:
         return EagleUtil.getRotationalHub(getState().Pose);
       case SOTF:
-        return EagleUtil.getRobotTargetAngle(
-            getState().Pose,
-            getTar());
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getTar());
       default:
         return 0;
     }
