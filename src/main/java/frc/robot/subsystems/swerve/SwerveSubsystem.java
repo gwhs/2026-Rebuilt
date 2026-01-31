@@ -50,7 +50,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     PASSING_OUTPOST_SIDE,
     TOWER,
     HUB,
-    TST,
+    SOTF,
   }
 
   private Alert frontLeftDriveConnectedAlert =
@@ -345,15 +345,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 0;
       case HUB:
         return EagleUtil.getRotationalHub(getState().Pose);
-      case TST:
+      case SOTF:
         return EagleUtil.getRobotTargetAngle(
             getState().Pose,
-            EagleUtil.calcAimpoint(
-                getState().Pose,
-                getPose(
-                    EagleUtil.getFuelFlyTime(
-                        EagleUtil.getRobotTargetDistance(getState().Pose, FieldConstants.RED_HUB))),
-                FieldConstants.RED_HUB));
+            getTar());
       default:
         return 0;
     }
@@ -366,7 +361,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     double t;
     for (int i = 0; i < 6; i++) {
       t = EagleUtil.getFuelFlyTime(dst);
-      target = EagleUtil.calcAimpoint(getState().Pose, getPose(t), target.getTranslation());
+      target = EagleUtil.calcAimpoint(getState().Pose, getPose(t), FieldConstants.RED_HUB);
       dst = EagleUtil.getRobotTargetDistance(stPos, target);
       DogLog.log("timeInForLoop", t);
     }
