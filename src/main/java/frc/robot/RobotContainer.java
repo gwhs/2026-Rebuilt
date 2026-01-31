@@ -7,8 +7,8 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -171,19 +171,34 @@ public class RobotContainer {
                 () -> {
                   Pose2d stPos = EagleUtil.getShooterPos(drivetrain.getState().Pose);
                   Translation3d initPosition = new Translation3d(stPos.getX(), stPos.getY(), 0.635);
-                  double dst = EagleUtil.getRobotTargetDistance(stPos, FieldConstants.RED_HUB);
+                  /*
+                  double t =
+                      EagleUtil.getFuelFlyTime(
+                          EagleUtil.getRobotTargetDistance(
+                              drivetrain.getState().Pose, FieldConstants.RED_HUB));
+                              */
+                  Pose2d tar = drivetrain.getTar();
+                  double dst = EagleUtil.getRobotTargetDistance(stPos, tar);
+                  double t = EagleUtil.getFuelFlyTime(dst);
                   double d = EagleUtil.getShooterVelocity(dst);
                   DogLog.log("velocity of fuel", d);
                   DogLog.log("distance to tar", dst);
+                  DogLog.log("fuelTimeInAir", t);
+
+                  ChassisSpeeds robotVelocityChassis =
+                      ChassisSpeeds.fromRobotRelativeSpeeds(
+                          drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
+                  double robotDx = robotVelocityChassis.vxMetersPerSecond;
+                  double robotDy = robotVelocityChassis.vyMetersPerSecond;
 
                   double a = drivetrain.getState().Pose.getRotation().getRadians();
                   Translation3d initVelocity =
                       new Translation3d(
-                          d * Math.cos(FieldConstants.shooterAngleRadian) * Math.cos(a),
-                          d * Math.cos(FieldConstants.shooterAngleRadian) * Math.sin(a),
-                          d
-                              * Math.sin(FieldConstants.shooterAngleRadian)
-                              * Math.sin(FieldConstants.shooterAngleRadian));
+                          (d * Math.cos(FieldConstants.shooterAngleRadian) * Math.cos(a))
+                              + robotDx, // x
+                          (d * Math.cos(FieldConstants.shooterAngleRadian) * Math.sin(a))
+                              + robotDy, // y
+                          d * Math.sin(FieldConstants.shooterAngleRadian)); // z
                   FuelSim.getInstance()
                       .spawnFuel(
                           initPosition,
@@ -248,14 +263,6 @@ public class RobotContainer {
     startTime = HALUtil.getFPGATime();
 
     DogLog.log("Match Timer", DriverStation.getMatchTime());
-
-    Pose2d r1 = drivetrain.getState().Pose;
-    Pose2d r2 = drivetrain.getPose(0.2);
-    Translation2d t = FieldConstants.RED_HUB;
-    Pose2d rt = EagleUtil.calcAimpoint(r1, r2, t);
-
-    DogLog.log("aimpoint", rt);
-    DogLog.log("estPos", r2);
 
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 

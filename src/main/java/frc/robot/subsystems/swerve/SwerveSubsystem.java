@@ -261,6 +261,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     frontrightEncoderConnectedAlert.set(!frontRightEncoder.isConnected());
     backRightEncoderConnectedAlert.set(!backRightEncoder.isConnected());
     pigeonConnectedAlert.set(!pigeon.isConnected());
+
+    DogLog.log("aimpoint", getTar());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -346,10 +348,29 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case TST:
         return EagleUtil.getRobotTargetAngle(
             getState().Pose,
-            EagleUtil.calcAimpoint(getState().Pose, getPose(0.2), FieldConstants.RED_HUB));
+            EagleUtil.calcAimpoint(
+                getState().Pose,
+                getPose(
+                    EagleUtil.getFuelFlyTime(
+                        EagleUtil.getRobotTargetDistance(getState().Pose, FieldConstants.RED_HUB))),
+                FieldConstants.RED_HUB));
       default:
         return 0;
     }
+  }
+
+  public Pose2d getTar() {
+    Pose2d stPos = EagleUtil.getShooterPos(getState().Pose);
+    Pose2d target = EagleUtil.calcAimpoint(getState().Pose, getPose(1), FieldConstants.RED_HUB);
+    double dst = EagleUtil.getRobotTargetDistance(stPos, target);
+    double t;
+    for (int i = 0; i < 6; i++) {
+      t = EagleUtil.getFuelFlyTime(dst);
+      target = EagleUtil.calcAimpoint(getState().Pose, getPose(t), target.getTranslation());
+      dst = EagleUtil.getRobotTargetDistance(stPos, target);
+      DogLog.log("timeInForLoop", t);
+    }
+    return target;
   }
 
   public boolean isDrivingToFuel() {

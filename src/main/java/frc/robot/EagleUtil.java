@@ -95,7 +95,7 @@ public class EagleUtil {
                     * Math.cos(FieldConstants.shooterAngleRadian)
                     * (distanceToTarget * Math.tan(FieldConstants.shooterAngleRadian)
                         - (FieldConstants.hubHeight - FieldConstants.shooterHeight))));
-    double c = 1.03; // constance to fix inefficiency
+    double c = 1; // constance to fix inefficiency
     return v * c;
   }
 
@@ -130,5 +130,17 @@ public class EagleUtil {
                 * Math.cos(robotPos.getRotation().getRadians()));
     double y = robotPos.getY();
     return new Pose2d(x, y, robotPos.getRotation());
+  }
+
+  public static double getFuelFlyTime(double dis) {
+    return (0.286636 * dis) + 0.71703;
+
+    /*
+    (-0.00209992 * Math.pow(dis, 4))
+        + (0.0571325 * Math.pow(dis, 3))
+        - (0.49225 * Math.pow(dis, 2))
+        + (1.81373 * dis)
+        - 0.673056;
+        */
   }
 }
