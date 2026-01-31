@@ -276,11 +276,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public Command swerveX() {
     return Commands.runOnce(
-      () -> {
-        this.setControl(driveBrake);
-        
-      });
-
+        () -> {
+          this.setControl(driveBrake);
+        });
   }
 
   public Command setSlowMode(boolean enable) {
