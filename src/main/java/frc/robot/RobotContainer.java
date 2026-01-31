@@ -209,6 +209,8 @@ public class RobotContainer {
 
     controller.povDown().whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundintakeroller.stopIntake());
+
+    controller.x().whileTrue(defenseMode());
   }
 
   public Command getAutonomousCommand() {
@@ -316,5 +318,13 @@ public class RobotContainer {
         groundintakeroller.startIntake(),
         groundintakeextension.extend(),
         drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()));
+  }
+
+  public Command defenseMode() {
+    return Commands.parallel(
+      drivetrain.swerveX(),
+      groundintakeextension.retract(),
+      groundintakeroller.stopIntake()
+    );
   }
 }
