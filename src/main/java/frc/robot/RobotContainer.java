@@ -322,9 +322,6 @@ public class RobotContainer {
 
   public Command defenseMode() {
     return Commands.parallel(
-      drivetrain.swerveX(),
-      groundintakeextension.retract(),
-      groundintakeroller.stopIntake()
-    );
+        drivetrain.swerveX(), groundintakeextension.retract(), groundintakeroller.stopIntake());
   }
 }
