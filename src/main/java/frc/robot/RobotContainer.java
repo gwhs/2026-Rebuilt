@@ -104,27 +104,37 @@ public class RobotContainer {
     switch (getRobot()) {
       case COMP:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createReal(rioCanbus, canivoreCanbus, signalList, drivetrain);
+        shooter =
+            ShooterSubsystem.createReal(
+                rioCanbus,
+                canivoreCanbus,
+                signalList,
+                drivetrain.poseSupplier(),
+                drivetrain.speedSupplier());
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createDisabled(drivetrain);
+        shooter =
+            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         break;
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
-        shooter = ShooterSubsystem.createDisabled(drivetrain);
+        shooter =
+            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
-        shooter = ShooterSubsystem.createDisabled(drivetrain);
+        shooter =
+            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createSim(drivetrain);
+        shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createDisabled(drivetrain);
+        shooter =
+            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         break;
     }
 

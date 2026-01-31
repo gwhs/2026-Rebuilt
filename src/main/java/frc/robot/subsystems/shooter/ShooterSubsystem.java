@@ -11,32 +11,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
 import java.util.function.Supplier;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-  public static ShooterSubsystem createSim(SwerveSubsystem drivetrain) {
-    return new ShooterSubsystem(
-        new ShooterIOSim(), () -> drivetrain.getState().Pose, () -> drivetrain.getState().Speeds);
+  public static ShooterSubsystem createSim(
+      Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> velocity) {
+    return new ShooterSubsystem(new ShooterIOSim(), robotPose, velocity);
   }
 
-  public static ShooterSubsystem createDisabled(SwerveSubsystem drivetrain) {
-    return new ShooterSubsystem(
-        new ShooterIODisabled(),
-        () -> drivetrain.getState().Pose,
-        () -> drivetrain.getState().Speeds);
+  public static ShooterSubsystem createDisabled(
+      Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> velocity) {
+    return new ShooterSubsystem(new ShooterIODisabled(), robotPose, velocity);
   }
 
   public static ShooterSubsystem createReal(
       CANBus rioCanbus,
       CANBus canivoreCanbus,
       StatusSignalCollection signal,
-      SwerveSubsystem drivetrain) {
+      Supplier<Pose2d> robotPose,
+      Supplier<ChassisSpeeds> velocity) {
     return new ShooterSubsystem(
-        new ShooterIOReal(rioCanbus, canivoreCanbus, signal),
-        () -> drivetrain.getState().Pose,
-        () -> drivetrain.getState().Speeds);
+        new ShooterIOReal(rioCanbus, canivoreCanbus, signal), robotPose, velocity);
   }
 
   private ShooterIO shooterIO;
