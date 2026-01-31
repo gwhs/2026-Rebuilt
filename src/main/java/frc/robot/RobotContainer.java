@@ -260,7 +260,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
         shooter.cruiseControl(),
-        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal)));
+        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal).or(controller.leftTrigger())).repeatedly());
   }
 
   public Command shootDepot() {
@@ -269,7 +269,7 @@ public class RobotContainer {
         shooter.cruiseControl(),
         indexer
             .index()
-            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
+            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing).or(controller.leftTrigger())).repeatedly());
   }
 
   public Command shootOutpost() {
@@ -278,7 +278,7 @@ public class RobotContainer {
         shooter.cruiseControl(),
         indexer
             .index()
-            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
+            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing).or(controller.leftTrigger())).repeatedly());
   }
 
   // TODO: add ground intake when said subsystem is added
