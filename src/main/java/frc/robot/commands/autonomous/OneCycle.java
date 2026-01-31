@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
+import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import java.util.function.Supplier;
@@ -22,6 +23,7 @@ public class OneCycle extends SequentialCommandGroup {
   public OneCycle(
       ShooterSubsystem shooter,
       SwerveSubsystem drivetrain,
+      IndexerSubsystem indexer,
       boolean mirror,
       Routine routine,
       boolean twoCycle) {
@@ -52,21 +54,16 @@ public class OneCycle extends SequentialCommandGroup {
       Pose2d startingPose =
           new Pose2d(cycle.getPoint(0).position, cycle.getIdealStartingState().rotation());
 
-      if (twoCycle) {
-        addCommands(
-            AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-            cyclePath(cycle, shooter, drivetrain),
-            Commands.waitSeconds(6),
-            cyclePath(cycle, shooter, drivetrain));
-      } else {
-        addCommands(
-            AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-            cyclePath(cycle, shooter, drivetrain),
-            Commands.waitSeconds(6)
-                .deadlineFor(drivetrain.driveToPose(() -> getScorePose(() -> cycle))),
-            climbPath(climb, shooter, drivetrain),
-            Commands.idle());
-      }
+      addCommands(
+          AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
+          cyclePath(cycle, shooter, drivetrain),
+          Commands.waitSeconds(6)
+              .deadlineFor(
+                  drivetrain
+                      .driveToPose(() -> getScorePose(() -> cycle))
+                      .alongWith(indexer.index())),
+          cyclePath(cycle, shooter, drivetrain).onlyIf(() -> twoCycle),
+          climbPath(climb, shooter, drivetrain).onlyIf(() -> !twoCycle));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
