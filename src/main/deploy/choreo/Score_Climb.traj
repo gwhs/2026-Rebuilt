@@ -16,7 +16,7 @@
  "params":{
   "waypoints":[
     {"x":{"exp":"Score.x", "val":2.4675525188446046}, "y":{"exp":"Score.y", "val":4.025968074798584}, "heading":{"exp":"Score.heading", "val":0.0}, "intervals":19, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"Climb.x", "val":1.5660611987113953}, "y":{"exp":"Climb.y + 0.5 m", "val":4.2401522064209995}, "heading":{"exp":"Climb.heading", "val":0.0}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"Climb.x", "val":1.5665059156417849}, "y":{"exp":"Climb.y + 0.5 m", "val":4.65}, "heading":{"exp":"Climb.heading", "val":0.0}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},

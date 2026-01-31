@@ -20,50 +20,58 @@ public class OneCycle extends SequentialCommandGroup {
     TRENCH
   }
 
+  private SwerveSubsystem drivetrain;
+  private ShooterSubsystem shooter;
+  private IndexerSubsystem indexer;
+
   public OneCycle(
-      ShooterSubsystem shooter,
       SwerveSubsystem drivetrain,
+      ShooterSubsystem shooter,
       IndexerSubsystem indexer,
       boolean mirror,
       Routine routine,
       boolean twoCycle) {
-
-    /* All your code should go inside this try-catch block */
+    this.drivetrain = drivetrain;
+    this.shooter = shooter;
+    this.indexer = indexer;
     try {
       // Load Paths
       PathPlannerPath cycle;
+      PathPlannerPath cycletwo;
       PathPlannerPath climb;
       String pathprefix = "";
 
+      // Set prefix for path names based on which auto
       if (routine == Routine.BUMP) {
         pathprefix = "B_";
       } else if (routine == Routine.TRENCH) {
         pathprefix = "T_";
       }
 
+      // If on outpost side, flip the paths
       if (mirror) {
         cycle = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle").mirrorPath();
+        cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2").mirrorPath();
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb_Mirrored");
       } else {
         cycle = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle");
+        cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2").mirrorPath();
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb");
       }
-      // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory(pathprefix + "PATH
-      // NAME");
 
       Pose2d startingPose =
           new Pose2d(cycle.getPoint(0).position, cycle.getIdealStartingState().rotation());
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          cyclePath(cycle, shooter, drivetrain),
+          cyclePath(cycle),
           Commands.waitSeconds(6)
               .deadlineFor(
                   drivetrain
                       .driveToPose(() -> getScorePose(() -> cycle))
                       .alongWith(indexer.index())),
-          cyclePath(cycle, shooter, drivetrain).onlyIf(() -> twoCycle),
-          climbPath(climb, shooter, drivetrain).onlyIf(() -> !twoCycle));
+          cyclePath(cycletwo).onlyIf(() -> twoCycle),
+          climbPath(climb).andThen(Commands.idle()).onlyIf(() -> !twoCycle));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
@@ -85,13 +93,11 @@ public class OneCycle extends SequentialCommandGroup {
     return score;
   }
 
-  private Command cyclePath(
-      PathPlannerPath path, ShooterSubsystem shooter, SwerveSubsystem drivetrain) {
+  private Command cyclePath(PathPlannerPath path) {
     return Commands.sequence(AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(80)));
   }
 
-  private Command climbPath(
-      PathPlannerPath path, ShooterSubsystem shooter, SwerveSubsystem drivetrain) {
+  private Command climbPath(PathPlannerPath path) {
     return Commands.sequence(
         AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(0)), Commands.idle());
   }
