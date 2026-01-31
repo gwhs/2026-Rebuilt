@@ -69,7 +69,7 @@ public class OneCycle extends SequentialCommandGroup {
               .deadlineFor(
                   drivetrain
                       .driveToPose(() -> getScorePose(() -> cycle))
-                      .alongWith(indexer.index())),
+                      .alongWith(Commands.parallel(indexer.index(), shooter.runVelocity(60)))),
           cyclePath(cycletwo).onlyIf(() -> twoCycle),
           climbPath(climb).andThen(Commands.idle()).onlyIf(() -> !twoCycle));
 
@@ -94,7 +94,7 @@ public class OneCycle extends SequentialCommandGroup {
   }
 
   private Command cyclePath(PathPlannerPath path) {
-    return Commands.sequence(AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(80)));
+    return Commands.sequence(AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(0)));
   }
 
   private Command climbPath(PathPlannerPath path) {
