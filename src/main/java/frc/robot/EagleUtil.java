@@ -133,7 +133,12 @@ public class EagleUtil {
   }
 
   public static double getFuelFlyTime(double dis) {
-    return (0.286625 * dis) + 0.71703;
+    return (-0.0020 * Math.pow(dis, 3))
+        + (0.0311744 * Math.pow(dis, 2))
+        + (-0.0124719 * dis)
+        + 1.18962;
+
+    // (0.28662 * dis) + 0.71703;
 
     /*
     (-0.00209992 * Math.pow(dis, 4))
