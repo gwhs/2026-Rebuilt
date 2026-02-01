@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -252,6 +253,10 @@ public class RobotContainer {
     DogLog.log("estPos", r2);
 
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
+
+    DogLog.log(
+        "Hub Status/Is Active",
+        HubTracker.isActive(DriverStation.getAlliance().orElse(Alliance.Red)));
 
     if (obj.isPresent()) {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
