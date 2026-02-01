@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
@@ -90,6 +91,8 @@ public class RobotContainer {
       new GroundIntakeLinearExtensionSubsystem(rioCanbus, canivoreCanbus, signalList);
   private final IndexerSubsystem indexer =
       new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
+  private final ClimberSubsystem climber =
+      new ClimberSubsystem(rioCanbus,canivoreCanbus, signalList);
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
