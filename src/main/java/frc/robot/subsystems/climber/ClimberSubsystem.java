@@ -15,8 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ClimberSubsystem extends SubsystemBase {
 
   private ClimberIO climberIO;
-  private double climberVoltage;
-  private double velocityGoal;
+  private double goalRotation; 
 
   public ClimberSubsystem(CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
     if (RobotBase.isSimulation()) {
@@ -30,37 +29,25 @@ public class ClimberSubsystem extends SubsystemBase {
     return this.runOnce(
         () -> {
           climberIO.runVoltage(voltage);
-          climberVoltage = voltage;
         });
   }
 
-  public Command runVelocity(double rotationsPerSecond) {
+  public Command runPosition(double rotation) {
     return this.runOnce(
-        () -> {
-          velocityGoal = rotationsPerSecond;
-          climberIO.runVelocity(rotationsPerSecond);
-        });
+      () -> {
+        climberIO.runPosition(rotation);
+        goalRotation = rotation;
+      }
+    );
   }
 
   @Override
   public void periodic() {
     climberIO.periodic();
-    DogLog.log("Climber/Goal Voltage", climberVoltage);
+    DogLog.log("Climber/Goal Rotation", goalRotation);
   }
 
   public double getMotor1Position() {
     return climberIO.getMotor1Position();
-  }
-
-  public double getMotor2Position() {
-    return climberIO.getMotor2Position();
-  }
-
-  public double getMotor1StatorCurrent() {
-    return climberIO.getMotor1StatorCurrent();
-  }
-
-  public double getMotor2StatorCurrent() {
-    return climberIO.getMotor2StatorCurrent();
   }
 }
