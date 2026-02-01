@@ -72,7 +72,7 @@ public class NeutralAutos extends SequentialCommandGroup {
 
       addCommands(
           Commands.sequence(
-                  AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
+                  AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()).alongWith(groundIntakeExtend.homingCommand()),
                   cyclePath(cycle),
                   Commands.waitSeconds(6)
                       .deadlineFor(
