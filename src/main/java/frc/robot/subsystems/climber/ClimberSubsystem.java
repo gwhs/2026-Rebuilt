@@ -8,6 +8,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -35,8 +36,9 @@ public class ClimberSubsystem extends SubsystemBase {
   public Command runPosition(double rotation) {
     return this.runOnce(
       () -> {
-        climberIO.runPosition(rotation);
-        goalRotation = rotation;
+        double rotationClamp = MathUtil.clamp(rotation, ClimberConstants.MIN_ROTATION, ClimberConstants.MAX_ROTATION);
+        climberIO.runPosition(rotationClamp);
+        goalRotation = rotationClamp;
       }
     );
   }

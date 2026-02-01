@@ -9,13 +9,18 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.StatusSignalCollection;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
+import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.Angle;
@@ -92,6 +97,20 @@ public class ClimberIOReal implements ClimberIO {
         talonFXConfig.Slot0.kD = 0;
 
         talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        talonFXConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        talonFXConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ClimberConstants.MAX_ROTATION;
+        talonFXConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        talonFXConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClimberConstants.MIN_ROTATION;
+
+        talonFXConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
+        talonFXConfig.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        talonFXConfig.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
+
+        talonFXConfig.HardwareLimitSwitch.ReverseLimitEnable = true;
+        talonFXConfig.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
+        talonFXConfig.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
+
 
         StatusCode status = StatusCode.StatusCodeNotInitialized;
         for (int i = 0; i <= 5; i++) {
