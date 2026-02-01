@@ -13,14 +13,17 @@ import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
+import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
+import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.Angle;
@@ -38,6 +41,8 @@ public class ClimberIOReal implements ClimberIO {
 
     private final MotionMagicVoltage request = new MotionMagicVoltage(0).withEnableFOC(true);
 
+    private final VoltageOut voltageOut = new VoltageOut(0);
+
     private final Alert motor1NotConnectedAlert =
         new Alert ("Climber Motor 1 Not Connected", AlertType.kError);
 
@@ -47,6 +52,10 @@ public class ClimberIOReal implements ClimberIO {
     private final StatusSignal<Temperature> motor1Temp;
     private final StatusSignal<Double> motor1ClosedLoopGoal;
     private final StatusSignal<Angle> motor1Position;
+
+    private final StatusSignal<ForwardLimitValue> forwardLimit;
+    private final StatusSignal<ReverseLimitValue> reverseLimit;
+    
 
     public ClimberIOReal(
         CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {
@@ -59,6 +68,8 @@ public class ClimberIOReal implements ClimberIO {
         motor1Acceleration = motor1.getAcceleration();
         motor1ClosedLoopGoal = motor1.getClosedLoopReference();
         motor1Position = motor1.getPosition();
+        forwardLimit = motor1.getForwardLimit();
+        reverseLimit = motor1.getReverseLimit();
 
         statusSignalCollection.addSignals(
         motor1Voltage,
@@ -127,6 +138,12 @@ public class ClimberIOReal implements ClimberIO {
     motor1.setVoltage(voltage);
   }
 
+    public void runVoltage(double voltage, boolean ignoreSoftwareLimit) {
+        motor1.setControl(
+            voltageOut.withIgnoreSoftwareLimits(ignoreSoftwareLimit).withOutput(voltage)
+        );
+    }
+
     public void setPosition(double rotation) {
         motor1.setPosition(rotation);
     }
@@ -137,6 +154,10 @@ public class ClimberIOReal implements ClimberIO {
 
     public double getMotor1Position() {
         return motor1Position.getValueAsDouble();
+    }
+
+    public boolean getReverseLimitSwitch() {
+        return reverseLimit.getValue() == ReverseLimitValue.ClosedToGround;
     }
 
     public void periodic() {

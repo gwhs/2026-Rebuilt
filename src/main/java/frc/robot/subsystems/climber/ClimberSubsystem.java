@@ -11,6 +11,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
@@ -40,6 +41,15 @@ public class ClimberSubsystem extends SubsystemBase {
         climberIO.runPosition(rotationClamp);
         goalRotation = rotationClamp;
       }
+    );
+  }
+
+  public Command homingCommand() {
+    return Commands.sequence(
+      Commands.runOnce(() -> climberIO.runVoltage(-3, true)),
+      Commands.waitUntil(() -> climberIO.getReverseLimitSwitch()),
+      Commands.runOnce(() -> climberIO.runVoltage(0)),
+      Commands.runOnce(() -> climberIO.setPosition(0))
     );
   }
 

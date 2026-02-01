@@ -8,6 +8,8 @@ package frc.robot.subsystems.climber;
 public interface ClimberIO {
 
     public void runVoltage(double voltage);
+
+    public void runVoltage(double voltage, boolean ignoreSoftwareLimit);
     
     public double getMotor1Position();
 
@@ -16,4 +18,6 @@ public interface ClimberIO {
     public void setPosition(double rotation);
 
     public void runPosition(double rotation);
+
+    public boolean getReverseLimitSwitch();
 }

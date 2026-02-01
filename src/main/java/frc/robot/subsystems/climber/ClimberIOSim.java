@@ -10,6 +10,8 @@ public class ClimberIOSim implements ClimberIO{
     @Override
   public void runVoltage(double voltage) {}
 
+  public void runVoltage(double voltage, boolean ignoreSoftwareLimit) {}
+
    @Override
   public void periodic() {}
 
@@ -20,5 +22,9 @@ public class ClimberIOSim implements ClimberIO{
   public void setPosition(double rotation) {}
 
   public void runPosition(double rotation) {}
+
+  public boolean getReverseLimitSwitch() {
+    return false;
+  }
 
 }
