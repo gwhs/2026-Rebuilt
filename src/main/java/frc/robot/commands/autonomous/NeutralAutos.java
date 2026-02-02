@@ -22,26 +22,26 @@ public class NeutralAutos extends SequentialCommandGroup {
     TRENCH
   }
 
-  private SwerveSubsystem drivetrain;
-  private ShooterSubsystem shooter;
-  private IndexerSubsystem indexer;
-  private GroundIntakeLinearExtensionSubsystem groundIntakeExtend;
-  private GroundIntakeRollerSubsystem groundIntakeRoller;
+  private static SwerveSubsystem drivetrain;
+  private static ShooterSubsystem shooter;
+  private static IndexerSubsystem indexer;
+  private static GroundIntakeLinearExtensionSubsystem groundIntakeExtend;
+  private static GroundIntakeRollerSubsystem groundIntakeRoller;
 
-  public NeutralAutos(
+  public static void configNeutralAutos(
       SwerveSubsystem drivetrain,
       ShooterSubsystem shooter,
       IndexerSubsystem indexer,
       GroundIntakeLinearExtensionSubsystem groundIntakeExtend,
-      GroundIntakeRollerSubsystem groundIntakeRoller,
-      boolean mirror,
-      Routine routine,
-      boolean twoCycle) {
-    this.drivetrain = drivetrain;
-    this.shooter = shooter;
-    this.indexer = indexer;
-    this.groundIntakeRoller = groundIntakeRoller;
-    this.groundIntakeExtend = groundIntakeExtend;
+      GroundIntakeRollerSubsystem groundIntakeRoller) {
+    NeutralAutos.drivetrain = drivetrain;
+    NeutralAutos.shooter = shooter;
+    NeutralAutos.indexer = indexer;
+    NeutralAutos.groundIntakeRoller = groundIntakeRoller;
+    NeutralAutos.groundIntakeExtend = groundIntakeExtend;
+  }
+
+  public NeutralAutos(boolean mirror, Routine routine, boolean twoCycle) {
     try {
       // Load Paths
       PathPlannerPath cycle;
@@ -72,7 +72,9 @@ public class NeutralAutos extends SequentialCommandGroup {
 
       addCommands(
           Commands.sequence(
-                  AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()).alongWith(groundIntakeExtend.homingCommand()),
+                  AutoBuilder.resetOdom(startingPose)
+                      .onlyIf(() -> RobotBase.isSimulation())
+                      .deadlineFor(groundIntakeExtend.homingCommand()),
                   cyclePath(cycle),
                   Commands.waitSeconds(6)
                       .deadlineFor(

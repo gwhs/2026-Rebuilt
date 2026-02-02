@@ -228,94 +228,16 @@ public class RobotContainer {
     autoChooser.addOption("Bump 2 Cycle", new BumpPathAuto_2c(drivetrain, shooter, false));
     autoChooser.addOption("Depot 1 Cycle", new DepotPathAuto_1c(drivetrain, shooter));
     */
-    autoChooser.addOption(
-        "Bump 1 Cycle Depot",
-        new NeutralAutos(
-            drivetrain,
-            shooter,
-            indexer,
-            groundintakeextension,
-            groundintakeroller,
-            false,
-            Routine.BUMP,
-            false));
-    autoChooser.addOption(
-        "Bump 1 Cycle Outpost",
-        new NeutralAutos(
-            drivetrain,
-            shooter,
-            indexer,
-            groundintakeextension,
-            groundintakeroller,
-            true,
-            Routine.BUMP,
-            false));
-    autoChooser.addOption(
-        "Bump 2 Cycle Depot",
-        new NeutralAutos(
-            drivetrain,
-            shooter,
-            indexer,
-            groundintakeextension,
-            groundintakeroller,
-            false,
-            Routine.BUMP,
-            true));
-    autoChooser.addOption(
-        "Bump 2 Cycle Outpost",
-        new NeutralAutos(
-            drivetrain,
-            shooter,
-            indexer,
-            groundintakeextension,
-            groundintakeroller,
-            true,
-            Routine.BUMP,
-            true));
-    autoChooser.addOption(
-        "Trench 1 Cycle Depot",
-        new NeutralAutos(
-            drivetrain,
-            shooter,
-            indexer,
-            groundintakeextension,
-            groundintakeroller,
-            false,
-            Routine.TRENCH,
-            false));
-    autoChooser.addOption(
-        "Trench 1 Cycle Outpost",
-        new NeutralAutos(
-            drivetrain,
-            shooter,
-            indexer,
-            groundintakeextension,
-            groundintakeroller,
-            true,
-            Routine.TRENCH,
-            false));
-    autoChooser.addOption(
-        "Trench 2 Cycle Depot",
-        new NeutralAutos(
-            drivetrain,
-            shooter,
-            indexer,
-            groundintakeextension,
-            groundintakeroller,
-            false,
-            Routine.TRENCH,
-            true));
-    autoChooser.addOption(
-        "Trench 2 Cycle Outpost",
-        new NeutralAutos(
-            drivetrain,
-            shooter,
-            indexer,
-            groundintakeextension,
-            groundintakeroller,
-            true,
-            Routine.TRENCH,
-            true));
+    NeutralAutos.configNeutralAutos(
+        drivetrain, shooter, indexer, groundintakeextension, groundintakeroller);
+    autoChooser.addOption("Bump 1 Cycle Depot", new NeutralAutos(false, Routine.BUMP, false));
+    autoChooser.addOption("Bump 1 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, false));
+    autoChooser.addOption("Bump 2 Cycle Depot", new NeutralAutos(false, Routine.BUMP, true));
+    autoChooser.addOption("Bump 2 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, true));
+    autoChooser.addOption("Trench 1 Cycle Depot", new NeutralAutos(false, Routine.TRENCH, false));
+    autoChooser.addOption("Trench 1 Cycle Outpost", new NeutralAutos(true, Routine.TRENCH, false));
+    autoChooser.addOption("Trench 2 Cycle Depot", new NeutralAutos(false, Routine.TRENCH, true));
+    autoChooser.addOption("Trench 2 Cycle Outpost", new NeutralAutos(true, Routine.TRENCH, true));
     autoChooser.addOption("Depot 1 Cycle", new DepotPathAuto_1c(drivetrain, shooter));
     SmartDashboard.putData("autonomous", autoChooser);
   }
