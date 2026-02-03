@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
+import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
@@ -39,7 +42,8 @@ public class RobotContainer {
     DEV,
     COMP,
     ANEMONE,
-    KITBOT
+    KITBOT,
+    SIM
   }
 
   private final SwerveSubsystem drivetrain;
@@ -49,18 +53,20 @@ public class RobotContainer {
 
   @SuppressWarnings("resource")
   public static Robot getRobot() {
-    if (RobotController.getSerialNumber().equals("032414F0")) {
+    final String serialNumber = RobotController.getSerialNumber();
+    if (RobotBase.isSimulation()) {
+      return Robot.SIM;
+    } else if (serialNumber.equals("032414F0")) {
       return Robot.ANEMONE;
-    } else if (RobotController.getSerialNumber().equals("03223849")) {
+    } else if (serialNumber.equals("03223849")) {
       return Robot.DEV;
-    } else if (RobotController.getSerialNumber().equals("1234")) {
+    } else if (serialNumber.equals("1234")) {
       return Robot.COMP;
-    } else if (RobotController.getSerialNumber().equals("03282BB2")) {
+    } else if (serialNumber.equals("03282BB2")) {
       return Robot.KITBOT;
     } else {
       new Alert(
-              "roborio unrecognized. here is the serial number:"
-                  + RobotController.getSerialNumber(),
+              "roborio unrecognized. here is the serial number:" + serialNumber,
               Alert.AlertType.kError)
           .set(true);
       ;
@@ -145,14 +151,6 @@ public class RobotContainer {
         break;
     }
 
-    shooter =
-        new ShooterSubsystem(
-            rioCanbus,
-            canivoreCanbus,
-            signalList,
-            () -> drivetrain.getState().Pose,
-            () -> drivetrain.getState().Speeds);
-
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
     objDecCam =
@@ -230,6 +228,11 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(drivetrain.setSlowMode(true))
         .onFalse(drivetrain.setSlowMode(false));
+
+    controller.povDown().whileTrue(deployGroundIntake());
+    controller.povDown().onFalse(groundintakeroller.stopIntake());
+
+    controller.x().whileTrue(defenseMode());
   }
 
   public Command getAutonomousCommand() {
@@ -272,6 +275,10 @@ public class RobotContainer {
 
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
+    DogLog.log(
+        "Hub Status/Is Active",
+        HubTracker.isActive(DriverStation.getAlliance().orElse(Alliance.Red)));
+
     if (obj.isPresent()) {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
     } else {
@@ -289,32 +296,58 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
         shooter.cruiseControl(),
-        indexer.index().onlyWhile(shooter.isAtGoalVelocity_Hub.and(drivetrain.isFacingGoal)));
+        indexer
+            .index()
+            .onlyWhile(
+                shooter
+                    .isAtGoalVelocity_Hub
+                    .and(drivetrain.isFacingGoal)
+                    .or(controller.leftTrigger()))
+            .repeatedly());
   }
 
   public Command shootDepot() {
-    return Commands.sequence(
+    return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
         shooter.cruiseControl(),
         indexer
             .index()
-            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
+            .onlyWhile(
+                shooter
+                    .isAtGoalVelocity_Passing
+                    .and(drivetrain.isFacingGoalPassing)
+                    .or(controller.leftTrigger()))
+            .repeatedly());
   }
 
   public Command shootOutpost() {
-    return Commands.sequence(
+    return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
         shooter.cruiseControl(),
         indexer
             .index()
-            .onlyWhile(shooter.isAtGoalVelocity_Passing.and(drivetrain.isFacingGoalPassing)));
+            .onlyWhile(
+                shooter
+                    .isAtGoalVelocity_Passing
+                    .and(drivetrain.isFacingGoalPassing)
+                    .or(controller.leftTrigger()))
+            .repeatedly());
   }
 
-  // TODO: add ground intake when said subsystem is added
   public Command unStuck() {
     return Commands.parallel(
-        indexer.reverse()
-        // groundintake
-        );
+        indexer.reverse(), groundintakeroller.reverseIntake(), groundintakeextension.extend());
+  }
+
+  public Command deployGroundIntake() {
+    return Commands.parallel(
+        groundintakeroller.startIntake(),
+        groundintakeextension.extend(),
+        drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()));
+  }
+
+  public Command defenseMode() {
+    return Commands.parallel(
+        drivetrain.swerveX(), groundintakeextension.retract(), groundintakeroller.stopIntake());
   }
 }

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.indexer;
+package frc.robot.subsystems.groundIntakeRoller;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -22,7 +22,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 
-public class IndexerIOReal implements IndexerIO {
+public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
   private final TalonFX motor1;
 
@@ -36,10 +36,10 @@ public class IndexerIOReal implements IndexerIO {
   private final Alert motor1NotConnectedAlert =
       new Alert("Indexer Motor 1 Not Connected ", AlertType.kError);
 
-  public IndexerIOReal(
-      CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {
+  public GroundIntakeRollerIOReal(
+      CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
 
-    motor1 = new TalonFX(IndexerConstants.MOTOR_1_ID, rioCanbus);
+    motor1 = new TalonFX(GroundIntakeRollerConstants.MOTOR_1_ID, rioCanbus);
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
@@ -50,7 +50,7 @@ public class IndexerIOReal implements IndexerIO {
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 40;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 80;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -58,26 +58,27 @@ public class IndexerIOReal implements IndexerIO {
     talonFXConfig.Slot0.kS = 0.125;
     talonFXConfig.Slot0.kG = 0;
     talonFXConfig.Slot0.kA = 0;
-    talonFXConfig.Slot0.kV = 0.065;
+    talonFXConfig.Slot0.kV = 0.1125;
     talonFXConfig.Slot0.kP = 0.5;
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
+
     for (int i = 0; i <= 5; i++) {
       status = motor1.getConfigurator().apply(talonFXConfig);
       if (status.isOK()) break;
     }
     if (!status.isOK()) {
-      new Alert("Indexer: Could not configure Motor 1. Error" + status.toString(), AlertType.kError)
+      new Alert(
+              "Ground Roller: Could not configure Motor 1. Error" + status.toString(),
+              AlertType.kError)
           .set(true);
     }
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-    statusSignalCollection.addSignals(
+    signal.addSignals(
         motor1Voltage,
         motor1StatorCurrent,
         motor1Velocity,
@@ -95,18 +96,18 @@ public class IndexerIOReal implements IndexerIO {
         motor1ClosedLoopGoal);
   }
 
-  public void periodic() {
-    DogLog.log("Indexer/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Temperature", motor1Temp.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Acceleration", motor1Acceleration.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Closed Loop Goal", motor1ClosedLoopGoal.getValueAsDouble());
-
-    motor1NotConnectedAlert.set(!motor1.isConnected());
-  }
-
   public void runVoltage(double voltage) {
     motor1.setVoltage(voltage);
+  }
+
+  public void periodic() {
+    DogLog.log("Ground Roller/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
+    DogLog.log("Ground Roller/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
+    DogLog.log("Ground Roller/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
+    DogLog.log("Ground Roller/Motor 1 Temperature", motor1Temp.getValueAsDouble());
+    DogLog.log("Ground Roller/Motor 1 Acceleration", motor1Acceleration.getValueAsDouble());
+    DogLog.log("Ground Roller/Motor 1 Closed Loop Goal", motor1ClosedLoopGoal.getValueAsDouble());
+
+    motor1NotConnectedAlert.set(!motor1.isConnected());
   }
 }
