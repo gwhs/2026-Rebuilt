@@ -25,6 +25,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
@@ -95,8 +96,9 @@ public class RobotContainer {
       new GroundIntakeRollerSubsystem(rioCanbus, canivoreCanbus, signalList);
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension =
       new GroundIntakeLinearExtensionSubsystem(rioCanbus, canivoreCanbus, signalList);
-  private final IndexerSubsystem indexer =
-      new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
+
+  private ClimberSubsystem climber;
+  private final IndexerSubsystem indexer;
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -120,30 +122,42 @@ public class RobotContainer {
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createDisabled();
+        indexer = IndexerSubsystem.createDisabled();
         break;
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createDisabled();
+        indexer = IndexerSubsystem.createDisabled();
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createDisabled();
+        indexer = IndexerSubsystem.createDisabled();
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createSim();
+        indexer = IndexerSubsystem.createSim();
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createDisabled();
+        indexer = IndexerSubsystem.createDisabled();
         break;
     }
 

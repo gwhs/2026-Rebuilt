@@ -20,4 +20,12 @@ public class GroundIntakeLinearExtensionIOSim implements GroundIntakeLinearExten
   public double getStatorCurrent() {
     return 0;
   }
+
+  public boolean getReverseLimit() {
+    return false;
+  }
+
+  public boolean getForwardLimit() {
+    return false;
+  }
 }
