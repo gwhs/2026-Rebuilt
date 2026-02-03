@@ -7,17 +7,17 @@ package frc.robot.subsystems.climber;
 /** Add your docs here. */
 public interface ClimberIO {
 
-    public void runVoltage(double voltage);
+  public void runVoltage(double voltage);
 
-    public void runVoltage(double voltage, boolean ignoreSoftwareLimit);
-    
-    public double getMotor1Position();
+  public void runVoltage(double voltage, boolean ignoreSoftwareLimit);
 
-    public void periodic();
+  public double getMotor1Position();
 
-    public void setPosition(double rotation);
+  public void periodic();
 
-    public void runPosition(double rotation);
+  public void setPosition(double rotation);
 
-    public boolean getReverseLimitSwitch();
+  public void runPosition(double rotation);
+
+  public boolean getReverseLimitSwitch();
 }

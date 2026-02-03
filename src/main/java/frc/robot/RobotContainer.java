@@ -92,7 +92,7 @@ public class RobotContainer {
   private final IndexerSubsystem indexer =
       new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
   private final ClimberSubsystem climber =
-      new ClimberSubsystem(rioCanbus,canivoreCanbus, signalList);
+      new ClimberSubsystem(rioCanbus, canivoreCanbus, signalList);
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 

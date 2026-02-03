@@ -6,7 +6,6 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -17,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ClimberSubsystem extends SubsystemBase {
 
   private ClimberIO climberIO;
-  private double goalRotation; 
+  private double goalRotation;
 
   public ClimberSubsystem(CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
     if (RobotBase.isSimulation()) {
@@ -36,21 +35,21 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public Command runPosition(double rotation) {
     return this.runOnce(
-      () -> {
-        double rotationClamp = MathUtil.clamp(rotation, ClimberConstants.MIN_ROTATION, ClimberConstants.MAX_ROTATION);
-        climberIO.runPosition(rotationClamp);
-        goalRotation = rotationClamp;
-      }
-    );
+        () -> {
+          double rotationClamp =
+              MathUtil.clamp(
+                  rotation, ClimberConstants.MIN_ROTATION, ClimberConstants.MAX_ROTATION);
+          climberIO.runPosition(rotationClamp);
+          goalRotation = rotationClamp;
+        });
   }
 
   public Command homingCommand() {
     return Commands.sequence(
-      Commands.runOnce(() -> climberIO.runVoltage(-3, true)),
-      Commands.waitUntil(() -> climberIO.getReverseLimitSwitch()),
-      Commands.runOnce(() -> climberIO.runVoltage(0)),
-      Commands.runOnce(() -> climberIO.setPosition(0))
-    );
+        Commands.runOnce(() -> climberIO.runVoltage(-3, true)),
+        Commands.waitUntil(() -> climberIO.getReverseLimitSwitch()),
+        Commands.runOnce(() -> climberIO.runVoltage(0)),
+        Commands.runOnce(() -> climberIO.setPosition(0)));
   }
 
   @Override

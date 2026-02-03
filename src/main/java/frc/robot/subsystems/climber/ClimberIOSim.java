@@ -5,14 +5,14 @@
 package frc.robot.subsystems.climber;
 
 /** Add your docs here. */
-public class ClimberIOSim implements ClimberIO{
+public class ClimberIOSim implements ClimberIO {
 
-    @Override
+  @Override
   public void runVoltage(double voltage) {}
 
   public void runVoltage(double voltage, boolean ignoreSoftwareLimit) {}
 
-   @Override
+  @Override
   public void periodic() {}
 
   public double getMotor1Position() {
@@ -26,5 +26,4 @@ public class ClimberIOSim implements ClimberIO{
   public boolean getReverseLimitSwitch() {
     return false;
   }
-
 }
