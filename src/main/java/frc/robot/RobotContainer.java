@@ -7,7 +7,6 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -166,6 +165,7 @@ public class RobotContainer {
 
     configureBindings();
     configureAutonomous();
+    configureFuelSim();
     drivetrain.setDefaultCommand(defualtDriveCommand);
 
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
@@ -173,10 +173,15 @@ public class RobotContainer {
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
     DogLog.log("Current Robot", getRobot().toString());
-
-    SmartDashboard.putData(
-        "auto rotate",
-        drivetrain.setRotationCommand(RotationTarget.TST)); // fix rotate wobble when stop
+    if (RobotBase.isSimulation()) {
+      SmartDashboard.putData(
+          Commands.runOnce(
+                  () -> {
+                    FuelSim.getInstance().clearFuel();
+                  })
+              .withName("Reset Fuel")
+              .ignoringDisable(true));
+    }
   }
 
   /**
@@ -250,6 +255,21 @@ public class RobotContainer {
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
+  private void configureFuelSim() {
+    FuelSim instance = FuelSim.getInstance();
+    // instance.spawnStartingFuel();
+    instance.registerRobot(
+        0.660, // from left to right
+        0.711, // from front to back
+        0.127, // from floor to top of bumpers
+        () -> drivetrain.getState().Pose, // Supplier<Pose2d> of robot pose
+        () ->
+            drivetrain.getState()
+                .Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+
+    instance.start();
+  }
+
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
@@ -271,14 +291,6 @@ public class RobotContainer {
     startTime = HALUtil.getFPGATime();
 
     DogLog.log("Match Timer", DriverStation.getMatchTime());
-
-    Pose2d r1 = drivetrain.getState().Pose;
-    Pose2d r2 = drivetrain.getPose(0.2);
-    Translation2d t = FieldConstants.RED_HUB;
-    Pose2d rt = EagleUtil.calcAimpoint(r1, r2, t);
-
-    DogLog.log("aimpoint", rt);
-    DogLog.log("estPos", r2);
 
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
@@ -303,8 +315,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
         shooter.cruiseControl(),
-        indexer
-            .index()
+        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
                     .isAtGoalVelocity_Hub
@@ -317,8 +328,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
         shooter.cruiseControl(),
-        indexer
-            .index()
+        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
                     .isAtGoalVelocity_Passing
@@ -331,8 +341,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
         shooter.cruiseControl(),
-        indexer
-            .index()
+        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
                     .isAtGoalVelocity_Passing
