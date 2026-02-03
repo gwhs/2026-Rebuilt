@@ -328,6 +328,7 @@ public class FuelSim {
    *
    * @param pos Position to spawn at
    * @param vel Initial velocity vector
+   * @return
    */
   public void spawnFuel(Translation3d pos, Translation3d vel) {
     fuels.add(new Fuel(pos, vel));

@@ -18,6 +18,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -49,7 +50,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     PASSING_OUTPOST_SIDE,
     TOWER,
     HUB,
-    SOTF,
   }
 
   private Alert frontLeftDriveConnectedAlert =
@@ -280,7 +280,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Drivetrain/Facing Goal", isFacingGoal.getAsBoolean());
     DogLog.log("Drivetrain/Facing Passing Goal", isFacingGoalPassing.getAsBoolean());
 
-    DogLog.log("aimpoint", getTar());
+    DogLog.log("Drivetrain/predictedTarget", getVirtualTarget());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -366,39 +366,28 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case NORMAL:
         return 0;
       case PASSING_DEPOT_SIDE:
-        if (EagleUtil.isRedAlliance()) {
-          return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.RED_DEPOT_PASSING);
-        } else {
-          return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.BLUE_DEPOT_PASSING);
-        }
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
       case PASSING_OUTPOST_SIDE:
-        if (EagleUtil.isRedAlliance()) {
-          return EagleUtil.getRobotTargetAngle(getState().Pose, FieldConstants.RED_OUTPOST_PASSING);
-        } else {
-          return EagleUtil.getRobotTargetAngle(
-              getState().Pose, FieldConstants.BLUE_OUTPOST_PASSING);
-        }
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
       case TOWER:
         return 0;
       case HUB:
-        return EagleUtil.getRotationalHub(getState().Pose);
-      case SOTF:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getTar());
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
       default:
         return 0;
     }
   }
 
-  public Pose2d getTar() {
-    Pose2d stPos = EagleUtil.getShooterPos(getState().Pose);
-    Pose2d target = EagleUtil.calcAimpoint(getState().Pose, getPose(1), FieldConstants.RED_HUB);
-    double dst = EagleUtil.getRobotTargetDistance(stPos, target);
+  public Pose2d getVirtualTarget() {
+    Translation2d tar = EagleUtil.getRobotTarget(getState().Pose);
+    Pose2d shotPos = EagleUtil.getShooterPos(getState().Pose);
+    Pose2d target = EagleUtil.calcAimpoint(getState().Pose, getPose(1), tar);
+    double dist = EagleUtil.getRobotTargetDistance(shotPos, target);
     double t;
     for (int i = 0; i < 6; i++) {
-      t = EagleUtil.getFuelFlyTime(dst);
-      target = EagleUtil.calcAimpoint(getState().Pose, getPose(t), FieldConstants.RED_HUB);
-      dst = EagleUtil.getRobotTargetDistance(stPos, target);
-      DogLog.log("timeInForLoop", t);
+      t = EagleUtil.getFuelTimeInAir(dist);
+      target = EagleUtil.calcAimpoint(getState().Pose, getPose(t), tar);
+      dist = EagleUtil.getRobotTargetDistance(shotPos, target);
     }
     return target;
   }

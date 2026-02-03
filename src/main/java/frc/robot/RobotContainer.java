@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -163,9 +162,7 @@ public class RobotContainer {
 
     DogLog.log("Current Robot", getRobot().toString());
 
-    SmartDashboard.putData(
-        "auto rotate",
-        drivetrain.setRotationCommand(RotationTarget.SOTF)); // fix rotate wobble when stop
+    SmartDashboard.putData("auto rotate", drivetrain.setRotationCommand(RotationTarget.HUB));
     SmartDashboard.putData(
         Commands.runOnce(
                 () -> {
@@ -212,49 +209,6 @@ public class RobotContainer {
         .y()
         .whileTrue(drivetrain.setShootingRange(true))
         .onFalse(drivetrain.setShootingRange(false));
-
-
-    controller //shoot in fuel sim
-        .rightTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  Pose2d stPos = EagleUtil.getShooterPos(drivetrain.getState().Pose);
-                  Translation3d initPosition = new Translation3d(stPos.getX(), stPos.getY(), 0.635);
-                  /*
-                  double t =
-                      EagleUtil.getFuelFlyTime(
-                          EagleUtil.getRobotTargetDistance(
-                              drivetrain.getState().Pose, FieldConstants.RED_HUB));
-                              */
-                  Pose2d tar = drivetrain.getTar();
-                  double dst = EagleUtil.getRobotTargetDistance(stPos, tar);
-                  double t = EagleUtil.getFuelFlyTime(dst);
-                  double d = EagleUtil.getShooterVelocity(dst);
-                  DogLog.log("velocity of fuel", d);
-                  DogLog.log("distance to tar", dst);
-                  DogLog.log("fuelTimeInAir", t);
-
-                  ChassisSpeeds robotVelocityChassis =
-                      ChassisSpeeds.fromRobotRelativeSpeeds(
-                          drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
-                  double robotDx = robotVelocityChassis.vxMetersPerSecond;
-                  double robotDy = robotVelocityChassis.vyMetersPerSecond;
-
-                  double a = drivetrain.getState().Pose.getRotation().getRadians();
-                  Translation3d initVelocity =
-                      new Translation3d(
-                          (d * Math.cos(FieldConstants.shooterAngleRadian) * Math.cos(a))
-                              + robotDx, // x
-                          (d * Math.cos(FieldConstants.shooterAngleRadian) * Math.sin(a))
-                              + robotDy, // y
-                          d * Math.sin(FieldConstants.shooterAngleRadian)); // z
-                  FuelSim.getInstance()
-                      .spawnFuel(
-                          initPosition,
-                          initVelocity); // spawns a fuel with a given position and velocity (both
-                  // field centric, represented as vectors by Translation3d)
-                }));
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
@@ -349,8 +303,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
         shooter.cruiseControl(),
-        indexer
-            .index()
+        Commands.parallel(indexer.index(), shootInSim())
             .onlyWhile(
                 shooter
                     .isAtGoalVelocity_Hub
@@ -363,8 +316,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
         shooter.cruiseControl(),
-        indexer
-            .index()
+        Commands.parallel(indexer.index(), shootInSim())
             .onlyWhile(
                 shooter
                     .isAtGoalVelocity_Passing
@@ -377,14 +329,54 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
         shooter.cruiseControl(),
-        indexer
-            .index()
+        Commands.parallel(indexer.index(), shootInSim())
             .onlyWhile(
                 shooter
                     .isAtGoalVelocity_Passing
                     .and(drivetrain.isFacingGoalPassing)
                     .or(controller.leftTrigger()))
             .repeatedly());
+  }
+
+  public Command shootInSim() {
+    return Commands.sequence(
+            Commands.runOnce(
+                () -> {
+                  if (RobotBase.isSimulation()) {
+                    Pose2d shotPos = EagleUtil.getShooterPos(drivetrain.getState().Pose);
+                    Translation3d initPosition =
+                        new Translation3d(shotPos.getX(), shotPos.getY(), 0.635);
+                    Pose2d tar = drivetrain.getVirtualTarget();
+                    double dist = EagleUtil.getRobotTargetDistance(shotPos, tar);
+                    double t = EagleUtil.getFuelTimeInAir(dist);
+                    double v = EagleUtil.getShooterVelocity(dist);
+                    DogLog.log("velocity of fuel", v);
+                    DogLog.log("distance to tar", dist);
+                    DogLog.log("fuelTimeInAir", t);
+
+                    ChassisSpeeds robotVelocityChassis =
+                        ChassisSpeeds.fromRobotRelativeSpeeds(
+                            drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
+                    double robotDx = robotVelocityChassis.vxMetersPerSecond;
+                    double robotDy = robotVelocityChassis.vyMetersPerSecond;
+
+                    double a = drivetrain.getState().Pose.getRotation().getRadians();
+                    Translation3d initVelocity =
+                        new Translation3d(
+                            (v * Math.cos(FieldConstants.shooterAngleRadian) * Math.cos(a))
+                                + robotDx, // x
+                            (v * Math.cos(FieldConstants.shooterAngleRadian) * Math.sin(a))
+                                + robotDy, // y
+                            v * Math.sin(FieldConstants.shooterAngleRadian)); // z
+                    FuelSim.getInstance()
+                        .spawnFuel(
+                            initPosition,
+                            initVelocity); // spawns a fuel with a given position and velocity (both
+                    // field centric, represented as vectors by Translation3d)
+                  }
+                }),
+            Commands.waitSeconds(0.1))
+        .repeatedly();
   }
 
   public Command unStuck() {
