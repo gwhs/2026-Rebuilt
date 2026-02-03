@@ -22,5 +22,4 @@ public interface GroundIntakeLinearExtensionIO {
   public boolean getReverseLimit();
 
   public boolean getForwardLimit();
-
 }

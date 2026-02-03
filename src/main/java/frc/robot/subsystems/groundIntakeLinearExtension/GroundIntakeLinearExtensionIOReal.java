@@ -17,7 +17,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -62,7 +61,6 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
     motorPosition = motor.getPosition();
     motorForwardLimit = motor.getForwardLimit();
     motorReverseLimit = motor.getReverseLimit();
-
 
     statusSignalCollection.addSignals(
         motorVoltage,
@@ -116,8 +114,6 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
     talonFXConfig.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
     talonFXConfig.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
 
-
-
     talonFXConfig.Slot0.kP = 0.5;
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
@@ -155,8 +151,12 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
         "GroundIntakeLinearExtension/Motor 1 Closed Loop Goal",
         motorClosedLoopGoal.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Position", motorPosition.getValueAsDouble());
-    DogLog.log("GroundIntakeLinearExtension/Limit Switch Value (Reverse)", motorForwardLimit.getValueAsDouble());
-    DogLog.log("GroundIntakeLinearExtension/Limit Switch Value (Forward)", motorReverseLimit.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakeLinearExtension/Limit Switch Value (Reverse)",
+        motorForwardLimit.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakeLinearExtension/Limit Switch Value (Forward)",
+        motorReverseLimit.getValueAsDouble());
 
     motorNotConnectedAlert.set(!motor.isConnected());
   }
@@ -189,10 +189,9 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
 
   public boolean getForwardLimit() {
     return motorForwardLimit.getValue() == ForwardLimitValue.ClosedToGround;
-    }
+  }
 
   public boolean getReverseLimit() {
     return motorReverseLimit.getValue() == ReverseLimitValue.ClosedToGround;
   }
 }
-

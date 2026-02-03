@@ -1,7 +1,5 @@
 package frc.robot.subsystems.groundIntakeLinearExtension;
 
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-
 public class GroundIntakeLinearExtensionIOSim implements GroundIntakeLinearExtensionIO {
 
   public void periodic() {}
@@ -30,5 +28,4 @@ public class GroundIntakeLinearExtensionIOSim implements GroundIntakeLinearExten
   public boolean getForwardLimit() {
     return false;
   }
-
 }
