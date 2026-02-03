@@ -88,9 +88,9 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   private final ShooterSubsystem shooter;
-  private final GroundIntakeRollerSubsystem GroundIntakeRoller =
+  private final GroundIntakeRollerSubsystem groundIntakeRoller =
       new GroundIntakeRollerSubsystem(rioCanbus, canivoreCanbus, signalList);
-  private final GroundIntakeLinearExtensionSubsystem GroundIntakeExtension =
+  private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension =
       new GroundIntakeLinearExtensionSubsystem(rioCanbus, canivoreCanbus, signalList);
   private final IndexerSubsystem indexer =
       new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
@@ -223,7 +223,7 @@ public class RobotContainer {
         .onFalse(drivetrain.setSlowMode(false));
 
     controller.povDown().whileTrue(deployGroundIntake());
-    controller.povDown().onFalse(GroundIntakeRoller.stopIntake());
+    controller.povDown().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
   }
@@ -329,18 +329,18 @@ public class RobotContainer {
 
   public Command unStuck() {
     return Commands.parallel(
-        indexer.reverse(), GroundIntakeRoller.reverseIntake(), GroundIntakeExtension.extend());
+        indexer.reverse(), groundIntakeRoller.reverseIntake(), groundIntakeExtension.extend());
   }
 
   public Command deployGroundIntake() {
     return Commands.parallel(
-        GroundIntakeRoller.startIntake(),
-        GroundIntakeExtension.extend(),
+        groundIntakeRoller.startIntake(),
+        groundIntakeExtension.extend(),
         drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()));
   }
 
   public Command defenseMode() {
     return Commands.parallel(
-        drivetrain.swerveX(), GroundIntakeExtension.retract(), GroundIntakeRoller.stopIntake());
+        drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake());
   }
 }
