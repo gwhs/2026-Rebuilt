@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
+import frc.robot.subsystems.climber.ClimberConstants;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
@@ -27,18 +29,21 @@ public class NeutralAutos extends SequentialCommandGroup {
   private static IndexerSubsystem indexer;
   private static GroundIntakeLinearExtensionSubsystem groundIntakeExtend;
   private static GroundIntakeRollerSubsystem groundIntakeRoller;
+  private static ClimberSubsystem climber;
 
   public static void configNeutralAutos(
       SwerveSubsystem drivetrain,
       ShooterSubsystem shooter,
       IndexerSubsystem indexer,
       GroundIntakeLinearExtensionSubsystem groundIntakeExtend,
-      GroundIntakeRollerSubsystem groundIntakeRoller) {
+      GroundIntakeRollerSubsystem groundIntakeRoller,
+      ClimberSubsystem climber) {
     NeutralAutos.drivetrain = drivetrain;
     NeutralAutos.shooter = shooter;
     NeutralAutos.indexer = indexer;
     NeutralAutos.groundIntakeRoller = groundIntakeRoller;
     NeutralAutos.groundIntakeExtend = groundIntakeExtend;
+    NeutralAutos.climber = climber;
   }
 
   public NeutralAutos(boolean mirror, Routine routine, boolean twoCycle) {
@@ -109,7 +114,9 @@ public class NeutralAutos extends SequentialCommandGroup {
         AutoBuilder.followPath(path)
             .deadlineFor(
                 Commands.sequence(
-                    groundIntakeExtend.homingCommand().onlyIf(() -> homing),
+                    Commands.parallel(
+                        groundIntakeExtend.homingCommand().onlyIf(() -> homing),
+                        climber.homingCommand().onlyIf(() -> homing)),
                     Commands.parallel(
                         shooter.runVelocity(0),
                         groundIntakeExtend.extend(),
@@ -119,6 +126,7 @@ public class NeutralAutos extends SequentialCommandGroup {
 
   private Command climbPath(PathPlannerPath path) {
     return Commands.sequence(
-        AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(0)), Commands.idle());
+        AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(0)),
+        Commands.idle().alongWith(climber.runPosition(ClimberConstants.CLIMB)));
   }
 }

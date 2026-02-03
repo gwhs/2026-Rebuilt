@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
+import frc.robot.subsystems.climber.ClimberConstants;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
@@ -18,7 +20,8 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
       SwerveSubsystem drivetrain,
       ShooterSubsystem shooter,
       GroundIntakeLinearExtensionSubsystem groundIntakeExtend,
-      GroundIntakeRollerSubsystem groundIntakeRoller) {
+      GroundIntakeRollerSubsystem groundIntakeRoller,
+      ClimberSubsystem climber) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -36,12 +39,13 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           Commands.parallel(
-              AutoBuilder.followPath(startingPath),
+              AutoBuilder.followPath(startingPath).deadlineFor(climber.homingCommand()),
               Commands.sequence(
                   Commands.waitSeconds(1.2),
                   groundIntakeExtend.extend(),
                   groundIntakeRoller.startIntake())),
-          AutoBuilder.followPath(climbPath).deadlineFor(shooter.runVelocity(60)));
+          AutoBuilder.followPath(climbPath).deadlineFor(shooter.runVelocity(60)),
+          climber.runPosition(ClimberConstants.CLIMB));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
