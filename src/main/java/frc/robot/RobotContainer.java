@@ -226,6 +226,7 @@ public class RobotContainer {
     controller.povDown().onFalse(groundintakeroller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
+    controller.start().onTrue(autoClimb());
   }
 
   public Command getAutonomousCommand() {
@@ -341,6 +342,22 @@ public class RobotContainer {
 
   public Command defenseMode() {
     return Commands.parallel(
-        drivetrain.swerveX(), groundintakeextension.retract(), groundintakeroller.stopIntake());
+        drivetrain.swerveX(), groundintakeextension.retract(), groundintakeroller.stopIntake());    
   }
+
+  public Command autoClimb() {
+    Pose2d target = FieldConstants.getClimbPose(drivetrain.getState().Pose);
+    Command align=
+      drivetrain.driveToPose(() -> target).until(() -> 
+          drivetrain.getState().Pose.getTranslation().getDistance(target.getTranslation()) < 0.10);
+    
+    
+    return align;
+    // return drivetrain.driveToPose(() -> target); 
+    // todo: add import frc.robot.subsystems.climber.ClimberSubsystem;
+    // todo: add private final ClimberSubsystem climber;
+
+  }
+
+  
 }

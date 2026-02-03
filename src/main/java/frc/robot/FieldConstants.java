@@ -1,7 +1,14 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class FieldConstants {
   public static double BLUE_HUBX = Units.inchesToMeters(182.11);
@@ -39,6 +46,7 @@ public class FieldConstants {
   public static double RED_DEPOT_PASSING_X = 13.986;
   public static double RED_DEPOT_PASSING_Y = 1.116;
 
+
   public static Translation2d RED_DEPOT_PASSING =
       new Translation2d(RED_DEPOT_PASSING_X, RED_DEPOT_PASSING_Y);
   public static Translation2d BLUE_DEPOT_PASSING =
@@ -47,4 +55,25 @@ public class FieldConstants {
       new Translation2d(RED_OUTPOST_PASSING_X, RED_OUTPOST_PASSING_Y);
   public static Translation2d BLUE_OUTPOST_PASSING =
       new Translation2d(BLUE_OUTPOST_PASSING_X, BLUE_OUTPOST_PASSING_Y);
+
+  public static final Pose2d BLUE_DEPOT_CLIMB =
+      new Pose2d(1.565, 4.148, Rotation2d.kZero);
+
+  public static final Pose2d BLUE_OUTPOT_CLIMB =
+      new Pose2d(1.565, 3.290, Rotation2d.kZero);
+  
+  public static final Pose2d RED_DEPOT_CLIMB =
+      new Pose2d(14.862, 3.840, Rotation2d.k180deg);
+
+  public static final Pose2d RED_OUTPOT_CLIMB =
+      new Pose2d(14.862, 4.740, Rotation2d.k180deg);
+
+  public static final ArrayList<Pose2d> CLIMBPOSE = new ArrayList<>(Arrays.asList(BLUE_DEPOT_CLIMB,BLUE_OUTPOT_CLIMB,RED_DEPOT_CLIMB,RED_OUTPOT_CLIMB));
+  
+  public static Pose2d getClimbPose(Pose2d robotPose) {
+    return robotPose.nearest(CLIMBPOSE);
+    
+    
+  }
+
 }
