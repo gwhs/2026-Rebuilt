@@ -72,8 +72,7 @@ public class NeutralAutos extends SequentialCommandGroup {
 
       addCommands(
           Commands.sequence(
-                  AutoBuilder.resetOdom(startingPose)
-                      .onlyIf(() -> RobotBase.isSimulation()),
+                  AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
                   cyclePath(cycle, true),
                   Commands.waitSeconds(6)
                       .deadlineFor(
@@ -109,10 +108,12 @@ public class NeutralAutos extends SequentialCommandGroup {
     return Commands.sequence(
         AutoBuilder.followPath(path)
             .deadlineFor(
-                groundIntakeExtend.homingCommand().onlyIf(() -> homing),
-                shooter.runVelocity(0),
-                groundIntakeExtend.extend(),
-                groundIntakeRoller.startIntake()),
+                Commands.sequence(
+                    groundIntakeExtend.homingCommand().onlyIf(() -> homing),
+                    Commands.parallel(
+                        shooter.runVelocity(0),
+                        groundIntakeExtend.extend(),
+                        groundIntakeRoller.startIntake()))),
         groundIntakeRoller.stopIntake());
   }
 

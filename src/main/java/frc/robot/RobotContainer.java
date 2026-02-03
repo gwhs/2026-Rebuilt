@@ -246,7 +246,7 @@ public class RobotContainer {
     autoChooser.addOption("Depot 1 Cycle", new DepotPathAuto_1c(drivetrain, shooter));
     */
     NeutralAutos.configNeutralAutos(
-        drivetrain, shooter, indexer, groundintakeextension, groundintakeroller);
+        drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller);
     autoChooser.addOption("Bump 1 Cycle Depot", new NeutralAutos(false, Routine.BUMP, false));
     autoChooser.addOption("Bump 1 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, false));
     autoChooser.addOption("Bump 2 Cycle Depot", new NeutralAutos(false, Routine.BUMP, true));
@@ -257,7 +257,7 @@ public class RobotContainer {
     autoChooser.addOption("Trench 2 Cycle Outpost", new NeutralAutos(true, Routine.TRENCH, true));
     autoChooser.addOption(
         "Depot 1 Cycle",
-        new DepotPathAuto_1c(drivetrain, shooter, groundintakeextension, groundintakeroller));
+        new DepotPathAuto_1c(drivetrain, shooter, groundIntakeExtension, groundIntakeRoller));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
