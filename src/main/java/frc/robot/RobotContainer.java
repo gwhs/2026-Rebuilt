@@ -7,8 +7,6 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -303,7 +301,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
         shooter.cruiseControl(),
-        Commands.parallel(indexer.index(), shootInSim())
+        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
                     .isAtGoalVelocity_Hub
@@ -316,7 +314,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
         shooter.cruiseControl(),
-        Commands.parallel(indexer.index(), shootInSim())
+        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
                     .isAtGoalVelocity_Passing
@@ -329,54 +327,13 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
         shooter.cruiseControl(),
-        Commands.parallel(indexer.index(), shootInSim())
+        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
                     .isAtGoalVelocity_Passing
                     .and(drivetrain.isFacingGoalPassing)
                     .or(controller.leftTrigger()))
             .repeatedly());
-  }
-
-  public Command shootInSim() {
-    return Commands.sequence(
-            Commands.runOnce(
-                () -> {
-                  if (RobotBase.isSimulation()) {
-                    Pose2d shotPos = EagleUtil.getShooterPos(drivetrain.getState().Pose);
-                    Translation3d initPosition =
-                        new Translation3d(shotPos.getX(), shotPos.getY(), 0.635);
-                    Pose2d tar = drivetrain.getVirtualTarget();
-                    double dist = EagleUtil.getRobotTargetDistance(shotPos, tar);
-                    double t = EagleUtil.getFuelTimeInAir(dist);
-                    double v = EagleUtil.getShooterVelocity(dist);
-                    DogLog.log("velocity of fuel", v);
-                    DogLog.log("distance to tar", dist);
-                    DogLog.log("fuelTimeInAir", t);
-
-                    ChassisSpeeds robotVelocityChassis =
-                        ChassisSpeeds.fromRobotRelativeSpeeds(
-                            drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
-                    double robotDx = robotVelocityChassis.vxMetersPerSecond;
-                    double robotDy = robotVelocityChassis.vyMetersPerSecond;
-
-                    double a = drivetrain.getState().Pose.getRotation().getRadians();
-                    Translation3d initVelocity =
-                        new Translation3d(
-                            (v * Math.cos(FieldConstants.shooterAngleRadian) * Math.cos(a))
-                                + robotDx, // x
-                            (v * Math.cos(FieldConstants.shooterAngleRadian) * Math.sin(a))
-                                + robotDy, // y
-                            v * Math.sin(FieldConstants.shooterAngleRadian)); // z
-                    FuelSim.getInstance()
-                        .spawnFuel(
-                            initPosition,
-                            initVelocity); // spawns a fuel with a given position and velocity (both
-                    // field centric, represented as vectors by Translation3d)
-                  }
-                }),
-            Commands.waitSeconds(0.1))
-        .repeatedly();
   }
 
   public Command unStuck() {
