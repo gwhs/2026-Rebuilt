@@ -141,8 +141,6 @@ public class ShooterIOReal implements ShooterIO {
     motor6Acceleration = motor6.getAcceleration();
     motor6ClosedLoopGoal = motor6.getClosedLoopReference();
 
-
-
     statusSignalCollection.addSignals(
         motor1Voltage,
         motor1StatorCurrent,
@@ -316,8 +314,6 @@ public class ShooterIOReal implements ShooterIO {
           .set(true);
     }
   }
-
-  
 
   public void runVoltage(double voltage) {
     motor1.setVoltage(voltage);
