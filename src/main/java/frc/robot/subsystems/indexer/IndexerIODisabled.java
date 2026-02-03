@@ -5,9 +5,11 @@
 package frc.robot.subsystems.indexer;
 
 /** Add your docs here. */
-public class IndexerConstants {
-  public static final int MOTOR_1_ID = 29;
+public class IndexerIODisabled implements IndexerIO {
 
-  public static final double INDEXING_VOLTAGE = 3;
-  public static final double UNJAM_VOLTAGE = -6;
+  @Override
+  public void runVoltage(double voltage) {}
+
+  @Override
+  public void periodic() {}
 }
