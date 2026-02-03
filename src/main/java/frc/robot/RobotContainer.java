@@ -238,7 +238,9 @@ public class RobotContainer {
     autoChooser.addOption("Trench 1 Cycle Outpost", new NeutralAutos(true, Routine.TRENCH, false));
     autoChooser.addOption("Trench 2 Cycle Depot", new NeutralAutos(false, Routine.TRENCH, true));
     autoChooser.addOption("Trench 2 Cycle Outpost", new NeutralAutos(true, Routine.TRENCH, true));
-    autoChooser.addOption("Depot 1 Cycle", new DepotPathAuto_1c(drivetrain, shooter));
+    autoChooser.addOption(
+        "Depot 1 Cycle",
+        new DepotPathAuto_1c(drivetrain, shooter, groundintakeextension, groundintakeroller));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 

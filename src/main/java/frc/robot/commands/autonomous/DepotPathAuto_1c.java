@@ -5,13 +5,20 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
+import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
+import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class DepotPathAuto_1c extends SequentialCommandGroup {
-  public DepotPathAuto_1c(SwerveSubsystem drivetrain, ShooterSubsystem shooter) {
+  public DepotPathAuto_1c(
+      SwerveSubsystem drivetrain,
+      ShooterSubsystem shooter,
+      GroundIntakeLinearExtensionSubsystem groundIntakeExtend,
+      GroundIntakeRollerSubsystem groundIntakeRoller) {
 
     /* All your code should go inside this try-catch block */
     try {
@@ -28,7 +35,12 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
               startingPath.getPoint(0).position, startingPath.getIdealStartingState().rotation());
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(startingPath),
+          Commands.parallel(
+              AutoBuilder.followPath(startingPath),
+              Commands.sequence(
+                  Commands.waitSeconds(1.2),
+                  groundIntakeExtend.extend(),
+                  groundIntakeRoller.startIntake())),
           AutoBuilder.followPath(climbPath).deadlineFor(shooter.runVelocity(60)));
 
     } catch (Exception e) {
