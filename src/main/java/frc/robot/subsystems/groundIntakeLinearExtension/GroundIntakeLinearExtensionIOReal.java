@@ -152,10 +152,10 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
         motorClosedLoopGoal.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Position", motorPosition.getValueAsDouble());
     DogLog.log(
-        "GroundIntakeLinearExtension/Limit Switch Value (Reverse)",
+        "GroundIntakeLinearExtension/Limit Switch Value (Forward)",
         motorForwardLimit.getValueAsDouble());
     DogLog.log(
-        "GroundIntakeLinearExtension/Limit Switch Value (Forward)",
+        "GroundIntakeLinearExtension/Limit Switch Value (Reverse)",
         motorReverseLimit.getValueAsDouble());
 
     motorNotConnectedAlert.set(!motor.isConnected());

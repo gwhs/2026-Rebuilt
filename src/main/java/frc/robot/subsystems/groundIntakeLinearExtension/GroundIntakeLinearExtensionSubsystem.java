@@ -6,12 +6,9 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   private GroundIntakeLinearExtensionIO groundIntakeLinearExtensionIO;
-
-  public final Trigger isCurrentSpike;
 
   public GroundIntakeLinearExtensionSubsystem(
       CANBus rioCanbus, CANBus canivoreCanBus, StatusSignalCollection statusSignalCollection) {
@@ -22,10 +19,6 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
           new GroundIntakeLinearExtensionIOReal(
               canivoreCanBus, canivoreCanBus, statusSignalCollection);
     }
-
-    isCurrentSpike =
-        new Trigger(() -> groundIntakeLinearExtensionIO.getStatorCurrent() > 18)
-            .debounce(0.12); // TODO
   }
 
   @Override
@@ -48,14 +41,6 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
               GroundIntakeLinearExtensionConstants.RETRACT_ROTATION);
         });
   }
-
-  // public Command homingCommand() {
-  //   return Commands.sequence(
-  //       this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(-2, true)),
-  //       Commands.waitUntil(isCurrentSpike),
-  //       this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(0)),
-  //       this.runOnce(() -> groundIntakeLinearExtensionIO.setPosition(0)));
-  // }
 
   public Command homingCommand() {
     return Commands.sequence(
