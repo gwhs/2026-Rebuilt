@@ -9,6 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -27,6 +28,10 @@ public class DriveCommand extends Command {
 
   private final SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric();
 
+  private final SlewRateLimiter angularVelocityLimiter;
+  private final SlewRateLimiter xVelocityLimiter;
+  private final SlewRateLimiter yVelocityLimiter;
+
   private final double maxSpeed = 4.5;
   private final double maxAngularSpeed = 2.5 * Math.PI;
 
@@ -35,12 +40,18 @@ public class DriveCommand extends Command {
   public final PIDController robotHeadingController = new PIDController(0.04, 0, 0);
   public final PIDController shootingRangeDistance = new PIDController(0.3, 0, 0);
 
+  private boolean resetLimiter = true;
+
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
     this.controller = controller;
 
     robotHeadingController.enableContinuousInput(-180, 180);
+
+    angularVelocityLimiter = new SlewRateLimiter(1);
+    xVelocityLimiter = new SlewRateLimiter(1);
+    yVelocityLimiter = new SlewRateLimiter(1);
 
     addRequirements(drivetrain);
   }
@@ -107,6 +118,21 @@ public class DriveCommand extends Command {
       xInput = xInput * drivetrain.getTranslationSlowFactor();
       yInput = yInput * drivetrain.getTranslationSlowFactor();
       rotationalInput = rotationalInput * drivetrain.getRotationalSlowFactor();
+    }
+
+    if (drivetrain.isSlewRateLimitAcceleration()) {
+      if (resetLimiter) {
+        resetLimiter = false;
+        xVelocityLimiter.reset(xInput);
+        yVelocityLimiter.reset(yInput);
+        angularVelocityLimiter.reset(rotationalInput);
+      }
+
+      xInput = xVelocityLimiter.calculate(xInput);
+      yInput = yVelocityLimiter.calculate(yInput);
+      rotationalInput = angularVelocityLimiter.calculate(rotationalInput);
+    } else {
+      resetLimiter = true;
     }
 
     double xVelocity = xInput * maxSpeed;

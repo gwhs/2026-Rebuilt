@@ -148,6 +148,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double rotationalSlowFactor = 1;
   private boolean slowMode = false;
   private boolean shootingRange = false;
+  private boolean slewRateLimitAcceleration = false;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -307,11 +308,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         });
   }
 
+  public boolean isSlewRateLimitAcceleration() {
+    return slewRateLimitAcceleration;
+  }
+
   public Command setShootingRange(boolean enable) {
 
     return Commands.runOnce(
         () -> {
           this.shootingRange = enable;
+        });
+  }
+
+  public Command setLimitAcceleration(boolean enable) {
+
+    return Commands.runOnce(
+        () -> {
+          this.slewRateLimitAcceleration = enable;
         });
   }
 
