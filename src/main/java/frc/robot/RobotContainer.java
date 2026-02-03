@@ -161,15 +161,15 @@ public class RobotContainer {
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
     DogLog.log("Current Robot", getRobot().toString());
-
-    SmartDashboard.putData("auto rotate", drivetrain.setRotationCommand(RotationTarget.HUB));
-    SmartDashboard.putData(
-        Commands.runOnce(
-                () -> {
-                  FuelSim.getInstance().clearFuel();
-                })
-            .withName("Reset Fuel")
-            .ignoringDisable(true));
+    if (RobotBase.isSimulation()) {
+      SmartDashboard.putData(
+          Commands.runOnce(
+                  () -> {
+                    FuelSim.getInstance().clearFuel();
+                  })
+              .withName("Reset Fuel")
+              .ignoringDisable(true));
+    }
   }
 
   /**

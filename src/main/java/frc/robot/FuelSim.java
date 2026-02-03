@@ -335,7 +335,7 @@ public class FuelSim {
 
   public void spawnFuel(Translation3d pos, Translation3d vel) {
     double t2 = HALUtil.getFPGATime();
-    if ((t2 - t1) / 1000 > 100) { //units in ms
+    if ((t2 - t1) / 1000 > 100) { // units in ms
       fuels.add(new Fuel(pos, vel));
       t1 = HALUtil.getFPGATime();
     }
