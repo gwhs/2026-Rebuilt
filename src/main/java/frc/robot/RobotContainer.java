@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -18,9 +19,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommand;
+import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
+import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
@@ -39,7 +44,8 @@ public class RobotContainer {
     DEV,
     COMP,
     ANEMONE,
-    KITBOT
+    KITBOT,
+    SIM
   }
 
   private final SwerveSubsystem drivetrain;
@@ -49,18 +55,20 @@ public class RobotContainer {
 
   @SuppressWarnings("resource")
   public static Robot getRobot() {
-    if (RobotController.getSerialNumber().equals("032414F0")) {
+    final String serialNumber = RobotController.getSerialNumber();
+    if (RobotBase.isSimulation()) {
+      return Robot.SIM;
+    } else if (serialNumber.equals("032414F0")) {
       return Robot.ANEMONE;
-    } else if (RobotController.getSerialNumber().equals("03223849")) {
+    } else if (serialNumber.equals("03223849")) {
       return Robot.DEV;
-    } else if (RobotController.getSerialNumber().equals("1234")) {
+    } else if (serialNumber.equals("1234")) {
       return Robot.COMP;
-    } else if (RobotController.getSerialNumber().equals("03282BB2")) {
+    } else if (serialNumber.equals("03282BB2")) {
       return Robot.KITBOT;
     } else {
       new Alert(
-              "roborio unrecognized. here is the serial number:"
-                  + RobotController.getSerialNumber(),
+              "roborio unrecognized. here is the serial number:" + serialNumber,
               Alert.AlertType.kError)
           .set(true);
       ;
@@ -82,7 +90,10 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   private final ShooterSubsystem shooter;
-
+  private final GroundIntakeRollerSubsystem groundintakeroller =
+      new GroundIntakeRollerSubsystem(rioCanbus, canivoreCanbus, signalList);
+  private final GroundIntakeLinearExtensionSubsystem groundintakeextension =
+      new GroundIntakeLinearExtensionSubsystem(rioCanbus, canivoreCanbus, signalList);
   private final IndexerSubsystem indexer =
       new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
 
@@ -101,28 +112,39 @@ public class RobotContainer {
     switch (getRobot()) {
       case COMP:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter =
+            ShooterSubsystem.createReal(
+                rioCanbus,
+                canivoreCanbus,
+                signalList,
+                drivetrain.poseSupplier(),
+                drivetrain.speedSupplier());
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter =
+            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         break;
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
+        shooter =
+            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
+        shooter =
+            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        break;
+      case SIM:
+        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter =
+            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         break;
     }
-
-    shooter =
-        new ShooterSubsystem(
-            rioCanbus,
-            canivoreCanbus,
-            signalList,
-            () -> drivetrain.getState().Pose,
-            () -> drivetrain.getState().Speeds);
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
@@ -163,8 +185,36 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    RobotModeTriggers.disabled().onTrue(disableHandler());
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+    drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
+    controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
     controller
+        .rightTrigger()
+        .and(
+            drivetrain
+                .isInNeutralZone
+                .or(drivetrain.isInOpponentAllianceZone)
+                .and(drivetrain.isOnDepotSide))
+        .whileTrue(shootDepot());
+    controller
+        .rightTrigger()
+        .and(
+            drivetrain
+                .isInNeutralZone
+                .or(drivetrain.isInOpponentAllianceZone)
+                .and(drivetrain.isOnOutpostSide))
+        .whileTrue(shootOutpost());
+
+    controller.a().whileTrue(unStuck());
+
+    controller
+        .y()
+        .whileTrue(drivetrain.setShootingRange(true))
+        .onFalse(drivetrain.setShootingRange(false));
+
+
+    controller //shoot in fuel sim
         .rightTrigger()
         .onTrue(
             Commands.runOnce(
@@ -207,6 +257,8 @@ public class RobotContainer {
                 }));
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
+    drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
+
     drivetrain
         .isInNeutralZone
         .or(drivetrain.isInOpponentAllianceZone)
@@ -217,6 +269,16 @@ public class RobotContainer {
         .or(drivetrain.isInOpponentAllianceZone)
         .and(drivetrain.isOnDepotSide)
         .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
+
+    controller
+        .rightBumper()
+        .onTrue(drivetrain.setSlowMode(true))
+        .onFalse(drivetrain.setSlowMode(false));
+
+    controller.povDown().whileTrue(deployGroundIntake());
+    controller.povDown().onFalse(groundintakeroller.stopIntake());
+
+    controller.x().whileTrue(defenseMode());
   }
 
   public Command getAutonomousCommand() {
@@ -266,10 +328,79 @@ public class RobotContainer {
 
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
+    DogLog.log(
+        "Hub Status/Is Active",
+        HubTracker.isActive(DriverStation.getAlliance().orElse(Alliance.Red)));
+
     if (obj.isPresent()) {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
+  }
+
+  private Command disableHandler() {
+    return Commands.sequence(
+            shooter.runVoltage(0.0), drivetrain.setRotationCommand(RotationTarget.NORMAL))
+        .ignoringDisable(true);
+  }
+
+  public Command shootHub() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.HUB),
+        shooter.cruiseControl(),
+        indexer
+            .index()
+            .onlyWhile(
+                shooter
+                    .isAtGoalVelocity_Hub
+                    .and(drivetrain.isFacingGoal)
+                    .or(controller.leftTrigger()))
+            .repeatedly());
+  }
+
+  public Command shootDepot() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
+        shooter.cruiseControl(),
+        indexer
+            .index()
+            .onlyWhile(
+                shooter
+                    .isAtGoalVelocity_Passing
+                    .and(drivetrain.isFacingGoalPassing)
+                    .or(controller.leftTrigger()))
+            .repeatedly());
+  }
+
+  public Command shootOutpost() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
+        shooter.cruiseControl(),
+        indexer
+            .index()
+            .onlyWhile(
+                shooter
+                    .isAtGoalVelocity_Passing
+                    .and(drivetrain.isFacingGoalPassing)
+                    .or(controller.leftTrigger()))
+            .repeatedly());
+  }
+
+  public Command unStuck() {
+    return Commands.parallel(
+        indexer.reverse(), groundintakeroller.reverseIntake(), groundintakeextension.extend());
+  }
+
+  public Command deployGroundIntake() {
+    return Commands.parallel(
+        groundintakeroller.startIntake(),
+        groundintakeextension.extend(),
+        drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()));
+  }
+
+  public Command defenseMode() {
+    return Commands.parallel(
+        drivetrain.swerveX(), groundintakeextension.retract(), groundintakeroller.stopIntake());
   }
 }

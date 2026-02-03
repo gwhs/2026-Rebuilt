@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -101,6 +100,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double m_lastSimTime;
   private final Telemetry logger = new Telemetry();
 
+  private final SwerveRequest.SwerveDriveBrake driveBrake = new SwerveRequest.SwerveDriveBrake();
+
   public Trigger isInAllianceZone = new Trigger(() -> EagleUtil.isInAllianceZone(getState().Pose));
   public Trigger isInOpponentAllianceZone =
       new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getState().Pose));
@@ -109,6 +110,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Trigger isOnDepotSide = new Trigger(() -> EagleUtil.isOnDepotSide(getState().Pose));
   public Trigger isOnOutpostSide = new Trigger(() -> EagleUtil.isOnOutpostSide(getState().Pose));
 
+  public Trigger isOnBump = new Trigger(() -> EagleUtil.isOnBump(getState().Pose));
+
+  public Trigger isFacingGoal =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 5));
+  public Trigger isFacingGoalPassing =
+      new Trigger(
+          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 7.5));
   public Trigger isInShootingRange =
       new Trigger(
           () -> {
@@ -139,6 +148,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double rotationalSlowFactor = 1;
   private boolean slowMode = false;
   private boolean shootingRange = false;
+  private boolean slewRateLimitAcceleration = false;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -161,9 +171,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
-
-    SmartDashboard.putData("go to shooting range", setShootingRange(true));
-    SmartDashboard.putData("stop go to shooting range", setShootingRange(false));
   }
 
   private void configureAutoBuilder() {
@@ -194,6 +201,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       DriverStation.reportError(
           "Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
     }
+  }
+
+  public Supplier<Pose2d> poseSupplier() {
+    return () -> getState().Pose;
+  }
+
+  public Supplier<ChassisSpeeds> speedSupplier() {
+    return () -> getState().Speeds;
   }
 
   private void startSimThread() {
@@ -239,6 +254,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Current Zone/On Depot Side", isOnDepotSide.getAsBoolean());
     DogLog.log("Current Zone/On Outpost Side", isOnOutpostSide.getAsBoolean());
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
+    DogLog.log("Current Zone/On Bump", isOnBump.getAsBoolean());
     DogLog.log("In shooting range", isInShootingRange.getAsBoolean());
 
     DogLog.log(
@@ -261,11 +277,20 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     frontrightEncoderConnectedAlert.set(!frontRightEncoder.isConnected());
     backRightEncoderConnectedAlert.set(!backRightEncoder.isConnected());
     pigeonConnectedAlert.set(!pigeon.isConnected());
+    DogLog.log("Drivetrain/Facing Goal", isFacingGoal.getAsBoolean());
+    DogLog.log("Drivetrain/Facing Passing Goal", isFacingGoalPassing.getAsBoolean());
 
     DogLog.log("aimpoint", getTar());
   }
 
   private double defualtSlowFactor = 0.25;
+
+  public Command swerveX() {
+    return Commands.run(
+        () -> {
+          this.setControl(driveBrake);
+        });
+  }
 
   public Command setSlowMode(boolean enable) {
     return Commands.runOnce(
@@ -285,11 +310,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         });
   }
 
+  public boolean isSlewRateLimitAcceleration() {
+    return slewRateLimitAcceleration;
+  }
+
   public Command setShootingRange(boolean enable) {
 
     return Commands.runOnce(
         () -> {
           this.shootingRange = enable;
+        });
+  }
+
+  public Command setLimitAcceleration(boolean enable) {
+
+    return Commands.runOnce(
+        () -> {
+          this.slewRateLimitAcceleration = enable;
         });
   }
 

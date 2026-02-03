@@ -67,6 +67,13 @@ public class EagleUtil {
     return target.getTranslation().minus(robotpose.getTranslation()).getAngle().getRadians();
   }
 
+  public static boolean isOnBump(Pose2d robotPose) {
+    return (robotPose.getX() >= FieldConstants.BLUE_BUMP_X1
+            && robotPose.getX() <= FieldConstants.BLUE_BUMP_X2)
+        || (robotPose.getX() >= FieldConstants.RED_BUMP_X1
+            && robotPose.getX() <= FieldConstants.RED_BUMP_X2);
+  }
+
   public static double getRobotTargetAngle(Pose2d robotpose, Translation2d target) {
     return target.minus(robotpose.getTranslation()).getAngle().getDegrees();
   }
