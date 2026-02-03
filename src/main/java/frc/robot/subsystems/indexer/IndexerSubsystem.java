@@ -7,7 +7,6 @@ package frc.robot.subsystems.indexer;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,12 +16,21 @@ public class IndexerSubsystem extends SubsystemBase {
   private IndexerIO indexerIO;
   private double indexerVoltage;
 
-  public IndexerSubsystem(CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
-    if (RobotBase.isSimulation()) {
-      indexerIO = new IndexerIOSim();
-    } else {
-      indexerIO = new IndexerIOReal(rioCanbus, canivoreCanbus, signal);
-    }
+  public static IndexerSubsystem createSim() {
+    return new IndexerSubsystem(new IndexerIOSim());
+  }
+
+  public static IndexerSubsystem createDisabled() {
+    return new IndexerSubsystem(new IndexerIODisabled());
+  }
+
+  public static IndexerSubsystem createReal(
+      CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
+    return new IndexerSubsystem(new IndexerIOReal(rioCanbus, canivoreCanbus, signal));
+  }
+
+  public IndexerSubsystem(IndexerIO indexer) {
+    indexerIO = indexer;
   }
 
   public Command runVoltage(double voltage) {
