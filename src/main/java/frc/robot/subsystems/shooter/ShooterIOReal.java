@@ -220,8 +220,6 @@ public class ShooterIOReal implements ShooterIO {
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
     talonFXConfig.CurrentLimits.StatorCurrentLimit = 80;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
@@ -235,84 +233,23 @@ public class ShooterIOReal implements ShooterIO {
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i <= 5; i++) {
-      status = motor1.getConfigurator().apply(talonFXConfig);
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      new Alert(
-              "Shooter/Motor 1: Could not configure device. Error:" + status.toString(),
-              AlertType.kError)
-          .set(true);
-    }
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    setUpMotors(talonFXConfig, motor1);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-    status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i <= 5; i++) {
-      status = motor2.getConfigurator().apply(talonFXConfig);
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      new Alert(
-              "Shooter/Motor 2: Could not configure device. Error:" + status.toString(),
-              AlertType.kError)
-          .set(true);
-    }
+    setUpMotors(talonFXConfig, motor2);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i <= 5; i++) {
-      status = motor3.getConfigurator().apply(talonFXConfig);
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      new Alert(
-              "Shooter/Motor 3: Could not configure device. Error:" + status.toString(),
-              AlertType.kError)
-          .set(true);
-    }
+    setUpMotors(talonFXConfig, motor3);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-    status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i <= 5; i++) {
-      status = motor4.getConfigurator().apply(talonFXConfig);
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      new Alert(
-              "Shooter/Motor 4: Could not configure device. Error:" + status.toString(),
-              AlertType.kError)
-          .set(true);
-    }
+    setUpMotors(talonFXConfig, motor4);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i <= 5; i++) {
-      status = motor5.getConfigurator().apply(talonFXConfig);
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      new Alert(
-              "Shooter/Motor 5: Could not configure device. Error:" + status.toString(),
-              AlertType.kError)
-          .set(true);
-    }
+    setUpMotors(talonFXConfig, motor5);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i <= 5; i++) {
-      status = motor6.getConfigurator().apply(talonFXConfig);
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      new Alert(
-              "Shooter/Motor 6: Could not configure device. Error:" + status.toString(),
-              AlertType.kError)
-          .set(true);
-    }
+    setUpMotors(talonFXConfig, motor6);
   }
 
   public void runVoltage(double voltage) {
@@ -335,6 +272,24 @@ public class ShooterIOReal implements ShooterIO {
 
   public double getVelocity() {
     return motor1Velocity.getValueAsDouble(); // rotations per second
+  }
+
+  private boolean setUpMotors(TalonFXConfiguration talonFXConfig, TalonFX motor) {
+    StatusCode status = StatusCode.StatusCodeNotInitialized;
+    for (int i = 0; i <= 5; i++) {
+      status = motor.getConfigurator().apply(talonFXConfig);
+      if (status.isOK()) return true;
+    }
+    if (!status.isOK()) {
+      new Alert(
+              "Shooter/Motor "
+                  + motor.getDeviceID()
+                  + ": Could not configure device. Error:"
+                  + status.toString(),
+              AlertType.kError)
+          .set(true);
+    }
+    return false;
   }
 
   public void periodic() {
