@@ -271,7 +271,12 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   public double getVelocity() {
-    return motor1Velocity.getValueAsDouble(); // rotations per second
+    return (motor1Velocity.getValueAsDouble() +
+    motor2Velocity.getValueAsDouble() +
+    motor3Velocity.getValueAsDouble()+ 
+    motor4Velocity.getValueAsDouble() +
+    motor5Velocity.getValueAsDouble()+
+    motor6Velocity.getValueAsDouble()) / 6; // rotations per second
   }
 
   private boolean setUpMotors(TalonFXConfiguration talonFXConfig, TalonFX motor) {
