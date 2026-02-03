@@ -8,45 +8,30 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.function.Supplier;
 
 public class ClimberSubsystem extends SubsystemBase {
 
   private ClimberIO climberIO;
   private double goalRotation;
-  private final Supplier<Pose2d> robotPoseSupplier;
-  private final Supplier<ChassisSpeeds> robotRotationSupplier;
 
-  public static ClimberSubsystem createSim(
-      Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> rotation) {
-    return new ClimberSubsystem(new ClimberIOSim(), robotPose, rotation);
+  public static ClimberSubsystem createSim() {
+    return new ClimberSubsystem(new ClimberIOSim());
   }
 
-  public static ClimberSubsystem createDisabled(
-      Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> rotation) {
-    return new ClimberSubsystem(new ClimberIODisabled(), robotPose, rotation);
+  public static ClimberSubsystem createDisabled() {
+    return new ClimberSubsystem(new ClimberIODisabled());
   }
 
   public static ClimberSubsystem createReal(
-      CANBus rioCanbus,
-      CANBus canivoreCanbus,
-      StatusSignalCollection signal,
-      Supplier<Pose2d> robotPose,
-      Supplier<ChassisSpeeds> rotation) {
-    return new ClimberSubsystem(
-        new ClimberIOReal(rioCanbus, canivoreCanbus, signal), robotPose, rotation);
+      CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
+    return new ClimberSubsystem(new ClimberIOReal(rioCanbus, canivoreCanbus, signal));
   }
 
-  public ClimberSubsystem(
-      ClimberIO climberIO, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> rotation) {
+  public ClimberSubsystem(ClimberIO climberIO) {
     this.climberIO = climberIO;
-    robotPoseSupplier = robotPose;
-    robotRotationSupplier = rotation;
   }
 
   public Command runVoltage(double voltage) {

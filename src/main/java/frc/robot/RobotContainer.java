@@ -119,46 +119,36 @@ public class RobotContainer {
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain.speedSupplier());
-        climber =
-            ClimberSubsystem.createReal(
-                rioCanbus,
-                canivoreCanbus,
-                signalList,
-                drivetrain.poseSupplier(),
-                drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
-        climber =
-            ClimberSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createDisabled();
         break;
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
-        climber =
-            ClimberSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createDisabled();
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
-        climber =
-            ClimberSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createDisabled();
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
-        climber = ClimberSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createSim();
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
-        climber =
-            ClimberSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createDisabled();
         break;
     }
 
