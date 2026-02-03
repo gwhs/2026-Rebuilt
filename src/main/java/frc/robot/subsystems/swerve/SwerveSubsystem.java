@@ -100,6 +100,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double m_lastSimTime;
   private final Telemetry logger = new Telemetry();
 
+  private final SwerveRequest.SwerveDriveBrake driveBrake = new SwerveRequest.SwerveDriveBrake();
+
   public Trigger isInAllianceZone = new Trigger(() -> EagleUtil.isInAllianceZone(getState().Pose));
   public Trigger isInOpponentAllianceZone =
       new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getState().Pose));
@@ -271,6 +273,13 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   }
 
   private double defualtSlowFactor = 0.25;
+
+  public Command swerveX() {
+    return Commands.runOnce(
+        () -> {
+          this.setControl(driveBrake);
+        });
+  }
 
   public Command setSlowMode(boolean enable) {
     return Commands.runOnce(
