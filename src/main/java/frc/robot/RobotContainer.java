@@ -89,13 +89,13 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   private final ShooterSubsystem shooter;
-  private final GroundIntakeRollerSubsystem groundintakeroller =
+  private final GroundIntakeRollerSubsystem groundIntakeRoller =
       new GroundIntakeRollerSubsystem(rioCanbus, canivoreCanbus, signalList);
-  private final GroundIntakeLinearExtensionSubsystem groundintakeextension =
+  private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension =
       new GroundIntakeLinearExtensionSubsystem(rioCanbus, canivoreCanbus, signalList);
-  private final IndexerSubsystem indexer =
-      new IndexerSubsystem(rioCanbus, canivoreCanbus, signalList);
+
   private ClimberSubsystem climber;
+  private final IndexerSubsystem indexer;
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -120,35 +120,41 @@ public class RobotContainer {
                 drivetrain.poseSupplier(),
                 drivetrain.speedSupplier());
         climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
+        indexer = IndexerSubsystem.createDisabled();
         break;
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
+        indexer = IndexerSubsystem.createDisabled();
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
+        indexer = IndexerSubsystem.createDisabled();
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createSim();
+        indexer = IndexerSubsystem.createSim();
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
+        indexer = IndexerSubsystem.createDisabled();
         break;
     }
 
@@ -231,7 +237,7 @@ public class RobotContainer {
         .onFalse(drivetrain.setSlowMode(false));
 
     controller.povDown().whileTrue(deployGroundIntake());
-    controller.povDown().onFalse(groundintakeroller.stopIntake());
+    controller.povDown().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
   }
@@ -337,18 +343,18 @@ public class RobotContainer {
 
   public Command unStuck() {
     return Commands.parallel(
-        indexer.reverse(), groundintakeroller.reverseIntake(), groundintakeextension.extend());
+        indexer.reverse(), groundIntakeRoller.reverseIntake(), groundIntakeExtension.extend());
   }
 
   public Command deployGroundIntake() {
     return Commands.parallel(
-        groundintakeroller.startIntake(),
-        groundintakeextension.extend(),
+        groundIntakeRoller.startIntake(),
+        groundIntakeExtension.extend(),
         drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()));
   }
 
   public Command defenseMode() {
     return Commands.parallel(
-        drivetrain.swerveX(), groundintakeextension.retract(), groundintakeroller.stopIntake());
+        drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake());
   }
 }
