@@ -1,6 +1,7 @@
 package frc.robot;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -330,8 +331,14 @@ public class FuelSim {
    * @param vel Initial velocity vector
    * @return
    */
+  double t1 = HALUtil.getFPGATime();
+
   public void spawnFuel(Translation3d pos, Translation3d vel) {
-    fuels.add(new Fuel(pos, vel));
+    double t2 = HALUtil.getFPGATime();
+    if ((t2 - t1) / 1000 > 100) { //units in ms
+      fuels.add(new Fuel(pos, vel));
+      t1 = HALUtil.getFPGATime();
+    }
   }
 
   private void handleRobotCollision(Fuel fuel, Pose2d robot, Translation2d robotVel) {
