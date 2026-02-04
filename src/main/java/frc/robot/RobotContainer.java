@@ -151,9 +151,14 @@ public class RobotContainer {
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
-        climber = ClimberSubsystem.createDisabled();
-        indexer = IndexerSubsystem.createDisabled();
+            ShooterSubsystem.createReal(
+                rioCanbus,
+                canivoreCanbus,
+                signalList,
+                drivetrain.poseSupplier(),
+                drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
     }
 
