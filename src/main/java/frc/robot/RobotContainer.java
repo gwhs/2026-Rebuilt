@@ -106,6 +106,8 @@ public class RobotContainer {
                 HubTracker.timeRemainingInCurrentShift()
                     .orElse(Time.ofBaseUnits(0, Units.Second))
                     .in(Units.Seconds);
+            DogLog.log("Hub Status/Time Remaining in Shift", timeRemaining);
+            DogLog.log("Hub Status/Current Shift", currentShift);
 
             double upperThreshold = 3;
             double lowerThreshold = 24;
