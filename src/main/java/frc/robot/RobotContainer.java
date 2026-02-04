@@ -7,6 +7,7 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -165,7 +166,7 @@ public class RobotContainer {
 
     configureBindings();
     configureAutonomous();
-    configureFuelSim();
+
     drivetrain.setDefaultCommand(defualtDriveCommand);
 
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
@@ -173,7 +174,9 @@ public class RobotContainer {
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
     DogLog.log("Current Robot", getRobot().toString());
+
     if (RobotBase.isSimulation()) {
+      configureFuelSim();
       SmartDashboard.putData(
           Commands.runOnce(
                   () -> {
@@ -264,8 +267,9 @@ public class RobotContainer {
         0.127, // from floor to top of bumpers
         () -> drivetrain.getState().Pose, // Supplier<Pose2d> of robot pose
         () ->
-            drivetrain.getState()
-                .Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+            ChassisSpeeds.fromRobotRelativeSpeeds(
+                drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation()));
+    // Supplier<ChassisSpeeds> of field-centric chassis speeds
 
     instance.start();
   }
