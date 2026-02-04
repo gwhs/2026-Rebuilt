@@ -15,6 +15,7 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 
 public class Robot extends TimedRobot {
+
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -97,9 +98,6 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationInit() {}
 
-  @Override
-  public void simulationPeriodic() {}
-
   private static final class GcStatsCollector {
     private List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
     private final long[] lastTimes = new long[gcBeans.size()];
@@ -121,5 +119,14 @@ public class Robot extends TimedRobot {
       DogLog.log("GC/GCTimeMS", (double) accumTime);
       DogLog.log("GC/GCCounts", (double) accumCounts);
     }
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    FuelSim.getInstance().updateSim();
+    int bhs = FuelSim.Hub.BLUE_HUB.getScore(); // get number of fuel scored in blue hub
+    int rhs = FuelSim.Hub.RED_HUB.getScore(); // get number of fuel scored in red hub
+    DogLog.log("blue hub score", bhs);
+    DogLog.log("red hub score", rhs);
   }
 }

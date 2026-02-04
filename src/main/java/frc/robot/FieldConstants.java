@@ -76,4 +76,13 @@ public class FieldConstants {
     
   }
 
+
+  public static final double shooterAngleDegree = 72;
+  public static final double shooterAngleRadian = Units.degreesToRadians(shooterAngleDegree);
+  public static final double hubHeight = 1.8;
+  public static final double gravitationalAcc = 9.80665;
+  public static final double shooterHeight = 0.635;
+  public static final double motorToFlywheelGearRatio = 0.739;
+  public static final double flywheelDiameter = 0.0762;
+  public static final double robotCenterShooterDist = 0.254;
 }
