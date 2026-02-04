@@ -250,15 +250,6 @@ public class RobotContainer {
   }
 
   private void configureAutonomous() {
-    /*
-    autoChooser.addOption("Trench 1 Cycle", new Trench_1c(drivetrain, shooter, false));
-    autoChooser.addOption("Trench 2 Cycle", new Trench_2c(drivetrain, shooter, false));
-    autoChooser.addOption("Trench 1 Cycle Mirrored", new Trench_1c(drivetrain, shooter, true));
-    autoChooser.addOption("Trench 2 Cycle Mirrored", new Trench_2c(drivetrain, shooter, true));
-    autoChooser.addOption("Bump 1 Cycle", new BumpPathAuto_1c(drivetrain, shooter, false));
-    autoChooser.addOption("Bump 2 Cycle", new BumpPathAuto_2c(drivetrain, shooter, false));
-    autoChooser.addOption("Depot 1 Cycle", new DepotPathAuto_1c(drivetrain, shooter));
-    */
     NeutralAutos.configNeutralAutos(
         drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, climber);
     autoChooser.addOption("Bump 1 Cycle Depot", new NeutralAutos(false, Routine.BUMP, false));

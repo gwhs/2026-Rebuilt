@@ -79,15 +79,10 @@ public class NeutralAutos extends SequentialCommandGroup {
           Commands.sequence(
                   AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
                   cyclePath(cycle, true),
-                  Commands.waitSeconds(6)
-                      .deadlineFor(
-                          drivetrain
-                              .driveToPose(() -> getScorePose(() -> cycle))
-                              .alongWith(
-                                  Commands.parallel(indexer.index(), shooter.runVelocity(60)))),
                   cyclePath(cycletwo, false).onlyIf(() -> twoCycle),
                   climbPath(climb).andThen(Commands.idle()).onlyIf(() -> !twoCycle))
-              .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+              .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+          Commands.idle());
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
@@ -121,7 +116,12 @@ public class NeutralAutos extends SequentialCommandGroup {
                         shooter.runVelocity(0),
                         groundIntakeExtend.extend(),
                         groundIntakeRoller.startIntake()))),
-        groundIntakeRoller.stopIntake());
+        groundIntakeRoller.stopIntake(),
+        Commands.waitSeconds(6)
+            .deadlineFor(
+                drivetrain
+                    .driveToPose(() -> getScorePose(() -> path))
+                    .alongWith(Commands.parallel(indexer.index(), shooter.runVelocity(60)))));
   }
 
   private Command climbPath(PathPlannerPath path) {

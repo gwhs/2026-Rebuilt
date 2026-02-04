@@ -31,7 +31,6 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
       */
       PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("D_Start_Depot");
       PathPlannerPath climbPath = PathPlannerPath.fromChoreoTrajectory("D_Depot_Climb");
-      // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
 
       Pose2d startingPose =
           new Pose2d(
