@@ -361,12 +361,16 @@ public class RobotContainer {
 
   public Command autoClimb() {
     Pose2d target = FieldConstants.getClimbPose(drivetrain.getState().Pose);
-    Command align=
+    Command align =
       drivetrain.driveToPose(() -> target).until(() -> 
-          drivetrain.getState().Pose.getTranslation().getDistance(target.getTranslation()) < 0.10);
+          drivetrain.getState().Pose.getTranslation().getDistance(target.getTranslation()) < 0.10);    
     
-    
-    return align;
+    return Commands.sequence(
+      Commands.parallel(align, groundIntakeExtension.retract(), groundIntakeRoller.stopIntake()),
+      Commands.parallel(groundIntakeRoller.startIntake(), shooter.)
+      
+
+    );
     // return drivetrain.driveToPose(() -> target); 
     // todo: add import frc.robot.subsystems.climber.ClimberSubsystem;
     // todo: add private final ClimberSubsystem climber;
