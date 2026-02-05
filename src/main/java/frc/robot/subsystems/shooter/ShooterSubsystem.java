@@ -98,8 +98,6 @@ public class ShooterSubsystem extends SubsystemBase {
           double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
           double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
 
-          velocityGoal = rotationsPerSecond;
-
           //does not actually pre-spin
     });
   }
