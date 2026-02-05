@@ -5,7 +5,7 @@
 package frc.robot.subsystems.groundIntakeLinearExtension;
 
 /** Add your docs here. */
-public class GroundIntakeLinearExtensionIODisabled implements GroundIntakeLinearExtensionIO{
+public class GroundIntakeLinearExtensionIODisabled implements GroundIntakeLinearExtensionIO {
 
   @Override
   public void periodic() {}

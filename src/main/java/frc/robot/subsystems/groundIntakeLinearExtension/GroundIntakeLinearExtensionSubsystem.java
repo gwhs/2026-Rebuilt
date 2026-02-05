@@ -20,10 +20,12 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
 
   public static GroundIntakeLinearExtensionSubsystem createReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
-    return new GroundIntakeLinearExtensionSubsystem(new GroundIntakeLinearExtensionIOReal(rioCanbus, canivoreCanbus, signal));
+    return new GroundIntakeLinearExtensionSubsystem(
+        new GroundIntakeLinearExtensionIOReal(rioCanbus, canivoreCanbus, signal));
   }
 
-  public GroundIntakeLinearExtensionSubsystem(GroundIntakeLinearExtensionIO groundIntakeLinearExtensionIO) {
+  public GroundIntakeLinearExtensionSubsystem(
+      GroundIntakeLinearExtensionIO groundIntakeLinearExtensionIO) {
     this.groundIntakeLinearExtensionIO = groundIntakeLinearExtensionIO;
   }
 

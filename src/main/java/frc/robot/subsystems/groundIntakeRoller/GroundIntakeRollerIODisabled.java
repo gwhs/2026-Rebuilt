@@ -5,12 +5,11 @@
 package frc.robot.subsystems.groundIntakeRoller;
 
 /** Add your docs here. */
-public class GroundIntakeRollerIODisabled implements GroundIntakeRollerIO{
+public class GroundIntakeRollerIODisabled implements GroundIntakeRollerIO {
 
-    @Override
-    public void runVoltage(double voltage) {}
+  @Override
+  public void runVoltage(double voltage) {}
 
-    @Override
-    public void periodic() {}
-
+  @Override
+  public void periodic() {}
 }

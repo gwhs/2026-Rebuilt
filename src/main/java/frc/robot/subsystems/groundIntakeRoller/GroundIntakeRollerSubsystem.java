@@ -26,7 +26,8 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
 
   public static GroundIntakeRollerSubsystem createReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
-    return new GroundIntakeRollerSubsystem(new GroundIntakeRollerIOReal(rioCanbus, canivoreCanbus, signal));
+    return new GroundIntakeRollerSubsystem(
+        new GroundIntakeRollerIOReal(rioCanbus, canivoreCanbus, signal));
   }
 
   public GroundIntakeRollerSubsystem(GroundIntakeRollerIO groundIntakeRollerIO) {
@@ -67,5 +68,4 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
     groundIntakeRollerIO.periodic();
     DogLog.log("Ground Intake Roller/Goal Voltage", groundRollerVoltage);
   }
-
 }
