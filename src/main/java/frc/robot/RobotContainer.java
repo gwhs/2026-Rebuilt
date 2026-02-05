@@ -378,6 +378,7 @@ public class RobotContainer {
                 shooter
                     .isAtGoalVelocity_Hub
                     .and(drivetrain.isFacingGoal)
+                    .and(isHubActive)
                     .or(controller.leftTrigger()))
             .repeatedly());
   }
