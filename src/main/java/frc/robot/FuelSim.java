@@ -26,11 +26,11 @@ public class FuelSim {
   private static final double FIELD_LENGTH = 16.51;
   private static final double FIELD_WIDTH = 8.04;
   private static final double FRICTION =
-      0.1; // proportion of horizontal velocity to lose per second while on ground
+      2; // proportion of horizontal velocity to lose per second while on ground
 
   private static FuelSim instance = null;
 
-  private static int fuelInHub =
+  private static int fuelInHopper =
       8; // counter for number of fuels contained in robot hub, preloads 8 at start
 
   private static final Translation3d[] FIELD_XZ_LINE_STARTS = {
@@ -338,9 +338,9 @@ public class FuelSim {
 
   public void spawnFuel(Translation3d pos, Translation3d vel) {
     double t2 = HALUtil.getFPGATime();
-    if (((t2 - t1) / 1000 > 100) && (fuelInHub > 0)) { // units in ms
+    if (((t2 - t1) / 1000 > 100) && (fuelInHopper > 0)) { // units in ms
       fuels.add(new Fuel(pos, vel));
-      fuelInHub--;
+      fuelInHopper--;
       t1 = HALUtil.getFPGATime();
     }
   }
@@ -400,13 +400,13 @@ public class FuelSim {
 
   private void handleIntakes(ArrayList<Fuel> fuels) {
     Pose2d robot = robotSupplier.get();
-    if (fuelInHub < 55) { // chekc for maxium fuel contain ability
+    if (fuelInHopper < 55) { // chekc for maxium fuel contain ability
       for (SimIntake intake : intakes) {
         for (int i = 0; i < fuels.size(); i++) {
           if (intake.shouldIntake(fuels.get(i), robot)) {
             fuels.remove(i);
             i--;
-            fuelInHub++;
+            fuelInHopper++;
           }
         }
       }
@@ -632,7 +632,7 @@ public class FuelSim {
 
   private FuelSim() {}
 
-  public static int getFuelInHub() {
-    return fuelInHub;
+  public static int getFuelInHopper() {
+    return fuelInHopper;
   }
 }
