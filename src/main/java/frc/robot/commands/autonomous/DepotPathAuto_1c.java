@@ -23,12 +23,8 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
       GroundIntakeRollerSubsystem groundIntakeRoller,
       ClimberSubsystem climber) {
 
-    /* All your code should go inside this try-catch block */
     try {
 
-      /*
-        TODO: Load Paths
-      */
       PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("D_Start_Depot");
       PathPlannerPath climbPath = PathPlannerPath.fromChoreoTrajectory("D_Depot_Climb");
 
@@ -41,10 +37,14 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
               AutoBuilder.followPath(startingPath).deadlineFor(climber.homingCommand()),
               Commands.sequence(
                   Commands.waitSeconds(1.2),
-                  groundIntakeExtend.extend(),
-                  groundIntakeRoller.startIntake())),
-          AutoBuilder.followPath(climbPath).deadlineFor(shooter.runVelocity(60)),
-          climber.runPosition(ClimberConstants.CLIMB));
+                  Commands.parallel(groundIntakeExtend.extend(), groundIntakeRoller.startIntake()),
+                  Commands.waitSeconds(2),
+                  shooter.cruiseControl())),
+          AutoBuilder.followPath(climbPath).deadlineFor(shooter.cruiseControl()),
+          Commands.waitSeconds(6)
+              .deadlineFor(
+                  drivetrain.driveToPose(() -> getScorePose(climbPath)), shooter.cruiseControl()),
+          climber.runPosition(ClimberConstants.CLIMB).alongWith(shooter.runVoltage(0)));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());

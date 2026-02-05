@@ -80,9 +80,9 @@ public class NeutralAutos extends SequentialCommandGroup {
                   AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
                   cyclePath(cycle, true),
                   cyclePath(cycletwo, false).onlyIf(() -> twoCycle),
-                  climbPath(climb).andThen(Commands.idle()).onlyIf(() -> !twoCycle))
-              .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
-          Commands.idle());
+                  climbPath(climb).andThen(Commands.idle()).onlyIf(() -> !twoCycle),
+                  Commands.idle())
+              .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
@@ -113,20 +113,26 @@ public class NeutralAutos extends SequentialCommandGroup {
                         groundIntakeExtend.homingCommand().onlyIf(() -> homing),
                         climber.homingCommand().onlyIf(() -> homing)),
                     Commands.parallel(
-                        shooter.runVelocity(0),
+                        shooter.runVoltage(0),
                         groundIntakeExtend.extend(),
-                        groundIntakeRoller.startIntake()))),
+                        groundIntakeRoller.startIntake()),
+                    Commands.waitSeconds(3),
+                    shooter.cruiseControl())),
         groundIntakeRoller.stopIntake(),
         Commands.waitSeconds(6)
             .deadlineFor(
                 drivetrain
                     .driveToPose(() -> getScorePose(() -> path))
-                    .alongWith(Commands.parallel(indexer.index(), shooter.runVelocity(60)))));
+                    .alongWith(Commands.parallel(indexer.index(), shooter.cruiseControl()))));
   }
 
   private Command climbPath(PathPlannerPath path) {
     return Commands.sequence(
-        AutoBuilder.followPath(path).deadlineFor(shooter.runVelocity(0)),
+        AutoBuilder.followPath(path)
+            .deadlineFor(
+                shooter.runVelocity(0),
+                groundIntakeExtend.retract(),
+                groundIntakeRoller.runVoltage(0)),
         Commands.idle().alongWith(climber.runPosition(ClimberConstants.CLIMB)));
   }
 }
