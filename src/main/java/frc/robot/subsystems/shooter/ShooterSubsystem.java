@@ -91,6 +91,19 @@ public class ShooterSubsystem extends SubsystemBase {
         });
   }
 
+  public Command preSpin() {
+    return this.runOnce(() -> {
+          Pose2d robotPose = robotPoseSupplier.get();
+          Pose2d targetPose = robotTargetSupplier.get();
+          double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+          double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
+
+          velocityGoal = rotationsPerSecond;
+
+          //does not actually pre-spin
+    });
+  }
+
   @Override
   public void periodic() {
     shooterIO.periodic();
