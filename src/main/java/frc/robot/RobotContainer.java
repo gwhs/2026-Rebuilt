@@ -8,6 +8,8 @@ import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -21,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.HubTracker.Shift;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
@@ -89,13 +92,62 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   private final ShooterSubsystem shooter;
-  private final GroundIntakeRollerSubsystem groundIntakeRoller =
-      new GroundIntakeRollerSubsystem(rioCanbus, canivoreCanbus, signalList);
-  private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension =
-      new GroundIntakeLinearExtensionSubsystem(rioCanbus, canivoreCanbus, signalList);
-
+  private final GroundIntakeRollerSubsystem groundIntakeRoller;
+  private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
   private ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
+
+  public final Trigger isHubActive =
+      new Trigger(
+          () -> {
+            Shift currentShift = HubTracker.getCurrentShift().orElse(Shift.SHIFT_1);
+            double timeRemaining =
+                HubTracker.timeRemainingInCurrentShift()
+                    .orElse(Time.ofBaseUnits(0, Units.Second))
+                    .in(Units.Seconds);
+            DogLog.log("Hub Status/Time Remaining in Shift", timeRemaining);
+            DogLog.log("Hub Status/Current Shift", currentShift);
+
+            double upperThreshold = 3;
+            double lowerThreshold = 24;
+
+            if (HubTracker.getAutoWinner().orElse(Alliance.Red) == Alliance.Red) {
+              // Red Win
+              if (EagleUtil.isRedAlliance()) {
+                // We are Red
+                if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
+                  return timeRemaining >= lowerThreshold
+                      || timeRemaining <= upperThreshold
+                      || HubTracker.isActive();
+                }
+              } else {
+                // We Lose, as Blue
+                if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
+                  return timeRemaining >= lowerThreshold
+                      || timeRemaining <= upperThreshold
+                      || HubTracker.isActive();
+                }
+              }
+            } else {
+              // Blue Win
+              if (!EagleUtil.isRedAlliance()) {
+                // We Win, as Blue
+                if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
+                  return timeRemaining >= lowerThreshold
+                      || timeRemaining <= upperThreshold
+                      || HubTracker.isActive();
+                }
+              } else {
+                // We Win, as Red
+                if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
+                  return timeRemaining >= lowerThreshold
+                      || timeRemaining <= upperThreshold
+                      || HubTracker.isActive();
+                }
+              }
+            }
+            return HubTracker.isActive();
+          });
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -121,6 +173,10 @@ public class RobotContainer {
                 drivetrain.speedSupplier());
         climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeRoller =
+            GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension =
+            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -128,6 +184,8 @@ public class RobotContainer {
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         break;
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
@@ -135,6 +193,8 @@ public class RobotContainer {
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
@@ -142,19 +202,32 @@ public class RobotContainer {
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createSim();
         indexer = IndexerSubsystem.createSim();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createSim();
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
-        climber = ClimberSubsystem.createDisabled();
-        indexer = IndexerSubsystem.createDisabled();
+            ShooterSubsystem.createReal(
+                rioCanbus,
+                canivoreCanbus,
+                signalList,
+                drivetrain.poseSupplier(),
+                drivetrain.speedSupplier());
+        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeRoller =
+            GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension =
+            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
     }
 
@@ -302,9 +375,7 @@ public class RobotContainer {
 
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
-    DogLog.log(
-        "Hub Status/Is Active",
-        HubTracker.isActive(DriverStation.getAlliance().orElse(Alliance.Red)));
+    DogLog.log("Hub Status/Is Active", isHubActive.getAsBoolean());
 
     if (obj.isPresent()) {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
