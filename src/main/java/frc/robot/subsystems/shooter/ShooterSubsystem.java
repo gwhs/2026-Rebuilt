@@ -5,14 +5,11 @@ import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
 import frc.robot.ShotCalculator;
-
 import java.util.function.Supplier;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -32,8 +29,7 @@ public class ShooterSubsystem extends SubsystemBase {
       CANBus canivoreCanbus,
       StatusSignalCollection signal,
       Supplier<Pose2d> robotPose,
-      Supplier<Pose2d> robotTarget
-      ) {
+      Supplier<Pose2d> robotTarget) {
     return new ShooterSubsystem(
         new ShooterIOReal(rioCanbus, canivoreCanbus, signal), robotPose, robotTarget);
   }
@@ -79,7 +75,7 @@ public class ShooterSubsystem extends SubsystemBase {
           Pose2d targetPose = robotTargetSupplier.get();
           double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
           double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
-          
+
           velocityGoal = rotationsPerSecond;
           shooterIO.runVelocity(rotationsPerSecond);
         });

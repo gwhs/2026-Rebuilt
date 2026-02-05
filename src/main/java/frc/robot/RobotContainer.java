@@ -180,7 +180,8 @@ public class RobotContainer {
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
+            ShooterSubsystem.createDisabled(
+                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -189,7 +190,8 @@ public class RobotContainer {
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
+            ShooterSubsystem.createDisabled(
+                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -198,7 +200,8 @@ public class RobotContainer {
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
+            ShooterSubsystem.createDisabled(
+                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -206,7 +209,8 @@ public class RobotContainer {
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
+        shooter =
+            ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createSim();
         indexer = IndexerSubsystem.createSim();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
