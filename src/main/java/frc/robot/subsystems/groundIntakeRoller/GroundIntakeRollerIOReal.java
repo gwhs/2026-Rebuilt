@@ -34,7 +34,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   private final StatusSignal<Double> motor1ClosedLoopGoal;
 
   private final Alert motor1NotConnectedAlert =
-      new Alert("Indexer Motor 1 Not Connected ", AlertType.kError);
+      new Alert("Ground Intake Roller Motor 1 Not Connected ", AlertType.kError);
 
   public GroundIntakeRollerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
