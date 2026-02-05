@@ -114,15 +114,16 @@ public class RobotContainer {
             double lowerThreshold = 24;
 
             if (HubTracker.getAutoWinner().orElse(Alliance.Red) == Alliance.Red) {
-              // red win
+              // Red Win
               if (EagleUtil.isRedAlliance()) {
-                // we win
+                // We are Red
                 if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
                       || HubTracker.isActive();
                 }
               } else {
+                // We Lose, as Blue
                 if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
@@ -130,15 +131,16 @@ public class RobotContainer {
                 }
               }
             } else {
-              // blue win
+              // Blue Win
               if (!EagleUtil.isRedAlliance()) {
-                // we win
+                // We Win, as Blue
                 if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
                       || HubTracker.isActive();
                 }
               } else {
+                // We Win, as Red
                 if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
