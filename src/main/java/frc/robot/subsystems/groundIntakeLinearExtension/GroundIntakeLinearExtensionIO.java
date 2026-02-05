@@ -18,4 +18,8 @@ public interface GroundIntakeLinearExtensionIO {
   public void runVoltage(double volts, boolean ignoreSoftwareLimit);
 
   public double getStatorCurrent();
+
+  public boolean getReverseLimit();
+
+  public boolean getForwardLimit();
 }
