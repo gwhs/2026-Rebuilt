@@ -7,6 +7,7 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Alert;
@@ -238,7 +239,7 @@ public class RobotContainer {
 
     configureBindings();
     configureAutonomous();
-    configureFuelSim();
+
     drivetrain.setDefaultCommand(defualtDriveCommand);
 
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
@@ -246,7 +247,9 @@ public class RobotContainer {
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
     DogLog.log("Current Robot", getRobot().toString());
+
     if (RobotBase.isSimulation()) {
+      configureFuelSim();
       SmartDashboard.putData(
           Commands.runOnce(
                   () -> {
@@ -330,15 +333,20 @@ public class RobotContainer {
 
   private void configureFuelSim() {
     FuelSim instance = FuelSim.getInstance();
-    // instance.spawnStartingFuel();
+    instance.spawnStartingFuel();
     instance.registerRobot(
         0.660, // from left to right
         0.711, // from front to back
         0.127, // from floor to top of bumpers
         () -> drivetrain.getState().Pose, // Supplier<Pose2d> of robot pose
         () ->
-            drivetrain.getState()
-                .Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+            ChassisSpeeds.fromRobotRelativeSpeeds(
+                drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation()));
+    // Supplier<ChassisSpeeds> of field-centric chassis speeds
+
+    // Register an intake to remove fuel from the field as a rectangular bounding box
+    instance.registerIntake(
+        0.350, 0.700, -0.330, 0.330); // robot-centric coordinates for bounding box
 
     instance.start();
   }
@@ -374,6 +382,10 @@ public class RobotContainer {
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
+
+    double fuelInHub = FuelSim.getFuelInHub();
+
+    DogLog.log("number of fuels in hub", fuelInHub);
   }
 
   private Command disableHandler() {
