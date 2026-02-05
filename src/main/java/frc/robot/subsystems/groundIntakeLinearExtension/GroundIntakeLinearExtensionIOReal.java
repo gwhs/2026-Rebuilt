@@ -45,7 +45,8 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
 
   private final VoltageOut voltageOutRequest = new VoltageOut(0).withEnableFOC(true);
 
-  private final Alert motorNotConnectedAlert = new Alert("Motor 1 Not Connected", AlertType.kError);
+  private final Alert motorNotConnectedAlert =
+      new Alert("Ground Intake Linear Extension Motor 1 Not Connected", AlertType.kError);
 
   @SuppressWarnings("resource")
   public GroundIntakeLinearExtensionIOReal(
