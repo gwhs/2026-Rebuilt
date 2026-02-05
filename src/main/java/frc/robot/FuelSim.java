@@ -30,6 +30,8 @@ public class FuelSim {
 
   private static FuelSim instance = null;
 
+  private static int fuelInHub = 0; // counter for number of fuels contained in robot hub
+
   private static final Translation3d[] FIELD_XZ_LINE_STARTS = {
     new Translation3d(0, 0, 0),
     new Translation3d(3.96, 1.57, 0),
@@ -335,8 +337,9 @@ public class FuelSim {
 
   public void spawnFuel(Translation3d pos, Translation3d vel) {
     double t2 = HALUtil.getFPGATime();
-    if ((t2 - t1) / 1000 > 100) { // units in ms
+    if (((t2 - t1) / 1000 > 100) && (fuelInHub > 0)) { // units in ms
       fuels.add(new Fuel(pos, vel));
+      fuelInHub--;
       t1 = HALUtil.getFPGATime();
     }
   }
@@ -396,11 +399,14 @@ public class FuelSim {
 
   private void handleIntakes(ArrayList<Fuel> fuels) {
     Pose2d robot = robotSupplier.get();
-    for (SimIntake intake : intakes) {
-      for (int i = 0; i < fuels.size(); i++) {
-        if (intake.shouldIntake(fuels.get(i), robot)) {
-          fuels.remove(i);
-          i--;
+    if (fuelInHub < 55) { // chekc for maxium fuel contain ability
+      for (SimIntake intake : intakes) {
+        for (int i = 0; i < fuels.size(); i++) {
+          if (intake.shouldIntake(fuels.get(i), robot)) {
+            fuels.remove(i);
+            i--;
+            fuelInHub++;
+          }
         }
       }
     }
@@ -624,4 +630,8 @@ public class FuelSim {
   }
 
   private FuelSim() {}
+
+  public static int getFuelInHub() {
+    return fuelInHub;
+  }
 }

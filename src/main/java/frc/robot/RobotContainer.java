@@ -260,7 +260,7 @@ public class RobotContainer {
 
   private void configureFuelSim() {
     FuelSim instance = FuelSim.getInstance();
-    // instance.spawnStartingFuel();
+    instance.spawnStartingFuel();
     instance.registerRobot(
         0.660, // from left to right
         0.711, // from front to back
@@ -270,6 +270,10 @@ public class RobotContainer {
             ChassisSpeeds.fromRobotRelativeSpeeds(
                 drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation()));
     // Supplier<ChassisSpeeds> of field-centric chassis speeds
+
+    // Register an intake to remove fuel from the field as a rectangular bounding box
+    instance.registerIntake(
+        0.350, 0.700, -0.330, 0.330); // robot-centric coordinates for bounding box
 
     instance.start();
   }
@@ -307,6 +311,10 @@ public class RobotContainer {
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
+
+    double fuelInHub = FuelSim.getFuelInHub();
+
+    DogLog.log("number of fuels in hub", fuelInHub);
   }
 
   private Command disableHandler() {
