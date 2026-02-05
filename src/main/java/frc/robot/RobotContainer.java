@@ -109,7 +109,7 @@ public class RobotContainer {
                     .orElse(Time.ofBaseUnits(0, Units.Second))
                     .in(Units.Seconds);
             DogLog.log("Hub Status/Time Remaining in Shift", timeRemaining);
-            DogLog.log("Hub Status/Current Shift", currentShift);
+            DogLog.log("Hub Status/Current Shift", currentShift.name());
 
             double upperThreshold = 3;
             double lowerThreshold = 24;
@@ -173,7 +173,7 @@ public class RobotContainer {
                 canivoreCanbus,
                 signalList,
                 drivetrain.poseSupplier(),
-                drivetrain.speedSupplier());
+                drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
@@ -184,7 +184,8 @@ public class RobotContainer {
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+            ShooterSubsystem.createDisabled(
+                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -193,7 +194,8 @@ public class RobotContainer {
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+            ShooterSubsystem.createDisabled(
+                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -202,7 +204,8 @@ public class RobotContainer {
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+            ShooterSubsystem.createDisabled(
+                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -210,7 +213,8 @@ public class RobotContainer {
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        shooter =
+            ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createSim();
         indexer = IndexerSubsystem.createSim();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
@@ -224,7 +228,7 @@ public class RobotContainer {
                 canivoreCanbus,
                 signalList,
                 drivetrain.poseSupplier(),
-                drivetrain.speedSupplier());
+                drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
@@ -400,9 +404,9 @@ public class RobotContainer {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
 
-    double fuelInHub = FuelSim.getFuelInHub();
+    double fuelInHopper = FuelSim.getFuelInHopper();
 
-    DogLog.log("number of fuels in hub", fuelInHub);
+    DogLog.log("number of fuels in hopper", fuelInHopper);
   }
 
   private Command disableHandler() {
@@ -420,6 +424,7 @@ public class RobotContainer {
                 shooter
                     .isAtGoalVelocity_Hub
                     .and(drivetrain.isFacingGoal)
+                    .and(isHubActive)
                     .or(controller.leftTrigger()))
             .repeatedly());
   }
