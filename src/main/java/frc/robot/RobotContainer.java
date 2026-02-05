@@ -383,9 +383,9 @@ public class RobotContainer {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
 
-    double fuelInHub = FuelSim.getFuelInHub();
+    double fuelInHopper = FuelSim.getFuelInHopper();
 
-    DogLog.log("number of fuels in hub", fuelInHub);
+    DogLog.log("number of fuels in hopper", fuelInHopper);
   }
 
   private Command disableHandler() {
