@@ -82,7 +82,12 @@ public class ShooterSubsystem extends SubsystemBase {
           double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
 
           velocityGoal = rotationsPerSecond;
-          shooterIO.runVelocity(rotationsPerSecond);
+
+          if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
+              shooterIO.runVoltage(12);
+          } else {
+            shooterIO.runVelocity(rotationsPerSecond);
+          }
         });
   }
 
