@@ -321,9 +321,7 @@ public class RobotContainer {
 
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
-    DogLog.log(
-        "Hub Status/Is Active",
-        isHubActive.getAsBoolean());
+    DogLog.log("Hub Status/Is Active", isHubActive.getAsBoolean());
 
     if (obj.isPresent()) {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[] {obj.get()}); // ill forget it tommorow
