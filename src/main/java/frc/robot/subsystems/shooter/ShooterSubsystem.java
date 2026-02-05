@@ -5,24 +5,23 @@ import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
+import frc.robot.ShotCalculator;
 import java.util.function.Supplier;
 
 public class ShooterSubsystem extends SubsystemBase {
 
   public static ShooterSubsystem createSim(
-      Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> velocity) {
-    return new ShooterSubsystem(new ShooterIOSim(), robotPose, velocity);
+      Supplier<Pose2d> robotPose, Supplier<Pose2d> robotTarget) {
+    return new ShooterSubsystem(new ShooterIOSim(), robotPose, robotTarget);
   }
 
   public static ShooterSubsystem createDisabled(
-      Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> velocity) {
-    return new ShooterSubsystem(new ShooterIODisabled(), robotPose, velocity);
+      Supplier<Pose2d> robotPose, Supplier<Pose2d> robotTarget) {
+    return new ShooterSubsystem(new ShooterIODisabled(), robotPose, robotTarget);
   }
 
   public static ShooterSubsystem createReal(
@@ -30,9 +29,9 @@ public class ShooterSubsystem extends SubsystemBase {
       CANBus canivoreCanbus,
       StatusSignalCollection signal,
       Supplier<Pose2d> robotPose,
-      Supplier<ChassisSpeeds> velocity) {
+      Supplier<Pose2d> robotTarget) {
     return new ShooterSubsystem(
-        new ShooterIOReal(rioCanbus, canivoreCanbus, signal), robotPose, velocity);
+        new ShooterIOReal(rioCanbus, canivoreCanbus, signal), robotPose, robotTarget);
   }
 
   private ShooterIO shooterIO;
@@ -40,7 +39,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double velocityGoal;
 
   private final Supplier<Pose2d> robotPoseSupplier;
-  private final Supplier<ChassisSpeeds> robotVelocitySupplier;
+  private final Supplier<Pose2d> robotTargetSupplier;
 
   public final Trigger isAtGoalVelocity_Passing =
       new Trigger(() -> MathUtil.isNear(velocityGoal, shooterIO.getVelocity(), 10));
@@ -48,11 +47,10 @@ public class ShooterSubsystem extends SubsystemBase {
       new Trigger(() -> MathUtil.isNear(velocityGoal, shooterIO.getVelocity(), 5));
 
   public ShooterSubsystem(
-      ShooterIO shooterIO, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> velocity) {
+      ShooterIO shooterIO, Supplier<Pose2d> robotPose, Supplier<Pose2d> robotTarget) {
     this.shooterIO = shooterIO;
-
+    robotTargetSupplier = robotTarget;
     robotPoseSupplier = robotPose;
-    robotVelocitySupplier = velocity;
   }
 
   public Command runVelocity(double rotationsPerSecond) {
@@ -79,10 +77,9 @@ public class ShooterSubsystem extends SubsystemBase {
     return this.run(
         () -> {
           Pose2d robotPose = robotPoseSupplier.get();
-          ChassisSpeeds robotVelocity = robotVelocitySupplier.get();
-          Translation2d targetPose = EagleUtil.getRobotTarget(robotPose);
-          double rotationsPerSecond = 0;
-          // TODO ^ calc rps using above variables
+          Pose2d targetPose = robotTargetSupplier.get();
+          double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+          double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
 
           velocityGoal = rotationsPerSecond;
           shooterIO.runVelocity(rotationsPerSecond);
