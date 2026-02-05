@@ -9,8 +9,14 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
+import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
+import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
+import com.ctre.phoenix6.signals.ReverseLimitValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -32,12 +38,15 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
   private final StatusSignal<Temperature> motorTemp;
   private final StatusSignal<Double> motorClosedLoopGoal;
   private final StatusSignal<Angle> motorPosition;
+  private final StatusSignal<ForwardLimitValue> motorForwardLimit;
+  private final StatusSignal<ReverseLimitValue> motorReverseLimit;
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0).withEnableFOC(true);
 
   private final VoltageOut voltageOutRequest = new VoltageOut(0).withEnableFOC(true);
 
-  private final Alert motorNotConnectedAlert = new Alert("Motor 1 Not Connected", AlertType.kError);
+  private final Alert motorNotConnectedAlert =
+      new Alert("Ground Intake Linear Extension Motor 1 Not Connected", AlertType.kError);
 
   @SuppressWarnings("resource")
   public GroundIntakeLinearExtensionIOReal(
@@ -51,6 +60,8 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
     motorAcceleration = motor.getAcceleration();
     motorClosedLoopGoal = motor.getClosedLoopReference();
     motorPosition = motor.getPosition();
+    motorForwardLimit = motor.getForwardLimit();
+    motorReverseLimit = motor.getReverseLimit();
 
     statusSignalCollection.addSignals(
         motorVoltage,
@@ -59,7 +70,9 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
         motorTemp,
         motorAcceleration,
         motorClosedLoopGoal,
-        motorPosition);
+        motorPosition,
+        motorForwardLimit,
+        motorReverseLimit);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
@@ -69,7 +82,9 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
         motorTemp,
         motorAcceleration,
         motorClosedLoopGoal,
-        motorPosition);
+        motorPosition,
+        motorForwardLimit,
+        motorReverseLimit);
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
@@ -91,6 +106,14 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
         GroundIntakeLinearExtensionConstants.MAX_ACCELERATION;
     talonFXConfig.MotionMagic.MotionMagicCruiseVelocity =
         GroundIntakeLinearExtensionConstants.MAX_VELOCITY;
+
+    talonFXConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
+    talonFXConfig.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+    talonFXConfig.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
+
+    talonFXConfig.HardwareLimitSwitch.ReverseLimitEnable = true;
+    talonFXConfig.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
+    talonFXConfig.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
 
     talonFXConfig.Slot0.kP = 0.5;
     talonFXConfig.Slot0.kI = 0;
@@ -129,6 +152,12 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
         "GroundIntakeLinearExtension/Motor 1 Closed Loop Goal",
         motorClosedLoopGoal.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Position", motorPosition.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakeLinearExtension/Limit Switch Value (Forward)",
+        motorForwardLimit.getValueAsDouble());
+    DogLog.log(
+        "GroundIntakeLinearExtension/Limit Switch Value (Reverse)",
+        motorReverseLimit.getValueAsDouble());
 
     motorNotConnectedAlert.set(!motor.isConnected());
   }
@@ -157,5 +186,13 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
 
   public double getStatorCurrent() {
     return motorStatorCurrent.getValueAsDouble();
+  }
+
+  public boolean getForwardLimit() {
+    return motorForwardLimit.getValue() == ForwardLimitValue.ClosedToGround;
+  }
+
+  public boolean getReverseLimit() {
+    return motorReverseLimit.getValue() == ReverseLimitValue.ClosedToGround;
   }
 }
