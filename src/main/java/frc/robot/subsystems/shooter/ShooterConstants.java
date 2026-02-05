@@ -8,4 +8,3 @@ public class ShooterConstants {
   public static final int MOTOR_5_ID = 25;
   public static final int MOTOR_6_ID = 26;
 }
-
