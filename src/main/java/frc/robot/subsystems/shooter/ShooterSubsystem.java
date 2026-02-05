@@ -92,14 +92,15 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command preSpin() {
-    return this.run(() -> {
+    return this.run(
+        () -> {
           Pose2d robotPose = robotPoseSupplier.get();
           Pose2d targetPose = robotTargetSupplier.get();
           double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
           double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
 
-          //does not actually pre-spin
-    });
+          // does not actually pre-spin
+        });
   }
 
   @Override
