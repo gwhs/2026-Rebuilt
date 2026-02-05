@@ -2,7 +2,6 @@ package frc.robot.subsystems.groundIntakeLinearExtension;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,17 +26,6 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   public GroundIntakeLinearExtensionSubsystem(
       GroundIntakeLinearExtensionIO groundIntakeLinearExtensionIO) {
     this.groundIntakeLinearExtensionIO = groundIntakeLinearExtensionIO;
-  }
-
-  public GroundIntakeLinearExtensionSubsystem(
-      CANBus rioCanbus, CANBus canivoreCanBus, StatusSignalCollection statusSignalCollection) {
-    if (RobotBase.isSimulation()) {
-      groundIntakeLinearExtensionIO = new GroundIntakeLinearExtensionIOSim();
-    } else {
-      groundIntakeLinearExtensionIO =
-          new GroundIntakeLinearExtensionIOReal(
-              canivoreCanBus, canivoreCanBus, statusSignalCollection);
-    }
   }
 
   @Override
