@@ -14,5 +14,8 @@ public class ClimberConstants {
 
   public static final double PREP_CLIMB = 12; // TODO
   public static final double CLIMB_L1 = 6; // TODO
+  public static final double CLIMB_L2 = 6; // TODO
+  public static final double CLIMB_L3 = 6; // TODO
+
   public static final double CLIMB = 0; // TODO
 }
