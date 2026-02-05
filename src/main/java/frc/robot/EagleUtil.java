@@ -157,6 +157,7 @@ public class EagleUtil {
 
   public static Command shootInSim(SwerveSubsystem drivetrain) {
     return Commands.sequence(
+            Commands.waitSeconds(0.1),
             Commands.runOnce(
                 () -> {
                   if (RobotBase.isSimulation()) {
@@ -191,8 +192,7 @@ public class EagleUtil {
                             initVelocity); // spawns a fuel with a given position and velocity (both
                     // field centric, represented as vectors by Translation3d)
                   }
-                }),
-            Commands.waitSeconds(0.1))
+                }))
         .repeatedly();
   }
 }
