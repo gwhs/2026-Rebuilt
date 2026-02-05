@@ -30,7 +30,7 @@ public class FuelSim {
 
   private static FuelSim instance = null;
 
-  private static int fuelInHub = 0; // counter for number of fuels contained in robot hub
+  private static int fuelInHub = 8; // counter for number of fuels contained in robot hub, preloads 8 at start
 
   private static final Translation3d[] FIELD_XZ_LINE_STARTS = {
     new Translation3d(0, 0, 0),
