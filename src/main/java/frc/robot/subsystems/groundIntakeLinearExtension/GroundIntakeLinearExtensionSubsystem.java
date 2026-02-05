@@ -10,6 +10,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   private GroundIntakeLinearExtensionIO groundIntakeLinearExtensionIO;
 
+  public static GroundIntakeLinearExtensionSubsystem createSim() {
+    return new GroundIntakeLinearExtensionSubsystem(new GroundIntakeLinearExtensionIOSim());
+  }
+
+  public static GroundIntakeLinearExtensionSubsystem createDisabled() {
+    return new GroundIntakeLinearExtensionSubsystem(new GroundIntakeLinearExtensionIODisabled());
+  }
+
+  public static GroundIntakeLinearExtensionSubsystem createReal(
+      CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
+    return new GroundIntakeLinearExtensionSubsystem(new GroundIntakeLinearExtensionIOReal(rioCanbus, canivoreCanbus, signal));
+  }
+
+  public GroundIntakeLinearExtensionSubsystem(GroundIntakeLinearExtensionIO groundIntakeLinearExtensionIO) {
+    this.groundIntakeLinearExtensionIO = groundIntakeLinearExtensionIO;
+  }
+
   public GroundIntakeLinearExtensionSubsystem(
       CANBus rioCanbus, CANBus canivoreCanBus, StatusSignalCollection statusSignalCollection) {
     if (RobotBase.isSimulation()) {

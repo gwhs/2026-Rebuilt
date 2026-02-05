@@ -16,6 +16,23 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
   private GroundIntakeRollerIO groundIntakeRollerIO;
   private double groundRollerVoltage;
 
+  public static GroundIntakeRollerSubsystem createSim() {
+    return new GroundIntakeRollerSubsystem(new GroundIntakeRollerIOSim());
+  }
+
+  public static GroundIntakeRollerSubsystem createDisabled() {
+    return new GroundIntakeRollerSubsystem(new GroundIntakeRollerIODisabled());
+  }
+
+  public static GroundIntakeRollerSubsystem createReal(
+      CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
+    return new GroundIntakeRollerSubsystem(new GroundIntakeRollerIOReal(rioCanbus, canivoreCanbus, signal));
+  }
+
+  public GroundIntakeRollerSubsystem(GroundIntakeRollerIO groundIntakeRollerIO) {
+    this.groundIntakeRollerIO = groundIntakeRollerIO;
+  }
+
   public GroundIntakeRollerSubsystem(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
     if (RobotBase.isSimulation()) {
@@ -50,4 +67,5 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
     groundIntakeRollerIO.periodic();
     DogLog.log("Ground Intake Roller/Goal Voltage", groundRollerVoltage);
   }
+
 }
