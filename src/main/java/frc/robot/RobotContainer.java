@@ -91,11 +91,8 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   private final ShooterSubsystem shooter;
-  private final GroundIntakeRollerSubsystem groundIntakeRoller =
-      new GroundIntakeRollerSubsystem(rioCanbus, canivoreCanbus, signalList);
-  private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension =
-      new GroundIntakeLinearExtensionSubsystem(rioCanbus, canivoreCanbus, signalList);
-
+  private final GroundIntakeRollerSubsystem groundIntakeRoller;
+  private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
   private ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
 
@@ -175,6 +172,10 @@ public class RobotContainer {
                 drivetrain.speedSupplier());
         climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeRoller =
+            GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension =
+            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -182,6 +183,8 @@ public class RobotContainer {
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         break;
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
@@ -189,6 +192,8 @@ public class RobotContainer {
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
@@ -196,12 +201,16 @@ public class RobotContainer {
             ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
         climber = ClimberSubsystem.createSim();
         indexer = IndexerSubsystem.createSim();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createSim();
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -214,6 +223,10 @@ public class RobotContainer {
                 drivetrain.speedSupplier());
         climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeRoller =
+            GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension =
+            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
     }
 
