@@ -122,7 +122,11 @@ public class NeutralAutos extends SequentialCommandGroup {
             .deadlineFor(
                 drivetrain
                     .driveToPose(() -> getScorePose(() -> path))
-                    .alongWith(Commands.parallel(indexer.index(), shooter.cruiseControl()))));
+                    .alongWith(
+                        Commands.parallel(
+                            indexer.index(),
+                            shooter.cruiseControl(),
+                            EagleUtil.shootInSim(drivetrain)))));
   }
 
   private Command climbPath(PathPlannerPath path) {

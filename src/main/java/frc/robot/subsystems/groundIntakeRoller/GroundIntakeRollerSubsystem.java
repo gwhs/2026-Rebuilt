@@ -7,7 +7,6 @@ package frc.robot.subsystems.groundIntakeRoller;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,13 +15,22 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
   private GroundIntakeRollerIO groundIntakeRollerIO;
   private double groundRollerVoltage;
 
-  public GroundIntakeRollerSubsystem(
+  public static GroundIntakeRollerSubsystem createSim() {
+    return new GroundIntakeRollerSubsystem(new GroundIntakeRollerIOSim());
+  }
+
+  public static GroundIntakeRollerSubsystem createDisabled() {
+    return new GroundIntakeRollerSubsystem(new GroundIntakeRollerIODisabled());
+  }
+
+  public static GroundIntakeRollerSubsystem createReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
-    if (RobotBase.isSimulation()) {
-      groundIntakeRollerIO = new GroundIntakeRollerIOSim();
-    } else {
-      groundIntakeRollerIO = new GroundIntakeRollerIOReal(rioCanbus, canivoreCanbus, signal);
-    }
+    return new GroundIntakeRollerSubsystem(
+        new GroundIntakeRollerIOReal(rioCanbus, canivoreCanbus, signal));
+  }
+
+  public GroundIntakeRollerSubsystem(GroundIntakeRollerIO groundIntakeRollerIO) {
+    this.groundIntakeRollerIO = groundIntakeRollerIO;
   }
 
   public Command runVoltage(double voltage) {
