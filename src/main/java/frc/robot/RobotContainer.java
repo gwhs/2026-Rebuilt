@@ -78,7 +78,7 @@ public class RobotContainer {
     }
   }
 
-  private ObjectDetectionCam objDecCam;
+  //private ObjectDetectionCam objDecCam;
 
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
@@ -237,9 +237,9 @@ public class RobotContainer {
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
-    objDecCam =
-        new ObjectDetectionCam(
-            "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
+    // objDecCam =
+    //     new ObjectDetectionCam(
+    //         "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
 
     configureBindings();
     configureAutonomous();
@@ -359,9 +359,9 @@ public class RobotContainer {
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
-    if (objDecCam != null) {
-      objDecCam.updateDetection();
-    }
+    // if (objDecCam != null) {
+    //   objDecCam.updateDetection();
+    // }
 
     DogLog.log(
         "Loop Time/Robot Container/objectDetection Cam",

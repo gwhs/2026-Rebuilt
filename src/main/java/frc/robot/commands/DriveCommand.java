@@ -1,5 +1,5 @@
 // Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
+// Open Source Software; you can modify and/or share it under the terms 
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
@@ -10,6 +10,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,6 +19,11 @@ import frc.robot.FieldConstants;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.SwerveSubsystemConstants;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.objectDetection.GamePieceTracker;
+import java.util.Optional;
+import frc.robot.subsystems.aprilTagCam.*;;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -42,6 +48,8 @@ public class DriveCommand extends Command {
 
   private boolean resetLimiter = true;
 
+  private boolean driveAssist = false;
+
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
@@ -61,11 +69,29 @@ public class DriveCommand extends Command {
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
+  
+  public boolean getDriveAssist() {
+    return driveAssist;
+  }
+
+  public void setDriveAssist(boolean newDriveAssist) {
+    driveAssist = newDriveAssist;
+  }
+
   @Override
   public void execute() {
     double xInput = -controller.getLeftY();
     double yInput = -controller.getLeftX();
     double rotationalInput = -controller.getRightX();
+
+    double xVelocity = MathUtil.applyDeadband(xInput, 0.1);
+    double yVelocity = MathUtil.applyDeadband(yInput, 0.1);
+    double angularVelocity = MathUtil.applyDeadband(-controller.getRightX(), 0.1);
+
+
+    Pose2d currentRobotPose = drivetrain.getState().Pose;
+
+    Optional<Pose2d> currentGamePiecePose = GamePieceTracker.getGamePiece();
 
     xInput = MathUtil.applyDeadband(xInput, deadband);
     yInput = MathUtil.applyDeadband(yInput, deadband);
@@ -91,6 +117,7 @@ public class DriveCommand extends Command {
       DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
       DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
       DogLog.log("Drive Command/Current Robot Heading (degree)", currentRobotHeading);
+      DogLog.log("Drive Command/driveAssist", driveAssist);
     }
 
     if (drivetrain.goingToShootingRange()) {
@@ -119,6 +146,31 @@ public class DriveCommand extends Command {
       yInput = yInput * drivetrain.getTranslationSlowFactor();
       rotationalInput = rotationalInput * drivetrain.getRotationalSlowFactor();
     }
+  
+ if (drivetrain.isDrivingToFuel() && driveAssist && currentGamePiecePose.isPresent()) {
+      Pose2d coralRelativeToRobot = currentGamePiecePose.get().relativeTo(currentRobotPose);
+
+      double errorY = coralRelativeToRobot.getY();
+
+      double kP = 0.5507; // Change
+
+      if (DriverStation.getAlliance().isPresent()
+          && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+        kP *= -1;
+      }
+
+      ChassisSpeeds assistedVectorRobotOriented = new ChassisSpeeds(0, errorY * kP, 0);
+      DogLog.log("Intake Drive Assist/Assisted Robot Relative Vector", assistedVectorRobotOriented);
+
+      ChassisSpeeds assistedVectorFieldOriented =
+          ChassisSpeeds.fromRobotRelativeSpeeds(
+              assistedVectorRobotOriented, currentRobotPose.getRotation());
+      DogLog.log("Intake Drive Assist/Assisted Field Relative Vector", assistedVectorFieldOriented);
+
+      yVelocity += -assistedVectorFieldOriented.vyMetersPerSecond;
+      xVelocity += -assistedVectorFieldOriented.vxMetersPerSecond;
+      angularVelocity += assistedVectorFieldOriented.omegaRadiansPerSecond;
+    }
 
     if (drivetrain.isSlewRateLimitAcceleration()) {
       if (resetLimiter) {
@@ -135,15 +187,15 @@ public class DriveCommand extends Command {
       resetLimiter = true;
     }
 
-    double xVelocity = xInput * maxSpeed;
-    double yVelocity = yInput * maxSpeed;
-    double rotationalVelocity = rotationalInput * maxAngularSpeed;
+    xVelocity = xInput * maxSpeed;
+    yVelocity = yInput * maxSpeed;
+    angularVelocity = rotationalInput * maxAngularSpeed;
 
     drivetrain.setControl(
         fieldCentric
             .withVelocityX(xVelocity)
             .withVelocityY(yVelocity)
-            .withRotationalRate(rotationalVelocity));
+            .withRotationalRate(angularVelocity));
   }
 
   // Called once the command ends or is interrupted.
