@@ -353,7 +353,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Command setRotationCommand(RotationTarget rotationTarget) {
     return Commands.runOnce(
         () -> {
-          this.rotationTarget = rotationTarget;
+          this.rotationTarget = RotationTarget.NORMAL;
         });
   }
 
