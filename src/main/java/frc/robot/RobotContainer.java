@@ -480,8 +480,8 @@ public class RobotContainer {
   public Command stopShoot() {
     return Commands.parallel(
         drivetrain
-            .setRotationCommand(RotationTarget.NORMAL)
-            .alongWith(drivetrain.setSlowMode(false)),
+            .setRotationCommand(RotationTarget.NORMAL),
+            drivetrain.setSlowMode(false),
         shooter.runVoltage(0));
   }
 }
