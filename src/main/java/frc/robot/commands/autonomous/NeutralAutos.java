@@ -116,7 +116,7 @@ public class NeutralAutos extends SequentialCommandGroup {
                         groundIntakeExtend.extend(),
                         groundIntakeRoller.startIntake()),
                     Commands.waitSeconds(3),
-                    shooter.cruiseControl())),
+                    shooter.preSpin())),
         groundIntakeRoller.stopIntake(),
         Commands.waitSeconds(6)
             .deadlineFor(
@@ -137,5 +137,6 @@ public class NeutralAutos extends SequentialCommandGroup {
                 groundIntakeExtend.retract(),
                 groundIntakeRoller.runVoltage(0)),
         Commands.idle().alongWith(climber.runPosition(ClimberConstants.CLIMB)));
+    // TODO: Climb
   }
 }

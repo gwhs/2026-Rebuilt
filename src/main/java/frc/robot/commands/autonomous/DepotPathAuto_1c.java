@@ -35,36 +35,25 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           Commands.parallel(
               AutoBuilder.followPath(startingPath)
-                  .deadlineFor(climber.homingCommand())
                   .deadlineFor(
                       Commands.sequence(
-                          Commands.waitSeconds(0.5),
+                          Commands.parallel(
+                              climber.homingCommand().onlyIf(() -> RobotBase.isReal()),
+                              groundIntakeExtend.homingCommand().onlyIf(() -> RobotBase.isReal())),
                           Commands.parallel(
                               groundIntakeExtend.extend(), groundIntakeRoller.startIntake()),
                           Commands.waitSeconds(2),
-                          shooter.cruiseControl()))),
+                          shooter.preSpin()))),
           AutoBuilder.followPath(climbPath).deadlineFor(shooter.cruiseControl()),
           Commands.waitSeconds(6)
               .deadlineFor(
                   shooter.cruiseControl(),
                   EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
+          // TODO: Climb
           climber.runPosition(ClimberConstants.CLIMB).alongWith(shooter.runVoltage(0)));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
     }
-  }
-
-  private Pose2d getScorePose(PathPlannerPath path) {
-    Pose2d score;
-    if (EagleUtil.isRedAlliance()) {
-      score =
-          new Pose2d(
-              path.flipPath().getPoint(0).position,
-              path.flipPath().getIdealStartingState().rotation());
-    } else {
-      score = new Pose2d(path.getPoint(0).position, path.getIdealStartingState().rotation());
-    }
-    return score;
   }
 }
