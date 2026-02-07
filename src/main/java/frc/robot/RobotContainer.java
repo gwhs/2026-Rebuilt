@@ -302,12 +302,7 @@ public class RobotContainer {
                 .or(drivetrain.isInOpponentAllianceZone)
                 .and(drivetrain.isOnOutpostSide))
         .whileTrue(shootOutpost());
-    controller
-        .rightTrigger()
-        .onFalse(
-            drivetrain
-                .setRotationCommand(RotationTarget.NORMAL)
-                .alongWith(drivetrain.setSlowMode(false)));
+    controller.rightTrigger().onFalse(stopShoot());
 
     controller.a().whileTrue(unStuck());
 
@@ -480,5 +475,13 @@ public class RobotContainer {
             groundIntakeExtension.extend(), Commands.waitSeconds(.5),
             groundIntakeExtension.retract(), Commands.waitSeconds(.5))
         .repeatedly();
+  }
+
+  public Command stopShoot() {
+    return Commands.parallel(
+        drivetrain
+            .setRotationCommand(RotationTarget.NORMAL)
+            .alongWith(drivetrain.setSlowMode(false)),
+        shooter.runVoltage(0));
   }
 }
