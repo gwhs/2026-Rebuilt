@@ -293,6 +293,12 @@ public class RobotContainer {
                 .or(drivetrain.isInOpponentAllianceZone)
                 .and(drivetrain.isOnOutpostSide))
         .whileTrue(shootOutpost());
+    controller
+        .rightTrigger()
+        .onFalse(
+            drivetrain
+                .setRotationCommand(RotationTarget.NORMAL)
+                .alongWith(drivetrain.setSlowMode(false)));
 
     controller.a().whileTrue(unStuck());
 
@@ -303,17 +309,6 @@ public class RobotContainer {
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
-
-    drivetrain
-        .isInNeutralZone
-        .or(drivetrain.isInOpponentAllianceZone)
-        .and(drivetrain.isOnOutpostSide)
-        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
-    drivetrain
-        .isInNeutralZone
-        .or(drivetrain.isInOpponentAllianceZone)
-        .and(drivetrain.isOnDepotSide)
-        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
 
     controller
         .rightBumper()
@@ -401,6 +396,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
         shooter.cruiseControl(),
+        drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
@@ -415,6 +411,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
         shooter.cruiseControl(),
+        drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
@@ -428,6 +425,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
         shooter.cruiseControl(),
+        drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
