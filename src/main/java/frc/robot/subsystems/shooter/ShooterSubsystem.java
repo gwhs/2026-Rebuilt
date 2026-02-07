@@ -54,10 +54,15 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command runVelocity(double rotationsPerSecond) {
-    return this.runOnce(
+    return this.run(
         () -> {
           velocityGoal = rotationsPerSecond;
-          shooterIO.runVelocity(rotationsPerSecond);
+
+          if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
+            shooterIO.runVoltage(12);
+          } else {
+            shooterIO.runVelocity(rotationsPerSecond);
+          }
         });
   }
 
@@ -77,14 +82,32 @@ public class ShooterSubsystem extends SubsystemBase {
           double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
 
           velocityGoal = rotationsPerSecond;
-          shooterIO.runVelocity(rotationsPerSecond);
+
+          if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
+            shooterIO.runVoltage(12);
+          } else {
+            shooterIO.runVelocity(rotationsPerSecond);
+          }
+        });
+  }
+
+  public Command preSpin() {
+    return this.run(
+        () -> {
+          Pose2d robotPose = robotPoseSupplier.get();
+          Pose2d targetPose = robotTargetSupplier.get();
+          double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+          double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
+          runVoltage(0);
+
+          // does not actually pre-spin
         });
   }
 
   @Override
   public void periodic() {
     shooterIO.periodic();
-    DogLog.log("Shooter/ Current Velocity", shooterIO.getVelocity());
+    DogLog.log("Shooter/Current Velocity", shooterIO.getVelocity());
     DogLog.log("Shooter/Goal Velocity", velocityGoal);
     DogLog.log("Shooter/At Goal Velocity Hub", this.isAtGoalVelocity_Hub.getAsBoolean());
     DogLog.log("Shooter/At Goal Velocity Passing", this.isAtGoalVelocity_Passing.getAsBoolean());

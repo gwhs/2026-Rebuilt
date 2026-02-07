@@ -281,6 +281,7 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
     drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
+    controller.b().whileTrue(agitateGroundIntake());
     controller
         .rightTrigger()
         .and(
@@ -297,6 +298,7 @@ public class RobotContainer {
                 .or(drivetrain.isInOpponentAllianceZone)
                 .and(drivetrain.isOnOutpostSide))
         .whileTrue(shootOutpost());
+    controller.rightTrigger().onFalse(drivetrain.setRotationCommand(RotationTarget.NORMAL));
 
     controller.a().whileTrue(unStuck());
 
@@ -307,17 +309,6 @@ public class RobotContainer {
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
-
-    drivetrain
-        .isInNeutralZone
-        .or(drivetrain.isInOpponentAllianceZone)
-        .and(drivetrain.isOnOutpostSide)
-        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
-    drivetrain
-        .isInNeutralZone
-        .or(drivetrain.isInOpponentAllianceZone)
-        .and(drivetrain.isOnDepotSide)
-        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
 
     controller
         .rightBumper()
@@ -419,6 +410,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
         shooter.cruiseControl(),
+        drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
@@ -433,6 +425,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
         shooter.cruiseControl(),
+        drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
@@ -446,6 +439,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
         shooter.cruiseControl(),
+        drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
@@ -470,5 +464,12 @@ public class RobotContainer {
   public Command defenseMode() {
     return Commands.parallel(
         drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake());
+  }
+
+  public Command agitateGroundIntake() {
+    return Commands.sequence(
+            groundIntakeExtension.extend(), Commands.waitSeconds(.5),
+            groundIntakeExtension.retract(), Commands.waitSeconds(.5))
+        .repeatedly();
   }
 }
