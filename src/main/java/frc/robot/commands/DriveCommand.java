@@ -1,5 +1,5 @@
 // Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms 
+// Open Source Software; you can modify and/or share it under the terms
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
@@ -12,18 +12,18 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
+import frc.robot.subsystems.aprilTagCam.*;
+import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.SwerveSubsystemConstants;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import java.util.Optional;
-import frc.robot.subsystems.aprilTagCam.*;;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -69,7 +69,7 @@ public class DriveCommand extends Command {
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
-  
+
   public boolean getDriveAssist() {
     return driveAssist;
   }
@@ -87,7 +87,6 @@ public class DriveCommand extends Command {
     double xVelocity = MathUtil.applyDeadband(xInput, 0.1);
     double yVelocity = MathUtil.applyDeadband(yInput, 0.1);
     double angularVelocity = MathUtil.applyDeadband(-controller.getRightX(), 0.1);
-
 
     Pose2d currentRobotPose = drivetrain.getState().Pose;
 
@@ -146,8 +145,8 @@ public class DriveCommand extends Command {
       yInput = yInput * drivetrain.getTranslationSlowFactor();
       rotationalInput = rotationalInput * drivetrain.getRotationalSlowFactor();
     }
-  
- if (drivetrain.isDrivingToFuel() && driveAssist && currentGamePiecePose.isPresent()) {
+
+    if (drivetrain.isDrivingToFuel() && driveAssist && currentGamePiecePose.isPresent()) {
       Pose2d coralRelativeToRobot = currentGamePiecePose.get().relativeTo(currentRobotPose);
 
       double errorY = coralRelativeToRobot.getY();

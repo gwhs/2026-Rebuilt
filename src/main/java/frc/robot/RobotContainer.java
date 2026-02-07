@@ -30,8 +30,6 @@ import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtens
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
-import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
-import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
@@ -78,7 +76,7 @@ public class RobotContainer {
     }
   }
 
-  //private ObjectDetectionCam objDecCam;
+  // private ObjectDetectionCam objDecCam;
 
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
