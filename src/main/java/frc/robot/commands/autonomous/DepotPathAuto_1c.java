@@ -34,16 +34,20 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           Commands.parallel(
-              AutoBuilder.followPath(startingPath).deadlineFor(climber.homingCommand()),
-              Commands.sequence(
-                  Commands.waitSeconds(1.2),
-                  Commands.parallel(groundIntakeExtend.extend(), groundIntakeRoller.startIntake()),
-                  Commands.waitSeconds(2),
-                  shooter.cruiseControl())),
+              AutoBuilder.followPath(startingPath)
+                  .deadlineFor(climber.homingCommand())
+                  .deadlineFor(
+                      Commands.sequence(
+                          Commands.waitSeconds(0.5),
+                          Commands.parallel(
+                              groundIntakeExtend.extend(), groundIntakeRoller.startIntake()),
+                          Commands.waitSeconds(2),
+                          shooter.cruiseControl()))),
           AutoBuilder.followPath(climbPath).deadlineFor(shooter.cruiseControl()),
           Commands.waitSeconds(6)
               .deadlineFor(
-                  drivetrain.driveToPose(() -> getScorePose(climbPath)), shooter.cruiseControl()),
+                  shooter.cruiseControl(),
+                  EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
           climber.runPosition(ClimberConstants.CLIMB).alongWith(shooter.runVoltage(0)));
 
     } catch (Exception e) {
