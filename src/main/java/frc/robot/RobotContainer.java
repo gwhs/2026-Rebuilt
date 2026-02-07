@@ -106,7 +106,7 @@ public class RobotContainer {
                     .orElse(Time.ofBaseUnits(0, Units.Second))
                     .in(Units.Seconds);
             DogLog.log("Hub Status/Time Remaining in Shift", timeRemaining);
-            DogLog.log("Hub Status/Current Shift", currentShift);
+            DogLog.log("Hub Status/Current Shift", currentShift.name());
 
             double upperThreshold = 3;
             double lowerThreshold = 24;
@@ -170,7 +170,7 @@ public class RobotContainer {
                 canivoreCanbus,
                 signalList,
                 drivetrain.poseSupplier(),
-                drivetrain.speedSupplier());
+                drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
@@ -181,7 +181,8 @@ public class RobotContainer {
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+            ShooterSubsystem.createDisabled(
+                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -190,7 +191,8 @@ public class RobotContainer {
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+            ShooterSubsystem.createDisabled(
+                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -199,7 +201,8 @@ public class RobotContainer {
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+            ShooterSubsystem.createDisabled(
+                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -207,7 +210,8 @@ public class RobotContainer {
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter = ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain.speedSupplier());
+        shooter =
+            ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createSim();
         indexer = IndexerSubsystem.createSim();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
@@ -221,7 +225,7 @@ public class RobotContainer {
                 canivoreCanbus,
                 signalList,
                 drivetrain.poseSupplier(),
-                drivetrain.speedSupplier());
+                drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
@@ -274,6 +278,7 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
     drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
+    controller.b().whileTrue(agitateGroundIntake());
     controller
         .rightTrigger()
         .and(
@@ -403,6 +408,7 @@ public class RobotContainer {
                 shooter
                     .isAtGoalVelocity_Hub
                     .and(drivetrain.isFacingGoal)
+                    .and(isHubActive)
                     .or(controller.leftTrigger()))
             .repeatedly());
   }
@@ -448,5 +454,12 @@ public class RobotContainer {
   public Command defenseMode() {
     return Commands.parallel(
         drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake());
+  }
+
+  public Command agitateGroundIntake() {
+    return Commands.sequence(
+            groundIntakeExtension.extend(), Commands.waitSeconds(.5),
+            groundIntakeExtension.retract(), Commands.waitSeconds(.5))
+        .repeatedly();
   }
 }
