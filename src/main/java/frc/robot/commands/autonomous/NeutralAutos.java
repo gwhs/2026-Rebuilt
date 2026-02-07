@@ -80,8 +80,7 @@ public class NeutralAutos extends SequentialCommandGroup {
                   AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
                   cyclePath(cycle, true),
                   cyclePath(cycletwo, false).onlyIf(() -> twoCycle),
-                  climbPath(climb).andThen(Commands.idle()).onlyIf(() -> !twoCycle),
-                  Commands.idle())
+                  climbPath(climb).onlyIf(() -> !twoCycle))
               .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     } catch (Exception e) {
