@@ -479,9 +479,8 @@ public class RobotContainer {
 
   public Command stopShoot() {
     return Commands.parallel(
-        drivetrain
-            .setRotationCommand(RotationTarget.NORMAL),
-            drivetrain.setSlowMode(false),
+        drivetrain.setRotationCommand(RotationTarget.NORMAL),
+        drivetrain.setSlowMode(false),
         shooter.runVoltage(0));
   }
 }
