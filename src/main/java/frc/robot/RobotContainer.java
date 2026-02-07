@@ -278,6 +278,7 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
     drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
+    controller.b().whileTrue(agitateGroundIntake());
     controller
         .rightTrigger()
         .and(
@@ -453,5 +454,12 @@ public class RobotContainer {
   public Command defenseMode() {
     return Commands.parallel(
         drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake());
+  }
+
+  public Command agitateGroundIntake() {
+    return Commands.sequence(
+            groundIntakeExtension.extend(), Commands.waitSeconds(.5),
+            groundIntakeExtension.retract(), Commands.waitSeconds(.5))
+        .repeatedly();
   }
 }
