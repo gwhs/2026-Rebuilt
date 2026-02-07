@@ -119,9 +119,4 @@ public class ShooterSubsystem extends SubsystemBase {
   public double getVelocity() {
     return shooterIO.getVelocity();
   }
-
-  public static ShooterSubsystem createReal(Supplier<Pose2d> poseSupplier, Object object) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'createReal'");
-  }
 }
