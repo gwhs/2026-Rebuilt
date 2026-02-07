@@ -109,7 +109,7 @@ public class EagleUtil {
                     * Math.cos(FieldConstants.shooterAngleRadian)
                     * (distanceToTarget * Math.tan(FieldConstants.shooterAngleRadian)
                         - (FieldConstants.hubHeight - FieldConstants.shooterHeight))));
-    double c = 1; // constant to fix inefficiency
+    double c = 1.075 + (distanceToTarget * 0.005); // constant to fix inefficiency
     return v * c;
   }
 
@@ -149,10 +149,7 @@ public class EagleUtil {
   public static double getFuelTimeInAir(double distanceToTarget) {
     // eqation based on simulation data points and adjustments, may be adjusted later for better
     // performance
-    return (-0.0020 * Math.pow(distanceToTarget, 3))
-        + (0.0311744 * Math.pow(distanceToTarget, 2))
-        + (-0.0124719 * distanceToTarget)
-        + 1.18962;
+    return 0.63117 * Math.sin(0.23124 * distanceToTarget - 1.6501) + 1.87679;
   }
 
   public static Command shootInSim(SwerveSubsystem drivetrain) {
