@@ -48,8 +48,6 @@ public class DriveCommand extends Command {
 
   private boolean resetLimiter = true;
 
-  private boolean driveAssist = false;
-
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
@@ -70,23 +68,11 @@ public class DriveCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
 
-  public boolean getDriveAssist() {
-    return driveAssist;
-  }
-
-  public void setDriveAssist(boolean newDriveAssist) {
-    driveAssist = newDriveAssist;
-  }
-
   @Override
   public void execute() {
     double xInput = -controller.getLeftY();
     double yInput = -controller.getLeftX();
     double rotationalInput = -controller.getRightX();
-
-    double xVelocity = MathUtil.applyDeadband(xInput, 0.1);
-    double yVelocity = MathUtil.applyDeadband(yInput, 0.1);
-    double angularVelocity = MathUtil.applyDeadband(-controller.getRightX(), 0.1);
 
     Pose2d currentRobotPose = drivetrain.getState().Pose;
 
@@ -116,7 +102,7 @@ public class DriveCommand extends Command {
       DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
       DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
       DogLog.log("Drive Command/Current Robot Heading (degree)", currentRobotHeading);
-      DogLog.log("Drive Command/driveAssist", driveAssist);
+      DogLog.log("Drive Command/driveAssist", drivetrain.getDriveAssist());
     }
 
     if (drivetrain.goingToShootingRange()) {
@@ -146,7 +132,9 @@ public class DriveCommand extends Command {
       rotationalInput = rotationalInput * drivetrain.getRotationalSlowFactor();
     }
 
-    if (drivetrain.isDrivingToFuel() && driveAssist && currentGamePiecePose.isPresent()) {
+    if (drivetrain.isDrivingToFuel()
+        && drivetrain.getDriveAssist()
+        && currentGamePiecePose.isPresent()) {
       Pose2d coralRelativeToRobot = currentGamePiecePose.get().relativeTo(currentRobotPose);
 
       double errorY = coralRelativeToRobot.getY();
@@ -166,9 +154,9 @@ public class DriveCommand extends Command {
               assistedVectorRobotOriented, currentRobotPose.getRotation());
       DogLog.log("Intake Drive Assist/Assisted Field Relative Vector", assistedVectorFieldOriented);
 
-      yVelocity += -assistedVectorFieldOriented.vyMetersPerSecond;
-      xVelocity += -assistedVectorFieldOriented.vxMetersPerSecond;
-      angularVelocity += assistedVectorFieldOriented.omegaRadiansPerSecond;
+      xInput += -assistedVectorFieldOriented.vyMetersPerSecond;
+      yInput += -assistedVectorFieldOriented.vxMetersPerSecond;
+      rotationalInput += assistedVectorFieldOriented.omegaRadiansPerSecond;
     }
 
     if (drivetrain.isSlewRateLimitAcceleration()) {
@@ -186,15 +174,15 @@ public class DriveCommand extends Command {
       resetLimiter = true;
     }
 
-    xVelocity = xInput * maxSpeed;
-    yVelocity = yInput * maxSpeed;
-    angularVelocity = rotationalInput * maxAngularSpeed;
+    xInput = xInput * maxSpeed;
+    yInput = yInput * maxSpeed;
+    rotationalInput = rotationalInput * maxAngularSpeed;
 
     drivetrain.setControl(
         fieldCentric
-            .withVelocityX(xVelocity)
-            .withVelocityY(yVelocity)
-            .withRotationalRate(angularVelocity));
+            .withVelocityX(xInput)
+            .withVelocityY(yInput)
+            .withRotationalRate(rotationalInput));
   }
 
   // Called once the command ends or is interrupted.
