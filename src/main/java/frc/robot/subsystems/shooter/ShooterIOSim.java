@@ -22,7 +22,7 @@ public class ShooterIOSim implements ShooterIO {
 
   @Override
   public void runVoltage(double voltage) {
-    targetVelocity = 100.0/12 * voltage;
+    targetVelocity = 100.0 / 12 * voltage;
   }
 
   @Override
