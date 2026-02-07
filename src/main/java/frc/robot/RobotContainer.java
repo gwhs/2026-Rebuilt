@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.HubTracker.Shift;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.autonomous.DepotPathAuto_1c;
+import frc.robot.commands.autonomous.NeutralAutos;
+import frc.robot.commands.autonomous.NeutralAutos.Routine;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
@@ -295,6 +298,12 @@ public class RobotContainer {
                 .or(drivetrain.isInOpponentAllianceZone)
                 .and(drivetrain.isOnOutpostSide))
         .whileTrue(shootOutpost());
+    controller
+        .rightTrigger()
+        .onFalse(
+            drivetrain
+                .setRotationCommand(RotationTarget.NORMAL)
+                .alongWith(drivetrain.setSlowMode(false)));
 
     controller.a().whileTrue(unStuck());
 
@@ -305,17 +314,6 @@ public class RobotContainer {
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
-
-    drivetrain
-        .isInNeutralZone
-        .or(drivetrain.isInOpponentAllianceZone)
-        .and(drivetrain.isOnOutpostSide)
-        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
-    drivetrain
-        .isInNeutralZone
-        .or(drivetrain.isInOpponentAllianceZone)
-        .and(drivetrain.isOnDepotSide)
-        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
 
     controller
         .rightBumper()
@@ -333,6 +331,20 @@ public class RobotContainer {
   }
 
   private void configureAutonomous() {
+    NeutralAutos.configNeutralAutos(
+        drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, climber);
+    autoChooser.addOption("Bump 1 Cycle Depot", new NeutralAutos(false, Routine.BUMP, false));
+    autoChooser.addOption("Bump 1 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, false));
+    autoChooser.addOption("Bump 2 Cycle Depot", new NeutralAutos(false, Routine.BUMP, true));
+    autoChooser.addOption("Bump 2 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, true));
+    autoChooser.addOption("Trench 1 Cycle Depot", new NeutralAutos(false, Routine.TRENCH, false));
+    autoChooser.addOption("Trench 1 Cycle Outpost", new NeutralAutos(true, Routine.TRENCH, false));
+    autoChooser.addOption("Trench 2 Cycle Depot", new NeutralAutos(false, Routine.TRENCH, true));
+    autoChooser.addOption("Trench 2 Cycle Outpost", new NeutralAutos(true, Routine.TRENCH, true));
+    autoChooser.addOption(
+        "Depot 1 Cycle",
+        new DepotPathAuto_1c(
+            drivetrain, shooter, groundIntakeExtension, groundIntakeRoller, climber));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
@@ -403,6 +415,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
         shooter.cruiseControl(),
+        drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
@@ -417,6 +430,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
         shooter.cruiseControl(),
+        drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
@@ -430,6 +444,7 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
         shooter.cruiseControl(),
+        drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
                 shooter
