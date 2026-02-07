@@ -295,6 +295,7 @@ public class RobotContainer {
                 .or(drivetrain.isInOpponentAllianceZone)
                 .and(drivetrain.isOnOutpostSide))
         .whileTrue(shootOutpost());
+    controller.rightTrigger().onFalse(drivetrain.setRotationCommand(RotationTarget.NORMAL));
 
     controller.a().whileTrue(unStuck());
 
@@ -305,17 +306,6 @@ public class RobotContainer {
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
-
-    drivetrain
-        .isInNeutralZone
-        .or(drivetrain.isInOpponentAllianceZone)
-        .and(drivetrain.isOnOutpostSide)
-        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
-    drivetrain
-        .isInNeutralZone
-        .or(drivetrain.isInOpponentAllianceZone)
-        .and(drivetrain.isOnDepotSide)
-        .onTrue(drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
 
     controller
         .rightBumper()
