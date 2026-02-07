@@ -56,7 +56,9 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command runVelocity(double rotationsPerSecond) {
     return this.run(
         () -> {
-          velocityGoal = rotationsPerSecond;
+          velocityGoal =
+              Math.max(
+                  ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rotationsPerSecond));
 
           if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
             shooterIO.runVoltage(12);
