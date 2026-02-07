@@ -370,31 +370,41 @@ public class RobotContainer {
   }
 
   public Command autoClimb() {
-    Pose2d target = FieldConstants.getClimbPose(drivetrain.getState().Pose);
+    
+    Command prep =
+    Commands.parallel(
+        shooter.runVoltage(0.0),
+        groundIntakeRoller.stopIntake(),
+        groundIntakeExtension.retract(),
+        indexer.runVoltage(0)
+    ).withTimeout(0.25);
 
-    return Commands.sequence(
-        Commands.parallel(
-            drivetrain
-                .driveToPose(() -> target)
-                .until(
-                    () ->
-                        drivetrain
-                                .getState()
-                                .Pose
-                                .getTranslation()
-                                .getDistance(target.getTranslation())
-                            < 0.10)),
-        Commands.parallel(
-            groundIntakeRoller.startIntake(),
-            shooter.cruiseControl(),
-            climber.runPosition(ClimberConstants.PREP_CLIMB)),
-        climber.runPosition(ClimberConstants.CLIMB_L1),
-        Commands.waitUntil(controller.start()),
-        climber.runPosition(ClimberConstants.CLIMB),
-        climber.runPosition(ClimberConstants.CLIMB_L2),
-        Commands.waitUntil(controller.start()),
-        climber.runPosition(ClimberConstants.CLIMB),
-        climber.runPosition(ClimberConstants.CLIMB_L3));
+
+    Command align =
+    drivetrain
+        .driveToPose(() -> FieldConstants.getClimbPose(drivetrain.getState().Pose))
+        .until(
+            () ->
+                drivetrain
+                        .getState()
+                        .Pose
+                        .getTranslation()
+                        .getDistance(FieldConstants.getClimbPose(drivetrain.getState().Pose).getTranslation())
+                    < 0.10);
+
+                    return Commands.sequence(
+                      prep,
+                      align,
+                      climber.runPosition(ClimberConstants.PREP_CLIMB),
+                      Commands.waitUntil(controller.start()),
+                      climber.runPosition(ClimberConstants.CLIMB_L1),
+                      Commands.waitUntil(controller.start()),
+                      climber.runPosition(ClimberConstants.CLIMB),
+                      climber.runPosition(ClimberConstants.CLIMB_L2),
+                      Commands.waitUntil(controller.start()),
+                      climber.runPosition(ClimberConstants.CLIMB),
+                      climber.runPosition(ClimberConstants.CLIMB_L3));
+  
     // return drivetrain.driveToPose(() -> target);
     // todo: add import frc.robot.subsystems.climber.ClimberSubsystem;
     // todo: add private final ClimberSubsystem climber;
