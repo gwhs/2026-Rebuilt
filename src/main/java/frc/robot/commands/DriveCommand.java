@@ -9,8 +9,10 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.EagleUtil;
@@ -33,11 +35,14 @@ public class DriveCommand extends Command {
   private final SlewRateLimiter yVelocityLimiter;
 
   private final double maxSpeed = 4.5;
-  private final double maxAngularSpeed = 2.5 * Math.PI;
+  private final double maxAngularSpeed =
+      3.0 * Math.PI; // one rotation per second. need to test on real robot
 
   private final double deadband = 0.1;
 
-  public final PIDController robotHeadingController = new PIDController(0.04, 0, 0);
+  // TO-DO determine correct max accleration
+  public final ProfiledPIDController robotHeadingController =
+      new ProfiledPIDController(0.4, 0, 0.05, new TrapezoidProfile.Constraints(1, 10));
   public final PIDController shootingRangeDistance = new PIDController(0.3, 0, 0);
 
   private boolean resetLimiter = true;
@@ -82,11 +87,11 @@ public class DriveCommand extends Command {
 
       double currentRobotHeading = drivetrain.getState().Pose.getRotation().getDegrees();
 
-      robotHeadingController.setSetpoint(drivetrain.getGoalHeading());
+      robotHeadingController.setGoal(drivetrain.getGoalHeading());
 
       double pidOutput = robotHeadingController.calculate(currentRobotHeading);
 
-      rotationalInput = MathUtil.clamp(pidOutput, -0.5, 0.5);
+      rotationalInput = MathUtil.clamp(pidOutput, -1, 1);
 
       DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
       DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
