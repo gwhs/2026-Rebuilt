@@ -194,7 +194,7 @@ public class RobotContainer {
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
-        ShooterSubsystem.createReal(
+            ShooterSubsystem.createReal(
                 canivoreCanbus,
                 rioCanbus,
                 signalList,
