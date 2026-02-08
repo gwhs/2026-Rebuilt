@@ -355,8 +355,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return driveAssist;
   }
 
-  public void setDriveAssist(boolean newDriveAssist) {
-    driveAssist = newDriveAssist;
+  public Command setDriveAssist(boolean newDriveAssist) {
+    return Commands.runOnce(
+        () -> {
+          driveAssist = newDriveAssist;
+        });
   }
 
   public Command setRotationCommand(RotationTarget rotationTarget) {
