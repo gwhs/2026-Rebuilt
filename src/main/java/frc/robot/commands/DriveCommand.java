@@ -174,15 +174,13 @@ public class DriveCommand extends Command {
       resetLimiter = true;
     }
 
-   double xVelocity = xInput * maxSpeed;
-   double yVelocity = yInput * maxSpeed;
-   double rotationalVelocity = rotationalInput * maxAngularSpeed;
+    double xVelocity = xInput * maxSpeed;
+    double yVelocity = yInput * maxSpeed;
+    double rotationalVelocity = rotationalInput * maxAngularSpeed;
 
-   DogLog.log("Drive Command/ xVelocity", xVelocity);
-   DogLog.log("Drive Command/ yVelocity", yVelocity);
-   DogLog.log("Drive Command/ rotationalVelocity)", rotationalVelocity);
-
-
+    DogLog.log("Drive Command/ xVelocity", xVelocity);
+    DogLog.log("Drive Command/ yVelocity", yVelocity);
+    DogLog.log("Drive Command/ rotationalVelocity)", rotationalVelocity);
 
     drivetrain.setControl(
         fieldCentric
