@@ -78,17 +78,17 @@ public class ShooterIOReal implements ShooterIO {
   private final StatusSignal<Double> motor6ClosedLoopGoal;
 
   private final Alert motor1NotConnectedAlert =
-      new Alert("Motor 1 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 1 Not Connected", AlertType.kError);
   private final Alert motor2NotConnectedAlert =
-      new Alert("Motor 2 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 2 Not Connected", AlertType.kError);
   private final Alert motor3NotConnectedAlert =
-      new Alert("Motor 3 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 3 Not Connected", AlertType.kError);
   private final Alert motor4NotConnectedAlert =
-      new Alert("Motor 4 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 4 Not Connected", AlertType.kError);
   private final Alert motor5NotConnectedAlert =
-      new Alert("Motor 5 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 5 Not Connected", AlertType.kError);
   private final Alert motor6NotConnectedAlert =
-      new Alert("Motor 6 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 6 Not Connected", AlertType.kError);
 
   public ShooterIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {

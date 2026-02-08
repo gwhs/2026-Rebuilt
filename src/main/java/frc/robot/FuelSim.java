@@ -26,9 +26,22 @@ public class FuelSim {
   private static final double FIELD_LENGTH = 16.51;
   private static final double FIELD_WIDTH = 8.04;
   private static final double FRICTION =
-      0.1; // proportion of horizontal velocity to lose per second while on ground
+      2; // proportion of horizontal velocity to lose per second while on ground
+
+  // Room temperature dry air density: https://en.wikipedia.org/wiki/Density_of_air#Dry_air
+  private static final double AIR_DENSITY = 1.2041; // kg/m^3
+  private static final double FUEL_MASS = 0.448 * 0.45392; // kgs
+  private static final double FUEL_CROSS_AREA = Math.PI * FUEL_RADIUS * FUEL_RADIUS;
+  // Drag coefficient of smooth sphere:
+  // https://en.wikipedia.org/wiki/Drag_coefficient#/media/File:14ilf1l.svg
+  private static final double DRAG_COF = 0.47; // dimensionless
+  private static final double DRAG_FORCE_FACTOR = 0.5 * AIR_DENSITY * DRAG_COF * FUEL_CROSS_AREA;
+  private boolean simulateAirResistance = true; // original code defalt was false, changed to true
 
   private static FuelSim instance = null;
+
+  private static int fuelInHopper =
+      8; // counter for number of fuels contained in robot hub, preloads 8 at start
 
   private static final Translation3d[] FIELD_XZ_LINE_STARTS = {
     new Translation3d(0, 0, 0),
@@ -70,7 +83,18 @@ public class FuelSim {
     private void update() {
       pos = pos.plus(vel.times(PERIOD / subticks));
       if (pos.getZ() > FUEL_RADIUS) {
-        vel = vel.plus(GRAVITY.times(PERIOD / subticks));
+        Translation3d Fg = GRAVITY.times(FUEL_MASS);
+        Translation3d Fd = new Translation3d();
+
+        if (simulateAirResistance) {
+          double speed = vel.getNorm();
+          if (speed > 1e-6) {
+            Fd = vel.times(-DRAG_FORCE_FACTOR * speed);
+          }
+        }
+
+        Translation3d accel = Fg.plus(Fd).div(FUEL_MASS);
+        vel = vel.plus(accel.times(PERIOD / subticks));
       }
       if (Math.abs(vel.getZ()) < 0.05 && pos.getZ() <= FUEL_RADIUS + 0.03) {
         vel = new Translation3d(vel.getX(), vel.getY(), 0);
@@ -174,11 +198,48 @@ public class FuelSim {
     b.addImpulse(normal.times(-impulse));
   }
 
-  private static void handleFuelCollisions(ArrayList<Fuel> fuels) {
-    for (int i = 0; i < fuels.size() - 1; i++) {
-      for (int j = i + 1; j < fuels.size(); j++) {
-        if (fuels.get(i).pos.getDistance(fuels.get(j).pos) < FUEL_RADIUS * 2) {
-          handleFuelCollision(fuels.get(i), fuels.get(j));
+  private static final double CELL_SIZE = 0.25;
+  private static final int GRID_COLS = (int) Math.ceil(FIELD_LENGTH / CELL_SIZE);
+  private static final int GRID_ROWS = (int) Math.ceil(FIELD_WIDTH / CELL_SIZE);
+
+  @SuppressWarnings("unchecked")
+  private final ArrayList<Fuel>[][] grid = new ArrayList[GRID_COLS][GRID_ROWS];
+
+  private void handleFuelCollisions(ArrayList<Fuel> fuels) {
+    // Clear grid
+    for (int i = 0; i < GRID_COLS; i++) {
+      for (int j = 0; j < GRID_ROWS; j++) {
+        grid[i][j].clear();
+      }
+    }
+
+    // Populate grid
+    for (Fuel fuel : fuels) {
+      int col = (int) (fuel.pos.getX() / CELL_SIZE);
+      int row = (int) (fuel.pos.getY() / CELL_SIZE);
+
+      if (col >= 0 && col < GRID_COLS && row >= 0 && row < GRID_ROWS) {
+        grid[col][row].add(fuel);
+      }
+    }
+
+    // Check collisions
+    for (Fuel fuel : fuels) {
+      int col = (int) (fuel.pos.getX() / CELL_SIZE);
+      int row = (int) (fuel.pos.getY() / CELL_SIZE);
+
+      // Check 3x3 neighbor cells
+      for (int i = col - 1; i <= col + 1; i++) {
+        for (int j = row - 1; j <= row + 1; j++) {
+          if (i >= 0 && i < GRID_COLS && j >= 0 && j < GRID_ROWS) {
+            for (Fuel other : grid[i][j]) {
+              if (fuel != other && fuel.pos.getDistance(other.pos) < FUEL_RADIUS * 2) {
+                if (fuel.hashCode() < other.hashCode()) {
+                  handleFuelCollision(fuel, other);
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -335,8 +396,9 @@ public class FuelSim {
 
   public void spawnFuel(Translation3d pos, Translation3d vel) {
     double t2 = HALUtil.getFPGATime();
-    if ((t2 - t1) / 1000 > 100) { // units in ms
+    if (((t2 - t1) / 1000 > 100) && (fuelInHopper > 0)) { // units in ms
       fuels.add(new Fuel(pos, vel));
+      fuelInHopper--;
       t1 = HALUtil.getFPGATime();
     }
   }
@@ -396,11 +458,14 @@ public class FuelSim {
 
   private void handleIntakes(ArrayList<Fuel> fuels) {
     Pose2d robot = robotSupplier.get();
-    for (SimIntake intake : intakes) {
-      for (int i = 0; i < fuels.size(); i++) {
-        if (intake.shouldIntake(fuels.get(i), robot)) {
-          fuels.remove(i);
-          i--;
+    if (fuelInHopper < 55) { // chekc for maxium fuel contain ability
+      for (SimIntake intake : intakes) {
+        for (int i = 0; i < fuels.size(); i++) {
+          if (intake.shouldIntake(fuels.get(i), robot)) {
+            fuels.remove(i);
+            i--;
+            fuelInHopper++;
+          }
         }
       }
     }
@@ -623,5 +688,21 @@ public class FuelSim {
     }
   }
 
-  private FuelSim() {}
+  private FuelSim() {
+    // Initialize grid
+    for (int i = 0; i < GRID_COLS; i++) {
+      for (int j = 0; j < GRID_ROWS; j++) {
+        grid[i][j] = new ArrayList<Fuel>();
+      }
+    }
+  }
+
+  public static int getFuelInHopper() {
+    return fuelInHopper;
+  }
+
+  /** Enables accounting for drag force in physics step * */
+  public void disableAirResistance() { // was enableAirResistance in original code
+    simulateAirResistance = false;
+  }
 }

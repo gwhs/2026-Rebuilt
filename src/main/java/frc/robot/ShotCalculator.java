@@ -13,9 +13,9 @@ public class ShotCalculator {
       new InterpolatingDoubleTreeMap();
 
   static {
-    shootVelocityMap.put(1.0, 3600.0);
-    shootVelocityMap.put(1.2, 3800.0);
-    shootVelocityMap.put(2.0, 4000.0);
+    shootVelocityMap.put(1.0, 36.0);
+    shootVelocityMap.put(1.2, 40.0);
+    shootVelocityMap.put(2.0, 60.0);
     // ^^ placeholder/testing data, add real control points later
   }
 
