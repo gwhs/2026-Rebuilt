@@ -50,6 +50,6 @@ public class ClimberIOSim implements ClimberIO {
   }
 
   public boolean getReverseLimitSwitch() {
-    return getMotor1Position() >= 0.05;
+    return getMotor1Position() <= 0.05;
   }
 }

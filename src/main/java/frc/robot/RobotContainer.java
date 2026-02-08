@@ -245,9 +245,6 @@ public class RobotContainer {
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
-    SmartDashboard.putData("Prep Climb", climber.runPosition(ClimberConstants.PREP_CLIMB));
-    SmartDashboard.putData("Climb L1", climber.runPosition(ClimberConstants.CLIMB_L1));
-
     objDecCam =
         new ObjectDetectionCam(
             "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
