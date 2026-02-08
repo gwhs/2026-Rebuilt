@@ -43,13 +43,16 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public Command runPosition(double rotation) {
     return this.runOnce(
-        () -> {
-          double rotationClamp =
-              MathUtil.clamp(
-                  rotation, ClimberConstants.MIN_ROTATION, ClimberConstants.MAX_ROTATION);
-          climberIO.runPosition(rotationClamp);
-          goalRotation = rotationClamp;
-        });
+            () -> {
+              double rotationClamp =
+                  MathUtil.clamp(
+                      rotation, ClimberConstants.MIN_ROTATION, ClimberConstants.MAX_ROTATION);
+              climberIO.runPosition(rotationClamp);
+              goalRotation = rotationClamp;
+            })
+        .andThen(
+            Commands.waitUntil(
+                () -> MathUtil.isNear(goalRotation, climberIO.getMotor1Position(), 0.1)));
   }
 
   public Command homingCommand() {
@@ -64,6 +67,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public void periodic() {
     climberIO.periodic();
     DogLog.log("Climber/Goal Rotation", goalRotation);
+    DogLog.log("Climber/Current Position", getMotor1Position());
   }
 
   public double getMotor1Position() {
