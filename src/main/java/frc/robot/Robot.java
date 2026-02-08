@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     int rhs = FuelSim.Hub.RED_HUB.getScore(); // get number of fuel scored in red hub
     DogLog.log("blue hub score", bhs);
     DogLog.log("red hub score", rhs);
-    
+
     double fuelInHopper = FuelSim.getFuelInHopper();
     DogLog.log("number of fuels in hopper", fuelInHopper);
   }

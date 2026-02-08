@@ -384,29 +384,26 @@ public class RobotContainer {
       signalList.refreshAll();
     }
 
-     DogLog.log(
+    DogLog.log(
         "Loop Time/Robot Container/Refresh Signal List",
         (HALUtil.getFPGATime() - startTime) / 1000);
-
 
     startTime = HALUtil.getFPGATime();
     robovisual.update();
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
 
-
     startTime = HALUtil.getFPGATime();
 
     DogLog.log("Match Timer", DriverStation.getMatchTime());
 
-    DogLog.log(
-        "Loop Time/Robot Container/Match Timer", (HALUtil.getFPGATime() - startTime) / 1000);
+    DogLog.log("Loop Time/Robot Container/Match Timer", (HALUtil.getFPGATime() - startTime) / 1000);
 
     startTime = HALUtil.getFPGATime();
 
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
 
-     DogLog.log(
+    DogLog.log(
         "Loop Time/Robot Container/Game Piece Tracker", (HALUtil.getFPGATime() - startTime) / 1000);
 
     DogLog.log("Hub Status/Is Active", isHubActive.getAsBoolean());
