@@ -59,7 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
           double clampedRps = 
               Math.max(
                   ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rotationsPerSecond));
-          double velocityGoal = clampedRps;
+          velocityGoal = clampedRps;
 
           if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
             shooterIO.runVoltage(12);
