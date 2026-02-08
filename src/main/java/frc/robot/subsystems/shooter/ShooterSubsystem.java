@@ -84,12 +84,14 @@ public class ShooterSubsystem extends SubsystemBase {
           double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
           double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
 
-          velocityGoal = rotationsPerSecond;
+          double clampedRps = 
+              Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rotationsPerSecond));
+          velocityGoal = clampedRps;
 
           if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
             shooterIO.runVoltage(12);
           } else {
-            shooterIO.runVelocity(rotationsPerSecond);
+            shooterIO.runVelocity(clampedRps);
           }
         });
   }
