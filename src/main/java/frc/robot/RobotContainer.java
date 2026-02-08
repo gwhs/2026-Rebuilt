@@ -378,18 +378,36 @@ public class RobotContainer {
         "Loop Time/Robot Container/objectDetection Cam",
         (HALUtil.getFPGATime() - startTime) / 1000);
 
+    startTime = HALUtil.getFPGATime();
+
     if (RobotBase.isReal()) {
       signalList.refreshAll();
     }
 
+     DogLog.log(
+        "Loop Time/Robot Container/Refresh Signal List",
+        (HALUtil.getFPGATime() - startTime) / 1000);
+
+
+    startTime = HALUtil.getFPGATime();
+    robovisual.update();
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
-    robovisual.update();
+
+
     startTime = HALUtil.getFPGATime();
 
     DogLog.log("Match Timer", DriverStation.getMatchTime());
 
+    DogLog.log(
+        "Loop Time/Robot Container/Match Timer", (HALUtil.getFPGATime() - startTime) / 1000);
+
+    startTime = HALUtil.getFPGATime();
+
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
+
+     DogLog.log(
+        "Loop Time/Robot Container/Game Piece Tracker", (HALUtil.getFPGATime() - startTime) / 1000);
 
     DogLog.log("Hub Status/Is Active", isHubActive.getAsBoolean());
 
@@ -398,10 +416,6 @@ public class RobotContainer {
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
-
-    double fuelInHopper = FuelSim.getFuelInHopper();
-
-    DogLog.log("number of fuels in hopper", fuelInHopper);
   }
 
   private Command disableHandler() {
