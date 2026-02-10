@@ -15,7 +15,7 @@ public class LedSubsystem extends SubsystemBase {
 
   public LedSubsystem() {
     CANdleConfiguration conf = new CANdleConfiguration();
-    conf.LED.StripType = StripTypeValue.RGB;
+    conf.LED.StripType = StripTypeValue.BRG;
     conf.LED.BrightnessScalar = 1.0;
     conf.CANdleFeatures.StatusLedWhenActive = StatusLedWhenActiveValue.Disabled;
 
