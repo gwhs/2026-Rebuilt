@@ -36,13 +36,13 @@ public class DriveCommand extends Command {
 
   private final double maxSpeed = 4.5;
   private final double maxAngularSpeed =
-      3.0 * Math.PI; // one rotation per second. need to test on real robot
+      3.0 * Math.PI; 
 
   private final double deadband = 0.1;
 
   // TO-DO determine correct max accleration
   public final ProfiledPIDController robotHeadingController =
-      new ProfiledPIDController(0.15, 0, 0.02, new TrapezoidProfile.Constraints(1, 5));
+      new ProfiledPIDController(0.15, 0, 0.02, new TrapezoidProfile.Constraints(360, 720));
   public final PIDController shootingRangeDistance = new PIDController(0.3, 0, 0);
 
   private boolean resetLimiter = true;
@@ -96,6 +96,9 @@ public class DriveCommand extends Command {
       DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
       DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
       DogLog.log("Drive Command/Current Robot Heading (degree)", currentRobotHeading);
+      DogLog.log("Drive Command/Current heading Set Point ", robotHeadingController.getSetpoint());
+      DogLog.log("Drive Command/Current heading Goal", robotHeadingController.getGoal());
+      DogLog.log("Drive Command/Current target", drivetrain.getRotationTarget());
     }
 
     if (drivetrain.goingToShootingRange()) {
