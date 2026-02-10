@@ -62,12 +62,16 @@ public class LedSubsystem extends SubsystemBase {
   public Command countDown() {
     return run(
         () -> {
-          for (int i  = 5; i > -1; i++)
-          {
-            SolidColor[] countDown = new SolidColor[] {new SolidColor(LedConstants.IndexMax * i / 5, LedConstants.IndexMax).withColor(new RGBWColor(0, 0, 0))};
+          for (int i = 4; i > -1; i--) {
+            SolidColor[] countDown =
+                new SolidColor[] {
+                  new SolidColor(LedConstants.IndexMax * i / 5, LedConstants.IndexMax * (i + 1) / 5)
+                      .withColor(new RGBWColor(0, 0, 0))
+                };
             for (var solidColor : countDown) {
-             candle.setControl(solidColor);
+              candle.setControl(solidColor);
             }
-        }});
+          }
+        });
   }
 }
