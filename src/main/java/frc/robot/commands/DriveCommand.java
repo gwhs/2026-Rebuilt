@@ -51,6 +51,7 @@ public class DriveCommand extends Command {
   public final PIDController shootingRangeDistance = new PIDController(0.3, 0, 0);
 
   private boolean resetLimiter = true;
+  private boolean resetAutoRotate = true;
 
   public DriveCommand(SwerveSubsystem drivetrain, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -79,7 +80,7 @@ public class DriveCommand extends Command {
     double rotationalInput = -controller.getRightX();
 
     Pose2d currentRobotPose = drivetrain.getState().Pose;
-
+    double currentRobotHeading = currentRobotPose.getRotation().getDegrees();
     Optional<Pose2d> currentGamePiecePose = GamePieceTracker.getGamePiece();
 
     xInput = MathUtil.applyDeadband(xInput, deadband);
@@ -95,7 +96,10 @@ public class DriveCommand extends Command {
         && !hasRotationInput
         && !drivetrain.getdisableAutoRotate()) {
 
-      double currentRobotHeading = drivetrain.getState().Pose.getRotation().getDegrees();
+      if (resetAutoRotate == true) {
+        resetAutoRotate = false;
+        robotHeadingController.reset(currentRobotHeading);
+      }
 
       robotHeadingController.setGoal(drivetrain.getGoalHeading());
 
@@ -103,15 +107,10 @@ public class DriveCommand extends Command {
 
       rotationalInput = MathUtil.clamp(pidOutput, -1, 1);
 
-      DogLog.log("Drive Command/Auto Rotate PID output", pidOutput);
-      DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
-      DogLog.log("Drive Command/Current Robot Heading (degree)", currentRobotHeading);
-      DogLog.log("Drive Command/Current heading Set Point ", robotHeadingController.getSetpoint());
-      DogLog.log("Drive Command/Current heading Goal", robotHeadingController.getGoal());
-      DogLog.log("Drive Command/Current target", drivetrain.getRotationTarget());
-      DogLog.log("Drive Command/driveAssist", drivetrain.getDriveAssist());
-      DogLog.log("Drive Command/Current pidOutput", pidOutput);
+      DogLog.log("Drive Command/pidOutput", pidOutput);
       DogLog.log("Drive Command/ rotational input", rotationalInput);
+    } else {
+      resetAutoRotate = true;
     }
 
     if (drivetrain.goingToShootingRange()) {
@@ -190,7 +189,12 @@ public class DriveCommand extends Command {
     DogLog.log("Drive Command/ xVelocity", xVelocity);
     DogLog.log("Drive Command/ yVelocity", yVelocity);
     DogLog.log("Drive Command/ rotationalVelocity)", rotationalVelocity);
-
+    DogLog.log("Drive Command/auto Heading (degree)", currentRobotHeading);
+    DogLog.log("Drive Command/Auto Rotate goal (degree)", drivetrain.getGoalHeading());
+    DogLog.log("Drive Command/auto heading Set Point ", robotHeadingController.getSetpoint());
+    DogLog.log("Drive Command/auto heading Goal", robotHeadingController.getGoal());
+    DogLog.log("Drive Command/auto target", drivetrain.getRotationTarget());
+    DogLog.log("Drive Command/driveAssist", drivetrain.getDriveAssist());
     drivetrain.setControl(
         fieldCentric
             .withVelocityX(xVelocity)
