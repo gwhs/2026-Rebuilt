@@ -23,6 +23,7 @@ public class LedSubsystem extends SubsystemBase {
       candle.getConfigurator().apply(conf);
     }
 
+    SmartDashboard.putData("disable", disable());
     SmartDashboard.putData("solid green", solidGreen());
   }
 
@@ -35,6 +36,20 @@ public class LedSubsystem extends SubsystemBase {
       new SolidColor[] {
         new SolidColor(0, LedConstants.IndexMax).withColor(new RGBWColor(0, 255, 0))
       };
+
+  private final SolidColor[] disable =
+  new SolidColor[] {
+    new SolidColor(0, LedConstants.IndexMax).withColor(new RGBWColor(0, 0, 0))
+  };
+
+public Command disable() {
+    return run(
+        () -> {
+          for (var solidColor : disable) {
+            candle.setControl(solidColor);
+          }
+        });
+  }
 
   public Command solidGreen() {
     return run(
