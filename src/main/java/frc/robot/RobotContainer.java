@@ -29,6 +29,7 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
+import frc.robot.subsystems.led.LedSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
 import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
@@ -96,6 +97,7 @@ public class RobotContainer {
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
   private ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
+  private final LedSubsystem led = new LedSubsystem();
 
   public final Trigger isHubActive =
       new Trigger(
