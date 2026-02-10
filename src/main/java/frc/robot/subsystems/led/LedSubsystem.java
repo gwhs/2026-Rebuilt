@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class LedSubsystem extends SubsystemBase {
   private final CANdle candle = new CANdle(LedConstants.CANdleID, LedConstants.CANdleCANBus);
@@ -74,16 +72,17 @@ public class LedSubsystem extends SubsystemBase {
         Commands.waitSeconds(1),
         setCountDown(1),
         Commands.waitSeconds(1),
-        disable()
-    );
+        disable());
   }
 
-  public Command setCountDown(int count)
-  {
-     return run(
+  public Command setCountDown(int count) {
+    return run(
         () -> {
           SolidColor[] countdown =
-      new SolidColor[] {new SolidColor(LedConstants.IndexMax * count / 5, LedConstants.IndexMax).withColor(new RGBWColor(0, 0, 0))};
+              new SolidColor[] {
+                new SolidColor(LedConstants.IndexMax * count / 5, LedConstants.IndexMax)
+                    .withColor(new RGBWColor(0, 0, 0))
+              };
           for (var solidColor : countdown) {
             candle.setControl(solidColor);
           }
