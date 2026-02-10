@@ -431,7 +431,7 @@ public class RobotContainer {
                     .and(drivetrain.isFacingGoal)
                     .and(isHubActive)
                     .or(controller.leftTrigger()))
-            .repeatedly());
+            .repeatedly().withName("Shoot Hub"));
   }
 
   public Command shootDepot() {
@@ -445,7 +445,7 @@ public class RobotContainer {
                     .isAtGoalVelocity_Passing
                     .and(drivetrain.isFacingGoalPassing)
                     .or(controller.leftTrigger()))
-            .repeatedly());
+            .repeatedly().withName("Shoot Depot Side"));
   }
 
   public Command shootOutpost() {
@@ -459,24 +459,24 @@ public class RobotContainer {
                     .isAtGoalVelocity_Passing
                     .and(drivetrain.isFacingGoalPassing)
                     .or(controller.leftTrigger()))
-            .repeatedly());
+            .repeatedly().withName("Shoot Outpost Side"));
   }
 
   public Command unStuck() {
     return Commands.parallel(
-        indexer.reverse(), groundIntakeRoller.reverseIntake(), groundIntakeExtension.extend());
+        indexer.reverse(), groundIntakeRoller.reverseIntake(), groundIntakeExtension.extend().withName("Unjam"));
   }
 
   public Command deployGroundIntake() {
     return Commands.parallel(
         groundIntakeRoller.startIntake(),
         groundIntakeExtension.extend(),
-        drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()));
+        drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()).withName("Deploy Ground Intake"));
   }
 
   public Command defenseMode() {
     return Commands.parallel(
-        drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake());
+        drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake().withName("Defense Mode"));
   }
 
   public Command agitateGroundIntake() {
@@ -486,13 +486,13 @@ public class RobotContainer {
             groundIntakeExtension.retract(),
             Commands.waitSeconds(.5),
             groundIntakeRoller.stopIntake())
-        .repeatedly();
+        .repeatedly().withName("Start? Ground Intake");
   }
 
   public Command stopShoot() {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.NORMAL),
         drivetrain.setSlowMode(false),
-        shooter.runVoltage(0));
+        shooter.runVoltage(0).withName("Stop Shooting"));
   }
 }
