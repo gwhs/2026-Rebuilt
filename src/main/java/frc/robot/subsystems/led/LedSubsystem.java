@@ -8,7 +8,10 @@ import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
 import com.ctre.phoenix6.signals.StripTypeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class LedSubsystem extends SubsystemBase {
   private final CANdle candle = new CANdle(LedConstants.CANdleID, LedConstants.CANdleCANBus);
@@ -60,17 +63,29 @@ public class LedSubsystem extends SubsystemBase {
   }
 
   public Command countDown() {
-    return run(
+    return Commands.sequence(
+        setCountDown(5),
+        Commands.waitSeconds(1),
+        setCountDown(4),
+        Commands.waitSeconds(1),
+        setCountDown(3),
+        Commands.waitSeconds(1),
+        setCountDown(2),
+        Commands.waitSeconds(1),
+        setCountDown(1),
+        Commands.waitSeconds(1),
+        disable()
+    );
+  }
+
+  public Command setCountDown(int count)
+  {
+     return run(
         () -> {
-          for (int i = 4; i > -1; i--) {
-            SolidColor[] countDown =
-                new SolidColor[] {
-                  new SolidColor(LedConstants.IndexMax * i / 5, LedConstants.IndexMax * (i + 1) / 5)
-                      .withColor(new RGBWColor(0, 0, 0))
-                };
-            for (var solidColor : countDown) {
-              candle.setControl(solidColor);
-            }
+          SolidColor[] countdown =
+      new SolidColor[] {new SolidColor(LedConstants.IndexMax * count / 5, LedConstants.IndexMax).withColor(new RGBWColor(0, 0, 0))};
+          for (var solidColor : countdown) {
+            candle.setControl(solidColor);
           }
         });
   }
