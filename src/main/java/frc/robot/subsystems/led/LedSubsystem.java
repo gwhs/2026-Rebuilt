@@ -76,7 +76,7 @@ public class LedSubsystem extends SubsystemBase {
   }
 
   public Command setCountDown(int count) {
-    return run(
+    return runOnce(
         () -> {
           SolidColor[] countdown =
               new SolidColor[] {
