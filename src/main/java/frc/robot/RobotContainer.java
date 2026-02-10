@@ -432,7 +432,7 @@ public class RobotContainer {
                     .and(isHubActive)
                     .or(controller.leftTrigger()))
             .repeatedly()
-            .withName("Shoot Hub"));
+            ).withName("Shoot Hub");
   }
 
   public Command shootDepot() {
@@ -447,7 +447,7 @@ public class RobotContainer {
                     .and(drivetrain.isFacingGoalPassing)
                     .or(controller.leftTrigger()))
             .repeatedly()
-            .withName("Shoot Depot Side"));
+            ).withName("Shoot Depot Side");
   }
 
   public Command shootOutpost() {
@@ -462,14 +462,14 @@ public class RobotContainer {
                     .and(drivetrain.isFacingGoalPassing)
                     .or(controller.leftTrigger()))
             .repeatedly()
-            .withName("Shoot Outpost Side"));
+            ).withName("Shoot Outpost Side");
   }
 
   public Command unStuck() {
     return Commands.parallel(
         indexer.reverse(),
         groundIntakeRoller.reverseIntake(),
-        groundIntakeExtension.extend().withName("Unjam"));
+        groundIntakeExtension.extend()).withName("Unjam");
   }
 
   public Command deployGroundIntake() {
@@ -479,14 +479,14 @@ public class RobotContainer {
         drivetrain
             .temporarilyDisableRotation()
             .onlyWhile(controller.rightTrigger().negate())
-            .withName("Deploy Ground Intake"));
+            ).withName("Deploy Ground Intake");
   }
 
   public Command defenseMode() {
     return Commands.parallel(
         drivetrain.swerveX(),
         groundIntakeExtension.retract(),
-        groundIntakeRoller.stopIntake().withName("Defense Mode"));
+        groundIntakeRoller.stopIntake()).withName("Defense Mode");
   }
 
   public Command agitateGroundIntake() {
@@ -504,6 +504,6 @@ public class RobotContainer {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.NORMAL),
         drivetrain.setSlowMode(false),
-        shooter.runVoltage(0).withName("Stop Shooting"));
+        shooter.runVoltage(0)).withName("Stop Shooting");
   }
 }
