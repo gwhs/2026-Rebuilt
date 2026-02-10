@@ -38,11 +38,9 @@ public class LedSubsystem extends SubsystemBase {
       };
 
   private final SolidColor[] disable =
-  new SolidColor[] {
-    new SolidColor(0, LedConstants.IndexMax).withColor(new RGBWColor(0, 0, 0))
-  };
+      new SolidColor[] {new SolidColor(0, LedConstants.IndexMax).withColor(new RGBWColor(0, 0, 0))};
 
-public Command disable() {
+  public Command disable() {
     return run(
         () -> {
           for (var solidColor : disable) {
