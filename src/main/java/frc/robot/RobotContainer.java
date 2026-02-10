@@ -422,7 +422,7 @@ public class RobotContainer {
   public Command shootHub() {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.HUB),
-        shooter.cruiseControl(),
+        shooter.preSpin(),
         drivetrain.setSlowMode(0.5, 0.5),
         Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
             .onlyWhile(
