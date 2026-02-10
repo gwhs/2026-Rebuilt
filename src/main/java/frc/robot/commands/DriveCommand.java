@@ -13,8 +13,8 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -47,7 +47,7 @@ public class DriveCommand extends Command {
 
   // TO-DO determine correct max accleration
   public final ProfiledPIDController robotHeadingController =
-      new ProfiledPIDController(0.15, 0, 0.02, new TrapezoidProfile.Constraints(360, 720));
+      new ProfiledPIDController(0.005, 0, 0, new TrapezoidProfile.Constraints(360, 720));
   public final PIDController shootingRangeDistance = new PIDController(0.3, 0, 0);
 
   private boolean resetLimiter = true;
@@ -110,6 +110,8 @@ public class DriveCommand extends Command {
       DogLog.log("Drive Command/Current heading Goal", robotHeadingController.getGoal());
       DogLog.log("Drive Command/Current target", drivetrain.getRotationTarget());
       DogLog.log("Drive Command/driveAssist", drivetrain.getDriveAssist());
+      DogLog.log("Drive Command/Current pidOutput", pidOutput);
+      DogLog.log("Drive Command/ rotational input", rotationalInput);
     }
 
     if (drivetrain.goingToShootingRange()) {
