@@ -33,8 +33,6 @@ import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtens
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
-import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
-import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
@@ -81,7 +79,7 @@ public class RobotContainer {
     }
   }
 
-  private ObjectDetectionCam objDecCam;
+  // private ObjectDetectionCam objDecCam;
 
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
@@ -119,14 +117,14 @@ public class RobotContainer {
             if (HubTracker.getAutoWinner().orElse(Alliance.Red) == Alliance.Red) {
               // Red Win
               if (EagleUtil.isRedAlliance()) {
-                // We are Red
+                // as Red Team (win)
                 if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
                       || HubTracker.isActive();
                 }
               } else {
-                // We Lose, as Blue
+                // as Blue Team (loss)
                 if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
@@ -136,14 +134,14 @@ public class RobotContainer {
             } else {
               // Blue Win
               if (!EagleUtil.isRedAlliance()) {
-                // We Win, as Blue
+                // as Blue Team (win)
                 if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
                       || HubTracker.isActive();
                 }
               } else {
-                // We Win, as Red
+                // as Red Team (loss)
                 if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
@@ -246,9 +244,9 @@ public class RobotContainer {
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
-    objDecCam =
-        new ObjectDetectionCam(
-            "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
+    // objDecCam =
+    //     new ObjectDetectionCam(
+    //         "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
 
     configureBindings();
     configureAutonomous();
@@ -392,26 +390,41 @@ public class RobotContainer {
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
-    if (objDecCam != null) {
-      objDecCam.updateDetection();
-    }
+    // if (objDecCam != null) {
+    //   objDecCam.updateDetection();
+    // }
 
     DogLog.log(
         "Loop Time/Robot Container/objectDetection Cam",
         (HALUtil.getFPGATime() - startTime) / 1000);
+
+    startTime = HALUtil.getFPGATime();
 
     if (RobotBase.isReal()) {
       signalList.refreshAll();
     }
 
     DogLog.log(
-        "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
+        "Loop Time/Robot Container/Refresh Signal List",
+        (HALUtil.getFPGATime() - startTime) / 1000);
+
+    startTime = HALUtil.getFPGATime();
     robovisual.update();
+    DogLog.log(
+        "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
+
     startTime = HALUtil.getFPGATime();
 
     DogLog.log("Match Timer", DriverStation.getMatchTime());
 
+    DogLog.log("Loop Time/Robot Container/Match Timer", (HALUtil.getFPGATime() - startTime) / 1000);
+
+    startTime = HALUtil.getFPGATime();
+
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
+
+    DogLog.log(
+        "Loop Time/Robot Container/Game Piece Tracker", (HALUtil.getFPGATime() - startTime) / 1000);
 
     DogLog.log("Hub Status/Is Active", isHubActive.getAsBoolean());
 
@@ -420,10 +433,6 @@ public class RobotContainer {
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
-
-    double fuelInHopper = FuelSim.getFuelInHopper();
-
-    DogLog.log("number of fuels in hopper", fuelInHopper);
   }
 
   private Command disableHandler() {
@@ -504,9 +513,8 @@ public class RobotContainer {
 
   public Command stopShoot() {
     return Commands.parallel(
-        drivetrain
-            .setRotationCommand(RotationTarget.NORMAL)
-            .alongWith(drivetrain.setSlowMode(false)),
+        drivetrain.setRotationCommand(RotationTarget.NORMAL),
+        drivetrain.setSlowMode(false),
         shooter.runVoltage(0));
   }
 }
