@@ -25,10 +25,10 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.HubTracker.Shift;
 import frc.robot.commands.DriveCommand;
-import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
@@ -482,41 +482,46 @@ public class RobotContainer {
   }
 
   public Command autoClimb() {
-    
-    Command prep =
-    Commands.parallel(
-        shooter.runVoltage(0.0),
-        groundIntakeRoller.stopIntake(),
-        groundIntakeExtension.retract(),
-        indexer.runVoltage(0)
-    ).withTimeout(0.25);
 
+    Command prep =
+        Commands.parallel(
+                shooter.runVoltage(0.0),
+                groundIntakeRoller.stopIntake(),
+                groundIntakeExtension.retract(),
+                indexer.runVoltage(0))
+            .withTimeout(0.25);
 
     Command align =
-    drivetrain
-        .driveToPose(() -> FieldConstants.getClimbPose(drivetrain.getState().Pose))
-        .until(
-            () ->
-                drivetrain
-                        .getState()
-                        .Pose
-                        .getTranslation()
-                        .getDistance(FieldConstants.getClimbPose(drivetrain.getState().Pose).getTranslation())
-                    < 0.10);
+        drivetrain
+            .driveToPose(() -> FieldConstants.getClimbPose(drivetrain.getState().Pose))
+            .until(
+                () ->
+                    drivetrain
+                            .getState()
+                            .Pose
+                            .getTranslation()
+                            .getDistance(
+                                FieldConstants.getClimbPose(drivetrain.getState().Pose)
+                                    .getTranslation())
+                        < 0.10);
 
-                    return Commands.sequence(
-                      prep,
-                      align,
-                      climber.runPosition(ClimberConstants.PREP_CLIMB),
-                      Commands.waitUntil(controller.start()),
-                      climber.runPosition(ClimberConstants.CLIMB_L1),
-                      Commands.waitUntil(controller.start()),
-                      climber.runPosition(ClimberConstants.CLIMB),
-                      climber.runPosition(ClimberConstants.CLIMB_L2),
-                      Commands.waitUntil(controller.start()),
-                      climber.runPosition(ClimberConstants.CLIMB),
-                      climber.runPosition(ClimberConstants.CLIMB_L3));
-  
+    return Commands.sequence(
+        prep,
+        align,
+        climber.runPosition(ClimberConstants.PREP_CLIMB),
+        Commands.waitUntil(controller.start().debounce(0.2)),
+        climber.runPosition(ClimberConstants.CLIMB_L1),
+        Commands.waitUntil(controller.start().debounce(0.2)),
+        climber.runPosition(ClimberConstants.CLIMB),
+        Commands.waitUntil(controller.start().debounce(0.2)),
+        climber.runPosition(ClimberConstants.CLIMB_L2),
+        Commands.waitUntil(controller.start().debounce(0.2)),
+        climber.runPosition(ClimberConstants.CLIMB),
+        Commands.waitUntil(controller.start().debounce(0.2)),
+        climber.runPosition(ClimberConstants.CLIMB_L3),
+        Commands.idle());
+
+
     // return drivetrain.driveToPose(() -> target);
     // todo: add import frc.robot.subsystems.climber.ClimberSubsystem;
     // todo: add private final ClimberSubsystem climber;
