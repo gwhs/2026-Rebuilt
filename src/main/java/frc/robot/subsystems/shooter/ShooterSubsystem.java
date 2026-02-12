@@ -80,16 +80,14 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void runShooterWithClamp(double rps) {
-    double clampedRps =
-              Math.max(
-                  ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rps));
-          velocityGoal = clampedRps;
+    double clampedRps = Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rps));
+    velocityGoal = clampedRps;
 
-          if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
-            shooterIO.runVoltage(12);
-          } else {
-            shooterIO.runVelocity(clampedRps);
-          }
+    if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
+      shooterIO.runVoltage(12);
+    } else {
+      shooterIO.runVelocity(clampedRps);
+    }
   }
 
   public Command preSpin() {
