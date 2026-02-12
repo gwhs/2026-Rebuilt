@@ -28,6 +28,8 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
+import frc.robot.subsystems.aprilTagCam.AprilTagCam;
+import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
@@ -150,6 +152,8 @@ public class RobotContainer {
             return HubTracker.isActive();
           });
 
+  private AprilTagCam testCamOne;
+
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
     this.addPeriodic = addPeriodic;
@@ -172,12 +176,22 @@ public class RobotContainer {
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
+
         climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
             GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+
+        testCamOne =
+            new AprilTagCam(
+                AprilTagCamConstants.TEST_CAM_ONE,
+                AprilTagCamConstants.TEST_CAM_ONE_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
+                
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -368,6 +382,16 @@ public class RobotContainer {
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
+     startTime = HALUtil.getFPGATime();
+  
+    if (testCamOne != null) {
+      testCamOne.updatePoseEstim();
+      // 4
+      DogLog.log("Loop Time/Robot Container/Cam4", (HALUtil.getFPGATime() - startTime) / 1000);
+    }
+    if (testCamOne != null) {
+      testCamOne.updatePoseEstim();
+    }
     // if (objDecCam != null) {
     //   objDecCam.updateDetection();
     // }

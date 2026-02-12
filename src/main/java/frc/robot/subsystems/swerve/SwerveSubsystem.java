@@ -15,11 +15,14 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -34,6 +37,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToPose;
+import frc.robot.subsystems.aprilTagCam.AprilTagHelp;
+
 import java.util.function.Supplier;
 
 /**
@@ -445,5 +450,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
             () -> {
               this.disableAutoRotate = false;
             });
+  }
+
+public void addVisionMeasurent(AprilTagHelp helper) {
+
+    Pose2d pos = helper.pos;
+    Matrix<N3, N1> sd = helper.sd;
+    double timestamp = helper.timestamp;
+
+    super.addVisionMeasurement(pos, timestamp, sd);
   }
 }
