@@ -520,8 +520,6 @@ public class RobotContainer {
         Commands.waitUntil(controller.start().debounce(0.2)),
         climber.runPosition(ClimberConstants.CLIMB_L3),
         Commands.idle());
-
-
     // return drivetrain.driveToPose(() -> target);
     // todo: add import frc.robot.subsystems.climber.ClimberSubsystem;
     // todo: add private final ClimberSubsystem climber;
