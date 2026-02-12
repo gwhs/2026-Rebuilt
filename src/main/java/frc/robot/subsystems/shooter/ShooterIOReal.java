@@ -341,9 +341,15 @@ public class ShooterIOReal implements ShooterIO {
     DogLog.log("Shooter/Motor 6 Acceleration", motor6Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 6 Closed Loop Goal", motor6ClosedLoopGoal.getValueAsDouble());
 
-    DogLog.log("Shooter/Motor 1 and 2 Velocity Difference", motor1Velocity.getValueAsDouble()- motor2Velocity.getValueAsDouble());
-    DogLog.log("Shooter/Motor 3 and 4 Velocity Difference", motor3Velocity.getValueAsDouble()- motor4Velocity.getValueAsDouble());
-    DogLog.log("Shooter/Motor 5 and 6 Velocity Difference", motor5Velocity.getValueAsDouble()- motor6Velocity.getValueAsDouble());
+    DogLog.log(
+        "Shooter/Motor 1 and 2 Velocity Difference",
+        motor1Velocity.getValueAsDouble() - motor2Velocity.getValueAsDouble());
+    DogLog.log(
+        "Shooter/Motor 3 and 4 Velocity Difference",
+        motor3Velocity.getValueAsDouble() - motor4Velocity.getValueAsDouble());
+    DogLog.log(
+        "Shooter/Motor 5 and 6 Velocity Difference",
+        motor5Velocity.getValueAsDouble() - motor6Velocity.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
     motor2NotConnectedAlert.set(!motor2.isConnected());
