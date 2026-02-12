@@ -5,5 +5,5 @@ import com.ctre.phoenix6.CANBus;
 class LedConstants {
   public static int CANdleID = 50;
   public static CANBus CANdleCANBus = new CANBus("rio");
-  public static int IndexMax = 35; // TODO: change to actual size
+  public static int IndexMax = 33; // TODO: change to actual size
 }
