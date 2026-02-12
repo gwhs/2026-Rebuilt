@@ -99,13 +99,16 @@ public class DriveCommand extends Command {
 
       if (resetAutoRotate == true) {
         resetAutoRotate = false;
-        robotHeadingController.reset(currentRobotHeading, Units.radiansToDegrees(drivetrain.getState().Speeds.omegaRadiansPerSecond));
+        robotHeadingController.reset(
+            currentRobotHeading,
+            Units.radiansToDegrees(drivetrain.getState().Speeds.omegaRadiansPerSecond));
       }
 
       robotHeadingController.setGoal(drivetrain.getGoalHeading());
 
       double pidOutput = robotHeadingController.calculate(currentRobotHeading);
-      double setpointVelocity = robotHeadingController.getSetpoint().velocity / Units.radiansToDegrees(maxAngularSpeed);
+      double setpointVelocity =
+          robotHeadingController.getSetpoint().velocity / Units.radiansToDegrees(maxAngularSpeed);
       rotationalInput = MathUtil.clamp(pidOutput + setpointVelocity, -1, 1);
 
       DogLog.log("Drive Command/pidOutput", pidOutput);
