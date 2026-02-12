@@ -38,7 +38,6 @@ import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToPose;
 import frc.robot.subsystems.aprilTagCam.AprilTagHelp;
-
 import java.util.function.Supplier;
 
 /**
@@ -452,7 +451,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
             });
   }
 
-public void addVisionMeasurent(AprilTagHelp helper) {
+  public void addVisionMeasurent(AprilTagHelp helper) {
 
     Pose2d pos = helper.pos;
     Matrix<N3, N1> sd = helper.sd;

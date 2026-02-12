@@ -61,7 +61,7 @@ public class AprilTagCam {
       aprilTagFieldLayout =
           new AprilTagFieldLayout(
               Path.of(Filesystem.getDeployDirectory().getPath(), "2026-rebuilt-welded.json"));
-    } catch (IOException e) { 
+    } catch (IOException e) {
       e.printStackTrace();
     }
 

@@ -191,7 +191,7 @@ public class RobotContainer {
                 drivetrain::addVisionMeasurent,
                 () -> drivetrain.getState().Pose,
                 () -> drivetrain.getState().Speeds);
-                
+
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -382,8 +382,8 @@ public class RobotContainer {
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
-     startTime = HALUtil.getFPGATime();
-  
+    startTime = HALUtil.getFPGATime();
+
     if (testCamOne != null) {
       testCamOne.updatePoseEstim();
       // 4
