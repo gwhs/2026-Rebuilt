@@ -149,6 +149,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private boolean slowMode = false;
   private boolean shootingRange = false;
   private boolean slewRateLimitAcceleration = false;
+  private boolean driveAssist = false;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -348,6 +349,17 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public boolean getdisableAutoRotate() {
     return disableAutoRotate;
+  }
+
+  public boolean getDriveAssist() {
+    return driveAssist;
+  }
+
+  public Command setDriveAssist(boolean newDriveAssist) {
+    return Commands.runOnce(
+        () -> {
+          driveAssist = newDriveAssist;
+        });
   }
 
   public Command setRotationCommand(RotationTarget rotationTarget) {

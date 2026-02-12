@@ -33,8 +33,6 @@ import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtens
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
-import frc.robot.subsystems.objectDetection.ObjectDetectionCam;
-import frc.robot.subsystems.objectDetection.ObjectDetectionConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
@@ -81,7 +79,7 @@ public class RobotContainer {
     }
   }
 
-  private ObjectDetectionCam objDecCam;
+  // private ObjectDetectionCam objDecCam;
 
   @SuppressWarnings("unused")
   private final BiConsumer<Runnable, Double> addPeriodic;
@@ -117,14 +115,14 @@ public class RobotContainer {
             if (HubTracker.getAutoWinner().orElse(Alliance.Red) == Alliance.Red) {
               // Red Win
               if (EagleUtil.isRedAlliance()) {
-                // We are Red
+                // as Red Team (win)
                 if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
                       || HubTracker.isActive();
                 }
               } else {
-                // We Lose, as Blue
+                // as Blue Team (loss)
                 if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
@@ -134,14 +132,14 @@ public class RobotContainer {
             } else {
               // Blue Win
               if (!EagleUtil.isRedAlliance()) {
-                // We Win, as Blue
+                // as Blue Team (win)
                 if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
                       || HubTracker.isActive();
                 }
               } else {
-                // We Win, as Red
+                // as Red Team (loss)
                 if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
                   return timeRemaining >= lowerThreshold
                       || timeRemaining <= upperThreshold
@@ -194,10 +192,14 @@ public class RobotContainer {
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
-            ShooterSubsystem.createDisabled(
-                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
+            ShooterSubsystem.createReal(
+                canivoreCanbus,
+                rioCanbus,
+                signalList,
+                drivetrain.poseSupplier(),
+                drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
-        indexer = IndexerSubsystem.createDisabled();
+        indexer = IndexerSubsystem.createReal(canivoreCanbus, rioCanbus, signalList);
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         break;
@@ -240,9 +242,9 @@ public class RobotContainer {
 
     defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
-    objDecCam =
-        new ObjectDetectionCam(
-            "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
+    // objDecCam =
+    //     new ObjectDetectionCam(
+    //         "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
 
     configureBindings();
     configureAutonomous();
@@ -298,12 +300,7 @@ public class RobotContainer {
                 .or(drivetrain.isInOpponentAllianceZone)
                 .and(drivetrain.isOnOutpostSide))
         .whileTrue(shootOutpost());
-    controller
-        .rightTrigger()
-        .onFalse(
-            drivetrain
-                .setRotationCommand(RotationTarget.NORMAL)
-                .alongWith(drivetrain.setSlowMode(false)));
+    controller.rightTrigger().onFalse(stopShoot());
 
     controller.a().whileTrue(unStuck());
 
@@ -371,26 +368,41 @@ public class RobotContainer {
   public void periodic() {
     double startTime = HALUtil.getFPGATime();
 
-    if (objDecCam != null) {
-      objDecCam.updateDetection();
-    }
+    // if (objDecCam != null) {
+    //   objDecCam.updateDetection();
+    // }
 
     DogLog.log(
         "Loop Time/Robot Container/objectDetection Cam",
         (HALUtil.getFPGATime() - startTime) / 1000);
+
+    startTime = HALUtil.getFPGATime();
 
     if (RobotBase.isReal()) {
       signalList.refreshAll();
     }
 
     DogLog.log(
-        "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
+        "Loop Time/Robot Container/Refresh Signal List",
+        (HALUtil.getFPGATime() - startTime) / 1000);
+
+    startTime = HALUtil.getFPGATime();
     robovisual.update();
+    DogLog.log(
+        "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
+
     startTime = HALUtil.getFPGATime();
 
     DogLog.log("Match Timer", DriverStation.getMatchTime());
 
+    DogLog.log("Loop Time/Robot Container/Match Timer", (HALUtil.getFPGATime() - startTime) / 1000);
+
+    startTime = HALUtil.getFPGATime();
+
     Optional<Pose2d> obj = GamePieceTracker.getGamePiece();
+
+    DogLog.log(
+        "Loop Time/Robot Container/Game Piece Tracker", (HALUtil.getFPGATime() - startTime) / 1000);
 
     DogLog.log("Hub Status/Is Active", isHubActive.getAsBoolean());
 
@@ -399,82 +411,99 @@ public class RobotContainer {
     } else {
       DogLog.log("Object Detection/Fuel Pose", new Pose2d[0]); // ill forget it tommorow
     }
-
-    double fuelInHopper = FuelSim.getFuelInHopper();
-
-    DogLog.log("number of fuels in hopper", fuelInHopper);
   }
 
   private Command disableHandler() {
     return Commands.sequence(
-            shooter.runVoltage(0.0), drivetrain.setRotationCommand(RotationTarget.NORMAL))
-        .ignoringDisable(true);
+            shooter.runVoltage(0.0),
+            drivetrain.setRotationCommand(RotationTarget.NORMAL),
+            climber.runVoltage(0))
+        .ignoringDisable(true)
+        .withName("Disabled");
   }
 
   public Command shootHub() {
     return Commands.parallel(
-        drivetrain.setRotationCommand(RotationTarget.HUB),
-        shooter.cruiseControl(),
-        drivetrain.setSlowMode(0.5, 0.5),
-        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-            .onlyWhile(
-                shooter
-                    .isAtGoalVelocity_Hub
-                    .and(drivetrain.isFacingGoal)
-                    .and(isHubActive)
-                    .or(controller.leftTrigger()))
-            .repeatedly());
+            drivetrain.setRotationCommand(RotationTarget.HUB),
+            shooter.preSpin(),
+            drivetrain.setSlowMode(0.5, 0.5),
+            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(
+                    shooter
+                        .isAtGoalVelocity_Hub
+                        .and(drivetrain.isFacingGoal)
+                        .and(isHubActive)
+                        .or(controller.leftTrigger()))
+                .repeatedly())
+        .withName("Shoot Hub");
   }
 
   public Command shootDepot() {
     return Commands.parallel(
-        drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
-        shooter.cruiseControl(),
-        drivetrain.setSlowMode(0.5, 0.5),
-        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-            .onlyWhile(
-                shooter
-                    .isAtGoalVelocity_Passing
-                    .and(drivetrain.isFacingGoalPassing)
-                    .or(controller.leftTrigger()))
-            .repeatedly());
+            drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
+            shooter.cruiseControl(),
+            drivetrain.setSlowMode(0.5, 0.5),
+            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(
+                    shooter
+                        .isAtGoalVelocity_Passing
+                        .and(drivetrain.isFacingGoalPassing)
+                        .or(controller.leftTrigger()))
+                .repeatedly())
+        .withName("Shoot Depot Side");
   }
 
   public Command shootOutpost() {
     return Commands.parallel(
-        drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
-        shooter.cruiseControl(),
-        drivetrain.setSlowMode(0.5, 0.5),
-        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-            .onlyWhile(
-                shooter
-                    .isAtGoalVelocity_Passing
-                    .and(drivetrain.isFacingGoalPassing)
-                    .or(controller.leftTrigger()))
-            .repeatedly());
+            drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
+            shooter.cruiseControl(),
+            drivetrain.setSlowMode(0.5, 0.5),
+            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(
+                    shooter
+                        .isAtGoalVelocity_Passing
+                        .and(drivetrain.isFacingGoalPassing)
+                        .or(controller.leftTrigger()))
+                .repeatedly())
+        .withName("Shoot Outpost Side");
   }
 
   public Command unStuck() {
     return Commands.parallel(
-        indexer.reverse(), groundIntakeRoller.reverseIntake(), groundIntakeExtension.extend());
+            indexer.reverse(), groundIntakeRoller.reverseIntake(), groundIntakeExtension.extend())
+        .withName("Unjam");
   }
 
   public Command deployGroundIntake() {
     return Commands.parallel(
-        groundIntakeRoller.startIntake(),
-        groundIntakeExtension.extend(),
-        drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()));
+            groundIntakeRoller.startIntake(),
+            groundIntakeExtension.extend(),
+            drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
+        .withName("Deploy Ground Intake");
   }
 
   public Command defenseMode() {
     return Commands.parallel(
-        drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake());
+            drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake())
+        .withName("Defense Mode");
   }
 
   public Command agitateGroundIntake() {
     return Commands.sequence(
-            groundIntakeExtension.extend(), Commands.waitSeconds(.5),
-            groundIntakeExtension.retract(), Commands.waitSeconds(.5))
-        .repeatedly();
+            groundIntakeExtension.extend(),
+            Commands.waitSeconds(.5),
+            groundIntakeExtension.retract(),
+            Commands.waitSeconds(.5),
+            groundIntakeRoller.stopIntake())
+        .repeatedly()
+        .withName("Start? Ground Intake");
+  }
+
+  public Command stopShoot() {
+    return Commands.parallel(
+            drivetrain.setRotationCommand(RotationTarget.NORMAL),
+            drivetrain.setSlowMode(false),
+            shooter.runVoltage(0))
+        .withName("Stop Shooting");
   }
 }
