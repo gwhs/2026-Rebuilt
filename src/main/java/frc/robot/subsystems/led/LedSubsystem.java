@@ -73,8 +73,7 @@ public class LedSubsystem extends SubsystemBase {
         setCountDown(1),
         Commands.waitSeconds(1),
         disable());
-        Commands.waitSeconds(1);
-
+    Commands.waitSeconds(1);
   }
 
   public Command setCountDown(int count) {
