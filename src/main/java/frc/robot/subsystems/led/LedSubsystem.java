@@ -40,7 +40,7 @@ public class LedSubsystem extends SubsystemBase {
       };
 
   private final SolidColor[] red =
-      new SolidColor[]{
+      new SolidColor[] {
         new SolidColor(0, LedConstants.IndexMax).withColor(new RGBWColor(255, 0, 0))
       };
 
@@ -76,6 +76,8 @@ public class LedSubsystem extends SubsystemBase {
 
   public Command countDown() {
     return Commands.sequence(
+        solidGreen(),
+        Commands.waitSeconds(1),
         setCountDown(5),
         Commands.waitSeconds(1),
         setCountDown(4),
@@ -86,6 +88,7 @@ public class LedSubsystem extends SubsystemBase {
         Commands.waitSeconds(1),
         setCountDown(1),
         Commands.waitSeconds(1),
+        
         solidRed());
   }
 
