@@ -28,6 +28,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
@@ -321,6 +322,8 @@ public class RobotContainer {
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
+    controller.start().onTrue(prepForClimb());
+    controller.start().onTrue(autoClimb());
   }
 
   public Command getAutonomousCommand() {
@@ -486,6 +489,54 @@ public class RobotContainer {
     return Commands.parallel(
             drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake())
         .withName("Defense Mode");
+  }
+
+  public Command waitForStartPress() {
+    return Commands.sequence(
+        Commands.waitUntil(() -> !controller.start().getAsBoolean()),
+        Commands.waitUntil(() -> controller.start().getAsBoolean()));
+  }
+
+  public Command prepForClimb() {
+    return Commands.parallel(
+            shooter.runVoltage(0.0),
+            indexer.runVoltage(0),
+            groundIntakeRoller.stopIntake(),
+            groundIntakeExtension.retract())
+        .withTimeout(0.25);
+  }
+
+  public Command autoClimb() {
+    Command align =
+        drivetrain
+            .driveToPose(() -> FieldConstants.getClimbPose(drivetrain.getState().Pose))
+            .until(
+                () ->
+                    drivetrain
+                            .getState()
+                            .Pose
+                            .getTranslation()
+                            .getDistance(
+                                FieldConstants.getClimbPose(drivetrain.getState().Pose)
+                                    .getTranslation())
+                        < 0.10);
+
+    return Commands.sequence(
+        align,
+        climber.runPosition(ClimberConstants.PREP_CLIMB).withTimeout(10.0),
+        waitForStartPress(),
+        climber.runPosition(ClimberConstants.CLIMB_L1).withTimeout(10.0),
+        waitForStartPress(),
+        climber.runPosition(ClimberConstants.CLIMB).withTimeout(10.0),
+        waitForStartPress(),
+        climber.runPosition(ClimberConstants.CLIMB_L2).withTimeout(10.0),
+        waitForStartPress(),
+        climber.runPosition(ClimberConstants.CLIMB).withTimeout(10.0),
+        waitForStartPress(),
+        climber.runPosition(ClimberConstants.CLIMB_L3).withTimeout(10.0));
+    // return drivetrain.driveToPose(() -> target);
+    // todo: add import frc.robot.subsystems.climber.ClimberSubsystem;
+    // todo: add private final ClimberSubsystem climber;
   }
 
   public Command agitateGroundIntake() {
