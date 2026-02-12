@@ -415,78 +415,77 @@ public class RobotContainer {
 
   private Command disableHandler() {
     return Commands.sequence(
-            shooter.runVoltage(0.0), drivetrain.setRotationCommand(RotationTarget.NORMAL))
-        .ignoringDisable(true);
+            shooter.runVoltage(0.0),
+            drivetrain.setRotationCommand(RotationTarget.NORMAL),
+            climber.runVoltage(0))
+        .ignoringDisable(true)
+        .withName("Disabled");
   }
 
   public Command shootHub() {
     return Commands.parallel(
-        drivetrain.setRotationCommand(RotationTarget.HUB),
-        shooter.preSpin(),
-        drivetrain.setSlowMode(0.5, 0.5),
-        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-            .onlyWhile(
-                shooter
-                    .isAtGoalVelocity_Hub
-                    .and(drivetrain.isFacingGoal)
-                    .and(isHubActive)
-                    .or(controller.leftTrigger()))
-            .repeatedly()
-            ).withName("Shoot Hub");
+            drivetrain.setRotationCommand(RotationTarget.HUB),
+            shooter.preSpin(),
+            drivetrain.setSlowMode(0.5, 0.5),
+            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(
+                    shooter
+                        .isAtGoalVelocity_Hub
+                        .and(drivetrain.isFacingGoal)
+                        .and(isHubActive)
+                        .or(controller.leftTrigger()))
+                .repeatedly())
+        .withName("Shoot Hub");
   }
 
   public Command shootDepot() {
     return Commands.parallel(
-        drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
-        shooter.cruiseControl(),
-        drivetrain.setSlowMode(0.5, 0.5),
-        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-            .onlyWhile(
-                shooter
-                    .isAtGoalVelocity_Passing
-                    .and(drivetrain.isFacingGoalPassing)
-                    .or(controller.leftTrigger()))
-            .repeatedly()
-            ).withName("Shoot Depot Side");
+            drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
+            shooter.cruiseControl(),
+            drivetrain.setSlowMode(0.5, 0.5),
+            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(
+                    shooter
+                        .isAtGoalVelocity_Passing
+                        .and(drivetrain.isFacingGoalPassing)
+                        .or(controller.leftTrigger()))
+                .repeatedly())
+        .withName("Shoot Depot Side");
   }
 
   public Command shootOutpost() {
     return Commands.parallel(
-        drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
-        shooter.cruiseControl(),
-        drivetrain.setSlowMode(0.5, 0.5),
-        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-            .onlyWhile(
-                shooter
-                    .isAtGoalVelocity_Passing
-                    .and(drivetrain.isFacingGoalPassing)
-                    .or(controller.leftTrigger()))
-            .repeatedly()
-            ).withName("Shoot Outpost Side");
+            drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
+            shooter.cruiseControl(),
+            drivetrain.setSlowMode(0.5, 0.5),
+            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(
+                    shooter
+                        .isAtGoalVelocity_Passing
+                        .and(drivetrain.isFacingGoalPassing)
+                        .or(controller.leftTrigger()))
+                .repeatedly())
+        .withName("Shoot Outpost Side");
   }
 
   public Command unStuck() {
     return Commands.parallel(
-        indexer.reverse(),
-        groundIntakeRoller.reverseIntake(),
-        groundIntakeExtension.extend()).withName("Unjam");
+            indexer.reverse(), groundIntakeRoller.reverseIntake(), groundIntakeExtension.extend())
+        .withName("Unjam");
   }
 
   public Command deployGroundIntake() {
     return Commands.parallel(
-        groundIntakeRoller.startIntake(),
-        groundIntakeExtension.extend(),
-        drivetrain
-            .temporarilyDisableRotation()
-            .onlyWhile(controller.rightTrigger().negate())
-            ).withName("Deploy Ground Intake");
+            groundIntakeRoller.startIntake(),
+            groundIntakeExtension.extend(),
+            drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
+        .withName("Deploy Ground Intake");
   }
 
   public Command defenseMode() {
     return Commands.parallel(
-        drivetrain.swerveX(),
-        groundIntakeExtension.retract(),
-        groundIntakeRoller.stopIntake()).withName("Defense Mode");
+            drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake())
+        .withName("Defense Mode");
   }
 
   public Command agitateGroundIntake() {
@@ -502,8 +501,9 @@ public class RobotContainer {
 
   public Command stopShoot() {
     return Commands.parallel(
-        drivetrain.setRotationCommand(RotationTarget.NORMAL),
-        drivetrain.setSlowMode(false),
-        shooter.runVoltage(0)).withName("Stop Shooting");
+            drivetrain.setRotationCommand(RotationTarget.NORMAL),
+            drivetrain.setSlowMode(false),
+            shooter.runVoltage(0))
+        .withName("Stop Shooting");
   }
 }
