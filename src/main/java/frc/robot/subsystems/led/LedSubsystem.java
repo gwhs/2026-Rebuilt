@@ -93,3 +93,4 @@ public class LedSubsystem extends SubsystemBase {
         Commands.waitSeconds(1),
         solidRed());
   }
+}
