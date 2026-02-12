@@ -56,16 +56,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command runVelocity(double rotationsPerSecond) {
     return this.run(
         () -> {
-          double clampedRps =
-              Math.max(
-                  ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rotationsPerSecond));
-          velocityGoal = clampedRps;
-
-          if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
-            shooterIO.runVoltage(12);
-          } else {
-            shooterIO.runVelocity(clampedRps);
-          }
+          runShooterWithClamp(rotationsPerSecond);
         });
   }
 
@@ -84,9 +75,14 @@ public class ShooterSubsystem extends SubsystemBase {
           double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
           double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
 
-          double clampedRps =
+          runShooterWithClamp(rotationsPerSecond);
+        });
+  }
+
+  public void runShooterWithClamp(double rps) {
+    double clampedRps =
               Math.max(
-                  ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rotationsPerSecond));
+                  ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rps));
           velocityGoal = clampedRps;
 
           if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
@@ -94,7 +90,6 @@ public class ShooterSubsystem extends SubsystemBase {
           } else {
             shooterIO.runVelocity(clampedRps);
           }
-        });
   }
 
   public Command preSpin() {
