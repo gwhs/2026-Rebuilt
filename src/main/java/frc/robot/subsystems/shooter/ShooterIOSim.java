@@ -10,7 +10,7 @@ public class ShooterIOSim implements ShooterIO {
 
   private FlywheelSim motor =
       new FlywheelSim(
-          LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60Foc(1), 0.001, 1),
+          LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60Foc(2), 0.03, 1),
           DCMotor.getKrakenX60Foc(2));
 
   private double targetVelocity = 0; // rotationsPerSecond
@@ -22,7 +22,7 @@ public class ShooterIOSim implements ShooterIO {
 
   @Override
   public void runVoltage(double voltage) {
-    motor.setInputVoltage(voltage);
+    targetVelocity = 100.0 / 12 * voltage;
   }
 
   @Override
@@ -34,7 +34,7 @@ public class ShooterIOSim implements ShooterIO {
   public void periodic() {
     motor.update(.020);
     double error = targetVelocity - getVelocity();
-    double kP = 50;
+    double kP = 12;
     double voltage = kP * error;
     motor.setInputVoltage(voltage);
   }

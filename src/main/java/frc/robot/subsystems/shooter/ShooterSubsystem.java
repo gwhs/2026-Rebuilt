@@ -56,13 +56,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command runVelocity(double rotationsPerSecond) {
     return this.run(
         () -> {
-          velocityGoal = rotationsPerSecond;
-
-          if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
-            shooterIO.runVoltage(12);
-          } else {
-            shooterIO.runVelocity(rotationsPerSecond);
-          }
+          runShooterWithClamp(rotationsPerSecond);
         });
   }
 
@@ -81,20 +75,38 @@ public class ShooterSubsystem extends SubsystemBase {
           double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
           double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
 
-          velocityGoal = rotationsPerSecond;
+          runShooterWithClamp(rotationsPerSecond);
+        });
+  }
 
-          if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
-            shooterIO.runVoltage(12);
-          } else {
-            shooterIO.runVelocity(rotationsPerSecond);
-          }
+  private void runShooterWithClamp(double rps) {
+    double clampedRps = Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rps));
+    velocityGoal = clampedRps;
+
+    if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
+      shooterIO.runVoltage(12);
+    } else {
+      shooterIO.runVelocity(clampedRps);
+    }
+  }
+
+  public Command preSpin() {
+    return this.run(
+        () -> {
+          Pose2d robotPose = robotPoseSupplier.get();
+          Pose2d targetPose = robotTargetSupplier.get();
+          double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+          double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
+          runVoltage(0);
+
+          // does not actually pre-spin
         });
   }
 
   @Override
   public void periodic() {
     shooterIO.periodic();
-    DogLog.log("Shooter/ Current Velocity", shooterIO.getVelocity());
+    DogLog.log("Shooter/Current Velocity", shooterIO.getVelocity());
     DogLog.log("Shooter/Goal Velocity", velocityGoal);
     DogLog.log("Shooter/At Goal Velocity Hub", this.isAtGoalVelocity_Hub.getAsBoolean());
     DogLog.log("Shooter/At Goal Velocity Passing", this.isAtGoalVelocity_Passing.getAsBoolean());
