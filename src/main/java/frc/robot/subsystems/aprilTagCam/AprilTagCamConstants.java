@@ -14,7 +14,7 @@ public class AprilTagCamConstants {
   public static final String TEST_CAM_ONE = "cam5";
 
   public static final Transform3d TEST_CAM_ONE_LOCATION =
-      new Transform3d(0.124, 0.306, 0.17944, new Rotation3d(0, 0, 0));
+      new Transform3d(0.306, 0.124, 0.17944, new Rotation3d(0, 0, 0));
 
   public static final double Z_TOLERANCE = 2.00;
   public static final double XY_TOLERANCE = 2.00;
