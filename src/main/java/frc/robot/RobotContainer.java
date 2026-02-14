@@ -395,9 +395,6 @@ public class RobotContainer {
       testCamOne.updatePoseEstim();
       DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
     }
-    if (testCamOne != null) {
-      testCamOne.updatePoseEstim();
-    }
     // if (objDecCam != null) {
     //   objDecCam.updateDetection();
     // }
