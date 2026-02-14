@@ -453,7 +453,7 @@ public class RobotContainer {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.HUB),
             shooter.preSpin(),
-            drivetrain.setSlowMode(0.5, 0.5),
+            drivetrain.setSlowMode(0.5, 1),
             Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(
                     shooter
@@ -469,7 +469,7 @@ public class RobotContainer {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
             shooter.cruiseControl(),
-            drivetrain.setSlowMode(0.5, 0.5),
+            drivetrain.setSlowMode(0.5, 1),
             Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(
                     shooter
@@ -484,7 +484,7 @@ public class RobotContainer {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
             shooter.cruiseControl(),
-            drivetrain.setSlowMode(0.5, 0.5),
+            drivetrain.setSlowMode(0.5, 1),
             Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(
                     shooter
