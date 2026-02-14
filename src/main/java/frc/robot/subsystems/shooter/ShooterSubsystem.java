@@ -79,7 +79,7 @@ public class ShooterSubsystem extends SubsystemBase {
         });
   }
 
-  public void runShooterWithClamp(double rps) {
+  private void runShooterWithClamp(double rps) {
     double clampedRps = Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rps));
     velocityGoal = clampedRps;
 
