@@ -112,7 +112,7 @@ public class DriveCommand extends Command {
       rotationalInput = MathUtil.clamp(pidOutput + setpointVelocity, -1, 1);
 
       DogLog.log("Drive Command/pidOutput", pidOutput);
-      DogLog.log("Drive Command/ rotational input", rotationalInput);
+      DogLog.log("Drive Command/rotational input", rotationalInput);
     } else {
       resetAutoRotate = true;
     }
