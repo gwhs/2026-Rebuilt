@@ -92,8 +92,6 @@ public class RobotContainer {
   private final RobotVisualizer robovisual = new RobotVisualizer();
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-  private final SendableChooser<Command> rotationChooser = new SendableChooser<Command>();
-
   private final ShooterSubsystem shooter;
   private final GroundIntakeRollerSubsystem groundIntakeRoller;
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
@@ -251,10 +249,6 @@ public class RobotContainer {
     configureBindings();
     configureAutonomous();
 
-    if (RobotBase.isSimulation()) {
-      configureAutoRotation();
-    }
-
     drivetrain.setDefaultCommand(defualtDriveCommand);
 
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
@@ -349,22 +343,6 @@ public class RobotContainer {
         new DepotPathAuto_1c(
             drivetrain, shooter, groundIntakeExtension, groundIntakeRoller, climber));
     SmartDashboard.putData("autonomous", autoChooser);
-  }
-
-  private void configureAutoRotation() {
-    rotationChooser.addOption("Normal", drivetrain.setRotationCommand(RotationTarget.NORMAL));
-    rotationChooser.addOption(
-        "FORTY-FIVE", drivetrain.setRotationCommand(RotationTarget.FORTY_FIVE));
-    rotationChooser.addOption(
-        "PASSING_DEPOT_SIDE", drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE));
-    rotationChooser.addOption(
-        "PASSING_OUTPOST_SIDE", drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE));
-    rotationChooser.addOption("TOWER", drivetrain.setRotationCommand(RotationTarget.TOWER));
-    rotationChooser.addOption("HUB", drivetrain.setRotationCommand(RotationTarget.HUB));
-
-    SmartDashboard.putData("Auto Rotation", rotationChooser);
-
-    rotationChooser.onChange((command) -> CommandScheduler.getInstance().schedule(command));
   }
 
   private void configureFuelSim() {
