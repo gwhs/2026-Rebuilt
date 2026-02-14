@@ -27,7 +27,6 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   private final TalonFX motor1;
   private final TalonFX motor2;
 
-
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
   private final StatusSignal<AngularVelocity> motor1Velocity;
@@ -161,6 +160,5 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
     motor2NotConnectedAlert.set(!motor2.isConnected());
-
   }
 }
