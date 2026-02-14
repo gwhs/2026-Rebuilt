@@ -229,6 +229,13 @@ public class RobotContainer {
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        testCamOne =
+            new AprilTagCam(
+                AprilTagCamConstants.TEST_CAM_ONE,
+                AprilTagCamConstants.TEST_CAM_ONE_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
         shooter =
             ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createSim();
