@@ -153,6 +153,10 @@ public class RobotContainer {
           });
 
   private AprilTagCam testCamOne;
+  private AprilTagCam backRightCam;
+  private AprilTagCam backLeftCam;
+  private AprilTagCam frontRightCam;
+  private AprilTagCam frontLeftCam;
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -229,6 +233,12 @@ public class RobotContainer {
         break;
       case SIM:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
+        shooter =
+            ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
+        climber = ClimberSubsystem.createSim();
+        indexer = IndexerSubsystem.createSim();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createSim();
         testCamOne =
             new AprilTagCam(
                 AprilTagCamConstants.TEST_CAM_ONE,
@@ -236,12 +246,36 @@ public class RobotContainer {
                 drivetrain::addVisionMeasurent,
                 () -> drivetrain.getState().Pose,
                 () -> drivetrain.getState().Speeds);
-        shooter =
-            ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
-        climber = ClimberSubsystem.createSim();
-        indexer = IndexerSubsystem.createSim();
-        groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
-        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createSim();
+        backRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_RIGHT_CAM,
+                AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
+        backLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_LEFT_CAM,
+                AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
+
+        frontRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_RIGHT_CAM,
+                AprilTagCamConstants.FRONT_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
+
+        frontLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_LEFT_CAM,
+                AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
         break;
       default:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -395,6 +429,24 @@ public class RobotContainer {
       testCamOne.updatePoseEstim();
       DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
     }
+
+    if (backRightCam != null) {
+      backRightCam.updatePoseEstim();
+      DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+    }
+    if (backLeftCam != null) {
+      backLeftCam.updatePoseEstim();
+      DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+    }
+    if (frontRightCam != null) {
+      frontRightCam.updatePoseEstim();
+      DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+    }
+    if (frontLeftCam != null) {
+      frontLeftCam.updatePoseEstim();
+      DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+    }
+
     // if (objDecCam != null) {
     //   objDecCam.updateDetection();
     // }
