@@ -155,6 +155,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private boolean slewRateLimitAcceleration = false;
   private boolean driveAssist = false;
 
+  private SwerveDriveState cachedState = null;
+
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
@@ -232,8 +234,17 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     m_simNotifier.startPeriodic(kSimLoopPeriod);
   }
 
+  // return most recent state from periodic
+  public SwerveDriveState getCachedState() {
+    if (cachedState == null) {
+      cachedState = getStateCopy();
+    }
+    return cachedState;
+  }
+
   @Override
   public void periodic() {
+    cachedState = getStateCopy();
     /*
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
