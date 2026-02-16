@@ -27,7 +27,7 @@ public class LedSubsystem extends SubsystemBase {
     SmartDashboard.putData("disable", disable());
     SmartDashboard.putData("solid green", solidGreen());
     SmartDashboard.putData("count down", countDown());
-    SmartDashboard.putData(" advance count down", countDown(30, 20));
+    SmartDashboard.putData(" advance count down", countDown(20, 30));
   }
 
   private final RGBWColor white = new RGBWColor(255, 255, 255);
