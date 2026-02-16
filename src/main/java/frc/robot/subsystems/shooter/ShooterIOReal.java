@@ -21,12 +21,12 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 
 public class ShooterIOReal implements ShooterIO {
 
-  private final TalonFX motor1;
-  private final TalonFX motor2;
-  private final TalonFX motor3;
-  private final TalonFX motor4;
-  private final TalonFX motor5;
-  private final TalonFX motor6;
+  private final TalonFX motor1; // Right Front
+  private final TalonFX motor2; // Right Back
+  private final TalonFX motor3; // Middle Front
+  private final TalonFX motor4; // Middle Back
+  private final TalonFX motor5; // Left Front
+  private final TalonFX motor6; // Left Back
 
   private final VelocityVoltage velocityRequest1 = new VelocityVoltage(0).withEnableFOC(true);
   private final VelocityVoltage velocityRequest2 = new VelocityVoltage(0).withEnableFOC(true);
@@ -233,19 +233,19 @@ public class ShooterIOReal implements ShooterIO {
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor1);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor2);
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor3);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor4);
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor5);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;

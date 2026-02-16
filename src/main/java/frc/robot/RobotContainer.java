@@ -65,9 +65,9 @@ public class RobotContainer {
       return Robot.SIM;
     } else if (serialNumber.equals("032414F0")) {
       return Robot.ANEMONE;
-    } else if (serialNumber.equals("03223849")) {
+    } else if (serialNumber.equals("88888")) {
       return Robot.DEV;
-    } else if (serialNumber.equals("1234")) {
+    } else if (serialNumber.equals("03223849")) {
       return Robot.COMP;
     } else if (serialNumber.equals("03282BB2")) {
       return Robot.KITBOT;
@@ -452,7 +452,7 @@ public class RobotContainer {
   public Command shootHub() {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.HUB),
-            shooter.preSpin(),
+            shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
             Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(
