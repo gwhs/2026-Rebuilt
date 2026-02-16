@@ -58,7 +58,7 @@ public class LedSubsystem extends SubsystemBase {
           Commands.waitSeconds(1);
         }
       }
-    )
+    );
   }
 
   public Command disable() {
