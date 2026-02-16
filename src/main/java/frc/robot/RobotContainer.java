@@ -451,7 +451,6 @@ public class RobotContainer {
 
   public Command shootHub() {
     return Commands.parallel(
-<<<<<<< Updated upstream
             drivetrain.setRotationCommand(RotationTarget.HUB),
             shooter.preSpin(),
             drivetrain.setSlowMode(0.5, 1),
@@ -464,18 +463,6 @@ public class RobotContainer {
                         .or(controller.leftTrigger()))
                 .repeatedly())
         .withName("Shoot Hub");
-=======
-        drivetrain.setRotationCommand(RotationTarget.HUB),
-        shooter.cruiseControl(),
-        Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-            .onlyWhile(
-                shooter
-                    .isAtGoalVelocity_Hub
-                    .and(drivetrain.isFacingGoal)
-                    .and 
-                    .or(controller.leftTrigger()))
-            .repeatedly());
->>>>>>> Stashed changes
   }
 
   public Command shootDepot() {
