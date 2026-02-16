@@ -93,20 +93,19 @@ public class LedSubsystem extends SubsystemBase {
         solidRed()); // 0
   }
 
-  public Command countDown(int startIndex, int endIndex){
+  public Command countDown(int startIndex, int endIndex) {
     return Commands.sequence(
-      setColor(startIndex, endIndex, green),
-      Commands.waitSeconds(1),
-      setColor(startIndex + ((endIndex - startIndex) / 5), endIndex, disable),
-      Commands.waitSeconds(1),
-      setColor(startIndex + (2 * (endIndex - startIndex) / 5), endIndex, disable),
-      Commands.waitSeconds(1),
-      setColor(startIndex + (3 * (endIndex - startIndex) / 5), endIndex, disable),
-      Commands.waitSeconds(1),
-      setColor(startIndex + (4 * (endIndex - startIndex) / 5), endIndex, disable),
-      Commands.waitSeconds(1),
-      setColor(startIndex, endIndex, red)
-    );
+        setColor(startIndex, endIndex, green),
+        Commands.waitSeconds(1),
+        setColor(startIndex + (4 * (endIndex - startIndex) / 5), endIndex, disable),
+        Commands.waitSeconds(1),
+        setColor(startIndex + (3 * (endIndex - startIndex) / 5), endIndex, disable),
+        Commands.waitSeconds(1),
+        setColor(startIndex + (2 * (endIndex - startIndex) / 5), endIndex, disable),
+        Commands.waitSeconds(1),
+        setColor(startIndex + ((endIndex - startIndex) / 5), endIndex, disable),
+        Commands.waitSeconds(1),
+        setColor(startIndex, endIndex, red));
   }
   // 0 - 19, 20 - 30
 }
