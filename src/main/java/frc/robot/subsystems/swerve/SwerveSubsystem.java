@@ -294,7 +294,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return Commands.run(
         () -> {
           this.setControl(driveBrake);
-        });
+        }).withName("SwerveX");
   }
 
   public Command setSlowMode(boolean enable) {
@@ -303,7 +303,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
           this.slowMode = enable;
           this.translationSlowFactor = defualtSlowFactor;
           this.rotationalSlowFactor = defualtSlowFactor;
-        });
+        }).withName("Slow Mode: " + enable);
   }
 
   public Command setSlowMode(double translationSlowFactor, double rotationalSlowFactor) {
@@ -312,7 +312,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
           this.slowMode = true;
           this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
           this.rotationalSlowFactor = MathUtil.clamp(rotationalSlowFactor, 0, 1);
-        });
+        }).withName("Slow Mode: " + translationSlowFactor + ", " + rotationalSlowFactor);
   }
 
   public boolean isSlewRateLimitAcceleration() {
@@ -324,7 +324,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return Commands.runOnce(
         () -> {
           this.shootingRange = enable;
-        });
+        }).withName("Set Shooting Range: " + enable);
   }
 
   public Command setLimitAcceleration(boolean enable) {
@@ -332,7 +332,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return Commands.runOnce(
         () -> {
           this.slewRateLimitAcceleration = enable;
-        });
+        }).withName("Set Limit Acceleration: " + enable);
   }
 
   public double getTranslationSlowFactor() {
@@ -370,7 +370,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return Commands.runOnce(
         () -> {
           this.rotationTarget = rotationTarget;
-        });
+        }).withName("Set Rotation: " + rotationTarget.name());
   }
 
   public RotationTarget getRotationTarget() {
@@ -437,7 +437,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         () -> {
           return 0.0;
         },
-        this.controller);
+        this.controller).withName("Drive to Pose");
   }
 
   public Command temporarilyDisableRotation() {
@@ -448,7 +448,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         .finallyDo(
             () -> {
               this.disableAutoRotate = false;
-            });
+            }).withName("Disable AutoRotation");
   }
 
   public void addVisionMeasurent(AprilTagHelp helper) {
