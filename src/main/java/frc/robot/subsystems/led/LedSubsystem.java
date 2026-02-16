@@ -27,7 +27,7 @@ public class LedSubsystem extends SubsystemBase {
     SmartDashboard.putData("disable", disable());
     SmartDashboard.putData("solid green", solidGreen());
     SmartDashboard.putData("count down", countDown());
-    SmartDashboard.putData(" advance count down", countDown(20, 30, 3));
+    SmartDashboard.putData(" advance count down", countDown(20, 30));
   }
 
   private final RGBWColor white = new RGBWColor(255, 255, 255);
@@ -46,19 +46,6 @@ public class LedSubsystem extends SubsystemBase {
             candle.setControl(solidColor);
           }
         });
-  }
-
-  public Command setColor(int startIndex, int endIndex, RGBWColor color, int repeat)
-  {
-    return runOnce(
-      () -> {
-        for (int i = repeat; i > 0; i++)
-        {
-          setColor(endIndex - (startIndex / i), endIndex, color);
-          Commands.waitSeconds(1);
-        }
-      }
-    );
   }
 
   public Command disable() {
@@ -93,25 +80,33 @@ public class LedSubsystem extends SubsystemBase {
 
   public Command countDown() {
     return Commands.sequence(
-        solidGreen(), //5
+        solidGreen(), // 5
         Commands.waitSeconds(1),
-        setColor(28, LedConstants.IndexMax, disable), //4
+        setColor(28, LedConstants.IndexMax, disable), // 4
         Commands.waitSeconds(1),
-        setColor(21, LedConstants.IndexMax, disable), //3
+        setColor(21, LedConstants.IndexMax, disable), // 3
         Commands.waitSeconds(1),
-        setColor(14, LedConstants.IndexMax, disable), //2
+        setColor(14, LedConstants.IndexMax, disable), // 2
         Commands.waitSeconds(1),
-        setColor(7, LedConstants.IndexMax, disable), //1
+        setColor(7, LedConstants.IndexMax, disable), // 1
         Commands.waitSeconds(1),
-        solidRed()); //0
+        solidRed()); // 0
   }
 
-  public Command countDown(int startindex, int endIndex, int seconds)
-  {
+  public Command countDown(int startIndex, int endIndex){
     return Commands.sequence(
-      solidGreen(),
-      setColor(startindex, endIndex, disable, seconds)
-    );
+      setColor(startIndex, endIndex, green),
+      Commands.waitSeconds(1),
+      setColor(startIndex + ((endIndex - startIndex) / 5), endIndex, disable),
+      Commands.waitSeconds(1),
+      setColor(startIndex + (2 * (endIndex - startIndex) / 5), endIndex, disable),
+      Commands.waitSeconds(1),
+      setColor(startIndex + (3 * (endIndex - startIndex) / 5), endIndex, disable),
+      Commands.waitSeconds(1),
+      setColor(startIndex + (4 * (endIndex - startIndex) / 5), endIndex, disable),
+      Commands.waitSeconds(1),
+      setColor(startIndex, endIndex, red)
+    )
   }
   // 0 - 19, 20 - 30
 }
