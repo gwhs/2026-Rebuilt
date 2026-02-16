@@ -292,27 +292,30 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public Command swerveX() {
     return Commands.run(
-        () -> {
-          this.setControl(driveBrake);
-        });
+            () -> {
+              this.setControl(driveBrake);
+            })
+        .withName("SwerveX");
   }
 
   public Command setSlowMode(boolean enable) {
     return Commands.runOnce(
-        () -> {
-          this.slowMode = enable;
-          this.translationSlowFactor = defualtSlowFactor;
-          this.rotationalSlowFactor = defualtSlowFactor;
-        });
+            () -> {
+              this.slowMode = enable;
+              this.translationSlowFactor = defualtSlowFactor;
+              this.rotationalSlowFactor = defualtSlowFactor;
+            })
+        .withName("Slow Mode: " + enable);
   }
 
   public Command setSlowMode(double translationSlowFactor, double rotationalSlowFactor) {
     return Commands.runOnce(
-        () -> {
-          this.slowMode = true;
-          this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
-          this.rotationalSlowFactor = MathUtil.clamp(rotationalSlowFactor, 0, 1);
-        });
+            () -> {
+              this.slowMode = true;
+              this.translationSlowFactor = MathUtil.clamp(translationSlowFactor, 0, 1);
+              this.rotationalSlowFactor = MathUtil.clamp(rotationalSlowFactor, 0, 1);
+            })
+        .withName("Slow Mode: " + translationSlowFactor + ", " + rotationalSlowFactor);
   }
 
   public boolean isSlewRateLimitAcceleration() {
@@ -322,17 +325,19 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Command setShootingRange(boolean enable) {
 
     return Commands.runOnce(
-        () -> {
-          this.shootingRange = enable;
-        });
+            () -> {
+              this.shootingRange = enable;
+            })
+        .withName("Set Shooting Range: " + enable);
   }
 
   public Command setLimitAcceleration(boolean enable) {
 
     return Commands.runOnce(
-        () -> {
-          this.slewRateLimitAcceleration = enable;
-        });
+            () -> {
+              this.slewRateLimitAcceleration = enable;
+            })
+        .withName("Set Limit Acceleration: " + enable);
   }
 
   public double getTranslationSlowFactor() {
@@ -368,9 +373,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public Command setRotationCommand(RotationTarget rotationTarget) {
     return Commands.runOnce(
-        () -> {
-          this.rotationTarget = rotationTarget;
-        });
+            () -> {
+              this.rotationTarget = rotationTarget;
+            })
+        .withName("Set Rotation: " + rotationTarget.name());
   }
 
   public RotationTarget getRotationTarget() {
@@ -432,12 +438,13 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public Command driveToPose(Supplier<Pose2d> pose) {
     return new AlignToPose(
-        pose,
-        this,
-        () -> {
-          return 0.0;
-        },
-        this.controller);
+            pose,
+            this,
+            () -> {
+              return 0.0;
+            },
+            this.controller)
+        .withName("Drive to Pose");
   }
 
   public Command temporarilyDisableRotation() {
@@ -448,7 +455,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         .finallyDo(
             () -> {
               this.disableAutoRotate = false;
-            });
+            })
+        .withName("Disable AutoRotation");
   }
 
   public void addVisionMeasurent(AprilTagHelp helper) {
