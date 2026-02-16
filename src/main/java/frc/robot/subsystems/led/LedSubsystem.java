@@ -106,7 +106,7 @@ public class LedSubsystem extends SubsystemBase {
       setColor(startIndex + (4 * (endIndex - startIndex) / 5), endIndex, disable),
       Commands.waitSeconds(1),
       setColor(startIndex, endIndex, red)
-    )
+    );
   }
   // 0 - 19, 20 - 30
 }
