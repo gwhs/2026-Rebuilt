@@ -118,4 +118,14 @@ public class ShooterSubsystem extends SubsystemBase {
   public double getVelocity() {
     return shooterIO.getVelocity();
   }
+
+
+  public Command stopShooter() {
+	return this.runOnce(() -> {
+	  runVoltage(0.0);
+	  velocityGoal = 0.0;
+
+	});
+
+  }
 }

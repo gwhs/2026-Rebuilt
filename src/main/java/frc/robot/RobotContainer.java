@@ -442,7 +442,7 @@ public class RobotContainer {
 
   private Command disableHandler() {
     return Commands.sequence(
-            shooter.runVoltage(0.0),
+            shooter.stopShooter(),
             drivetrain.setRotationCommand(RotationTarget.NORMAL),
             climber.runVoltage(0))
         .ignoringDisable(true)
@@ -530,7 +530,7 @@ public class RobotContainer {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.NORMAL),
             drivetrain.setSlowMode(false),
-            shooter.runVoltage(0))
+            shooter.stopShooter())
         .withName("Stop Shooting");
   }
 }
