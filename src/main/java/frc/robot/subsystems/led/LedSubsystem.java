@@ -27,6 +27,7 @@ public class LedSubsystem extends SubsystemBase {
     SmartDashboard.putData("disable", disable());
     SmartDashboard.putData("solid green", solidGreen());
     SmartDashboard.putData("count down", countDown());
+    SmartDashboard.putData(" advance count down", countDown(20, 30, 3));
   }
 
   private final RGBWColor white = new RGBWColor(255, 255, 255);
@@ -45,6 +46,19 @@ public class LedSubsystem extends SubsystemBase {
             candle.setControl(solidColor);
           }
         });
+  }
+
+  public Command setColor(int startIndex, int endIndex, RGBWColor color, int repeat)
+  {
+    return runOnce(
+      () -> {
+        for (int i = repeat; i > 0; i++)
+        {
+          setColor(endIndex - (startIndex / i), endIndex, color);
+          Commands.waitSeconds(1);
+        }
+      }
+    )
   }
 
   public Command disable() {
@@ -79,16 +93,25 @@ public class LedSubsystem extends SubsystemBase {
 
   public Command countDown() {
     return Commands.sequence(
-        solidGreen(),
+        solidGreen(), //5
         Commands.waitSeconds(1),
-        setColor(28, LedConstants.IndexMax, disable),
+        setColor(28, LedConstants.IndexMax, disable), //4
         Commands.waitSeconds(1),
-        setColor(21, LedConstants.IndexMax, disable),
+        setColor(21, LedConstants.IndexMax, disable), //3
         Commands.waitSeconds(1),
-        setColor(14, LedConstants.IndexMax, disable),
+        setColor(14, LedConstants.IndexMax, disable), //2
         Commands.waitSeconds(1),
-        setColor(7, LedConstants.IndexMax, disable),
+        setColor(7, LedConstants.IndexMax, disable), //1
         Commands.waitSeconds(1),
-        solidRed());
+        solidRed()); //0
   }
+
+  public Command countDown(int startindex, int endIndex, int seconds)
+  {
+    return Commands.sequence(
+      solidGreen(),
+      setColor(startindex, endIndex, disable, seconds)
+    );
+  }
+  // 0 - 19, 20 - 30
 }
