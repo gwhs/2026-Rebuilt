@@ -50,7 +50,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
                   shooter.cruiseControl(),
                   EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
           // TODO: Climb
-          climber.runPosition(ClimberConstants.CLIMB).alongWith(shooter.runVoltage(0)));
+          climber.runPosition(ClimberConstants.CLIMB).alongWith(shooter.stopShooter()));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());

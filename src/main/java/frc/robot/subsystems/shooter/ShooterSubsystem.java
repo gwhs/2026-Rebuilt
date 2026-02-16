@@ -57,14 +57,14 @@ public class ShooterSubsystem extends SubsystemBase {
     return this.run(
         () -> {
           runShooterWithClamp(rotationsPerSecond);
-        });
+        }).withName("Run Velocity");
   }
 
   public Command runVoltage(double voltage) {
     return this.runOnce(
         () -> {
           shooterIO.runVoltage(voltage);
-        });
+        }).withName("Run Voltage");
   }
 
   public Command cruiseControl() {
@@ -76,7 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
           double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
 
           runShooterWithClamp(rotationsPerSecond);
-        });
+        }).withName("Cruise Control");
   }
 
   private void runShooterWithClamp(double rps) {
@@ -100,7 +100,7 @@ public class ShooterSubsystem extends SubsystemBase {
           runVoltage(0);
 
           // does not actually pre-spin
-        });
+        }).withName("Pre Spin");
   }
 
   @Override
@@ -122,8 +122,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command stopShooter() {
     return this.runOnce(
         () -> {
-          runVoltage(0.0);
+          shooterIO.runVoltage(0.0);
           velocityGoal = 0.0;
-        });
+        }).withName("Stop Shooter");
   }
 }
