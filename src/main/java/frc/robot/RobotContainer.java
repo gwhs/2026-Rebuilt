@@ -189,8 +189,8 @@ public class RobotContainer {
                 AprilTagCamConstants.TEST_CAM_ONE,
                 AprilTagCamConstants.TEST_CAM_ONE_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
 
         break;
       case ANEMONE:
@@ -234,8 +234,8 @@ public class RobotContainer {
                 AprilTagCamConstants.TEST_CAM_ONE,
                 AprilTagCamConstants.TEST_CAM_ONE_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         shooter =
             ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createSim();
@@ -265,7 +265,8 @@ public class RobotContainer {
 
     // objDecCam =
     //     new ObjectDetectionCam(
-    //         "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
+    //         "cam2026_01", ObjectDetectionConstants.robotToCam, () ->
+    // drivetrain.getCachedState().Pose);
 
     configureBindings();
     configureAutonomous();
@@ -373,10 +374,11 @@ public class RobotContainer {
         0.660, // from left to right
         0.711, // from front to back
         0.127, // from floor to top of bumpers
-        () -> drivetrain.getState().Pose, // Supplier<Pose2d> of robot pose
+        () -> drivetrain.getCachedState().Pose, // Supplier<Pose2d> of robot pose
         () ->
             ChassisSpeeds.fromRobotRelativeSpeeds(
-                drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation()));
+                drivetrain.getCachedState().Speeds,
+                drivetrain.getCachedState().Pose.getRotation()));
     // Supplier<ChassisSpeeds> of field-centric chassis speeds
 
     // Register an intake to remove fuel from the field as a rectangular bounding box

@@ -106,28 +106,35 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   private final SwerveRequest.SwerveDriveBrake driveBrake = new SwerveRequest.SwerveDriveBrake();
 
-  public Trigger isInAllianceZone = new Trigger(() -> EagleUtil.isInAllianceZone(getState().Pose));
+  public Trigger isInAllianceZone =
+      new Trigger(() -> EagleUtil.isInAllianceZone(getCachedState().Pose));
   public Trigger isInOpponentAllianceZone =
-      new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getState().Pose));
-  public Trigger isInNeutralZone = new Trigger(() -> EagleUtil.isInNeutralZone(getState().Pose));
+      new Trigger(() -> EagleUtil.isInOpponentAllianceZone(getCachedState().Pose));
+  public Trigger isInNeutralZone =
+      new Trigger(() -> EagleUtil.isInNeutralZone(getCachedState().Pose));
 
-  public Trigger isOnDepotSide = new Trigger(() -> EagleUtil.isOnDepotSide(getState().Pose));
-  public Trigger isOnOutpostSide = new Trigger(() -> EagleUtil.isOnOutpostSide(getState().Pose));
+  public Trigger isOnDepotSide = new Trigger(() -> EagleUtil.isOnDepotSide(getCachedState().Pose));
+  public Trigger isOnOutpostSide =
+      new Trigger(() -> EagleUtil.isOnOutpostSide(getCachedState().Pose));
 
-  public Trigger isOnBump = new Trigger(() -> EagleUtil.isOnBump(getState().Pose));
+  public Trigger isOnBump = new Trigger(() -> EagleUtil.isOnBump(getCachedState().Pose));
 
   public Trigger isFacingGoal =
       new Trigger(
-          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 5));
+          () ->
+              MathUtil.isNear(
+                  getGoalHeading(), getCachedState().Pose.getRotation().getDegrees(), 5));
   public Trigger isFacingGoalPassing =
       new Trigger(
-          () -> MathUtil.isNear(getGoalHeading(), getState().Pose.getRotation().getDegrees(), 7.5));
+          () ->
+              MathUtil.isNear(
+                  getGoalHeading(), getCachedState().Pose.getRotation().getDegrees(), 7.5));
   public Trigger isInShootingRange =
       new Trigger(
           () -> {
             return MathUtil.isNear(
                 SwerveSubsystemConstants.HUB_RADIUS,
-                getState()
+                getCachedState()
                     .Pose
                     .getTranslation()
                     .getDistance(
@@ -184,9 +191,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     try {
       var config = RobotConfig.fromGUISettings();
       AutoBuilder.configure(
-          () -> getState().Pose, // Supplier of current robot pose
+          () -> getCachedState().Pose, // Supplier of current robot pose
           this::resetPose, // Consumer for seeding pose against auto
-          () -> getState().Speeds, // Supplier of current robot speeds
+          () -> getCachedState().Speeds, // Supplier of current robot speeds
           // Consumer of ChassisSpeeds and feedforwards to drive the robot
           (speeds, feedforwards) ->
               setControl(
@@ -211,11 +218,11 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   }
 
   public Supplier<Pose2d> poseSupplier() {
-    return () -> getState().Pose;
+    return () -> getCachedState().Pose;
   }
 
   public Supplier<ChassisSpeeds> speedSupplier() {
-    return () -> getState().Speeds;
+    return () -> getCachedState().Speeds;
   }
 
   private void startSimThread() {
@@ -275,7 +282,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
     DogLog.log(
         "Distance to hub",
-        getState()
+        getCachedState()
             .Pose
             .getTranslation()
             .getDistance(
@@ -399,40 +406,40 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case NORMAL:
         return 0;
       case PASSING_DEPOT_SIDE:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
+        return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getVirtualTarget());
       case PASSING_OUTPOST_SIDE:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
+        return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getVirtualTarget());
       case TOWER:
         return 0;
       case HUB:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
+        return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getVirtualTarget());
       default:
         return 0;
     }
   }
 
   public Pose2d getVirtualTarget() {
-    Translation2d tar = EagleUtil.getRobotTarget(getState().Pose);
-    Pose2d shotPos = EagleUtil.getShooterPos(getState().Pose);
-    Pose2d target = EagleUtil.calcAimpoint(getState().Pose, getPose(1), tar);
+    Translation2d tar = EagleUtil.getRobotTarget(getCachedState().Pose);
+    Pose2d shotPos = EagleUtil.getShooterPos(getCachedState().Pose);
+    Pose2d target = EagleUtil.calcAimpoint(getCachedState().Pose, getPose(1), tar);
     double dist = EagleUtil.getRobotTargetDistance(shotPos, target);
     double t;
     for (int i = 0; i < 6; i++) {
       t = EagleUtil.getFuelTimeInAir(dist);
-      target = EagleUtil.calcAimpoint(getState().Pose, getPose(t), tar);
+      target = EagleUtil.calcAimpoint(getCachedState().Pose, getPose(t), tar);
       dist = EagleUtil.getRobotTargetDistance(shotPos, target);
     }
     return target;
   }
 
   public boolean isDrivingToFuel() {
-    ChassisSpeeds currRobotSpeed = getState().Speeds;
+    ChassisSpeeds currRobotSpeed = getCachedState().Speeds;
     return currRobotSpeed.vxMetersPerSecond > 0.1;
   }
 
   public Pose2d getPose(double timeSeconds) {
-    Pose2d currPose = getState().Pose;
-    ChassisSpeeds speeds = getState().Speeds;
+    Pose2d currPose = getCachedState().Pose;
+    ChassisSpeeds speeds = getCachedState().Speeds;
     double velocityX = speeds.vxMetersPerSecond;
     double velocityY = speeds.vyMetersPerSecond;
 
