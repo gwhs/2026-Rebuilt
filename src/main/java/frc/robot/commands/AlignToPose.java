@@ -105,12 +105,14 @@ public class AlignToPose extends Command {
     Pose2d tp = targetPose.get();
     ChassisSpeeds currentSpeed =
         ChassisSpeeds.fromRobotRelativeSpeeds(
-            drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
+            drivetrain.getCachedState().Speeds, drivetrain.getCachedState().Pose.getRotation());
 
     double predicted_X =
-        (tp.getX() - drivetrain.getState().Pose.getX()) * 0.3 + drivetrain.getState().Pose.getX();
+        (tp.getX() - drivetrain.getCachedState().Pose.getX()) * 0.3
+            + drivetrain.getCachedState().Pose.getX();
     double predicted_Y =
-        (tp.getY() - drivetrain.getState().Pose.getY()) * 0.3 + drivetrain.getState().Pose.getY();
+        (tp.getY() - drivetrain.getCachedState().Pose.getY()) * 0.3
+            + drivetrain.getCachedState().Pose.getY();
 
     PID_X.reset(predicted_X, currentSpeed.vxMetersPerSecond * 0.4);
     PID_Y.reset(predicted_Y, currentSpeed.vyMetersPerSecond * 0.4);
@@ -123,7 +125,7 @@ public class AlignToPose extends Command {
   @Override
   public void execute() {
     Pose2d currPose;
-    currPose = drivetrain.getState().Pose;
+    currPose = drivetrain.getCachedState().Pose;
     double currX = currPose.getX();
     double currY = currPose.getY();
     Double currRotation = currPose.getRotation().getDegrees();
