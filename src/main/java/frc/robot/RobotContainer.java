@@ -343,6 +343,8 @@ public class RobotContainer {
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
+
+    controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
   }
 
   public Command getAutonomousCommand() {
@@ -534,5 +536,13 @@ public class RobotContainer {
             drivetrain.setSlowMode(false),
             shooter.stopShooter())
         .withName("Stop Shooting");
+  }
+
+  public Command topoff() {
+    return Commands.parallel(
+        indexer.index(),
+        groundIntakeExtension.extend(),
+        groundIntakeRoller.startIntake(),
+        shooter.runVelocity(10));
   }
 }
