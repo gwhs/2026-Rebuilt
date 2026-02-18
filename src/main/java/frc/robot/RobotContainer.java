@@ -28,6 +28,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
+import frc.robot.commands.autonomous.SuperPass;
 import frc.robot.subsystems.aprilTagCam.AprilTagCam;
 import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -363,6 +364,9 @@ public class RobotContainer {
         "Depot 1 Cycle",
         new DepotPathAuto_1c(
             drivetrain, shooter, groundIntakeExtension, groundIntakeRoller, climber));
+    autoChooser.addOption(
+        "Super Pass",
+        new SuperPass(drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
