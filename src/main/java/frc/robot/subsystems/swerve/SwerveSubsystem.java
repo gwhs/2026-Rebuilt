@@ -155,6 +155,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private boolean slewRateLimitAcceleration = false;
   private boolean driveAssist = false;
 
+  public Pose2d cachedVirtualTarget = null; 
+
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
@@ -230,6 +232,13 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
               updateSimState(deltaTime, RobotController.getBatteryVoltage());
             });
     m_simNotifier.startPeriodic(kSimLoopPeriod);
+  }
+
+  public Pose2d getCachedVirtualTarget() { 
+    if (cachedVirtualTarget == null) { 
+      cachedVirtualTarget = getVirtualTarget();
+    }
+    return cachedVirtualTarget;
   }
 
   @Override
