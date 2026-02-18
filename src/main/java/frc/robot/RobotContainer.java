@@ -41,6 +41,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import frc.robot.subsystems.swerve.TunerConstants_Mk4i;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
+import frc.robot.subsystems.swerve.TunerConstants_mk5n;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -168,7 +169,7 @@ public class RobotContainer {
 
     switch (getRobot()) {
       case COMP:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        drivetrain = TunerConstants_mk5n.createDrivetrain();
         shooter =
             ShooterSubsystem.createReal(
                 rioCanbus,
@@ -228,14 +229,7 @@ public class RobotContainer {
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         break;
       case SIM:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
-        testCamOne =
-            new AprilTagCam(
-                AprilTagCamConstants.TEST_CAM_ONE,
-                AprilTagCamConstants.TEST_CAM_ONE_LOCATION,
-                drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+        drivetrain = TunerConstants_mk5n.createDrivetrain();
         shooter =
             ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createSim();
@@ -244,7 +238,7 @@ public class RobotContainer {
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createSim();
         break;
       default:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        drivetrain = TunerConstants_mk5n.createDrivetrain();
         shooter =
             ShooterSubsystem.createReal(
                 rioCanbus,
