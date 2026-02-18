@@ -161,7 +161,7 @@ public class EagleUtil {
                     Pose2d shotPos = EagleUtil.getShooterPos(drivetrain.getState().Pose);
                     Translation3d initPosition =
                         new Translation3d(shotPos.getX(), shotPos.getY(), 0.635);
-                    Pose2d tar = drivetrain.getVirtualTarget();
+                    Pose2d tar = drivetrain.getCachedVirtualTarget();
                     double dist = EagleUtil.getRobotTargetDistance(shotPos, tar);
                     double t = EagleUtil.getFuelTimeInAir(dist);
                     double v = EagleUtil.getShooterVelocity(dist);

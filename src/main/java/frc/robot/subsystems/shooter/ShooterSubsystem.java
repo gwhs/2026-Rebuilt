@@ -55,53 +55,61 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public Command runVelocity(double rotationsPerSecond) {
     return this.run(
-        () -> {
-          velocityGoal = rotationsPerSecond;
-
-          if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
-            shooterIO.runVoltage(12);
-          } else {
-            shooterIO.runVelocity(rotationsPerSecond);
-          }
-        });
+            () -> {
+              runShooterWithClamp(rotationsPerSecond, rotationsPerSecond);
+            })
+        .withName("Run Velocity");
   }
 
   public Command runVoltage(double voltage) {
     return this.runOnce(
-        () -> {
-          shooterIO.runVoltage(voltage);
-        });
+            () -> {
+              shooterIO.runVoltage(voltage);
+            })
+        .withName("Run Voltage");
   }
 
   public Command cruiseControl() {
     return this.run(
-        () -> {
-          Pose2d robotPose = robotPoseSupplier.get();
-          Pose2d targetPose = robotTargetSupplier.get();
-          double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
-          double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
+            () -> {
+              Pose2d robotPose = robotPoseSupplier.get();
+              Pose2d targetPose = robotTargetSupplier.get();
+              double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+              double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
+              double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
 
-          velocityGoal = rotationsPerSecond;
+              runShooterWithClamp(frontRotationsPerSecond, backRotationsPerSecond);
+            })
+        .withName("Cruise Control");
+  }
 
-          if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
-            shooterIO.runVoltage(12);
-          } else {
-            shooterIO.runVelocity(rotationsPerSecond);
-          }
-        });
+  private void runShooterWithClamp(double frontrps, double backrps) {
+    double clampedFrontRps =
+        Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, frontrps));
+    double clampedBackRps =
+        Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, backrps));
+    velocityGoal = clampedFrontRps;
+
+    if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
+      shooterIO.runVoltage(12);
+    } else {
+      shooterIO.runVelocity(clampedFrontRps, clampedBackRps);
+    }
   }
 
   public Command preSpin() {
     return this.run(
-        () -> {
-          Pose2d robotPose = robotPoseSupplier.get();
-          Pose2d targetPose = robotTargetSupplier.get();
-          double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
-          double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
-          runVoltage(0);
+            () -> {
+              Pose2d robotPose = robotPoseSupplier.get();
+              Pose2d targetPose = robotTargetSupplier.get();
+              double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+              double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
+              double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
+              runVoltage(0);
 
-          // does not actually pre-spin
-        });
+              // does not actually pre-spin
+            })
+        .withName("Pre Spin");
   }
 
   @Override
@@ -118,5 +126,14 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public double getVelocity() {
     return shooterIO.getVelocity();
+  }
+
+  public Command stopShooter() {
+    return this.runOnce(
+            () -> {
+              shooterIO.runVoltage(0.0);
+              velocityGoal = 0.0;
+            })
+        .withName("Stop Shooter");
   }
 }
