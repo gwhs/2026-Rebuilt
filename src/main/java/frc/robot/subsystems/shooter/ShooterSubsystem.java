@@ -56,7 +56,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command runVelocity(double rotationsPerSecond) {
     return this.run(
             () -> {
-              runShooterWithClamp(rotationsPerSecond);
+              runShooterWithClamp(rotationsPerSecond, rotationsPerSecond);
             })
         .withName("Run Velocity");
   }
@@ -75,21 +75,25 @@ public class ShooterSubsystem extends SubsystemBase {
               Pose2d robotPose = robotPoseSupplier.get();
               Pose2d targetPose = robotTargetSupplier.get();
               double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
-              double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
+              double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
+              double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
 
-              runShooterWithClamp(rotationsPerSecond);
+              runShooterWithClamp(frontRotationsPerSecond, backRotationsPerSecond);
             })
         .withName("Cruise Control");
   }
 
-  private void runShooterWithClamp(double rps) {
-    double clampedRps = Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, rps));
-    velocityGoal = clampedRps;
+  private void runShooterWithClamp(double frontrps, double backrps) {
+    double clampedFrontRps =
+        Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, frontrps));
+    double clampedBackRps =
+        Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, backrps));
+    velocityGoal = clampedFrontRps;
 
     if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
       shooterIO.runVoltage(12);
     } else {
-      shooterIO.runVelocity(clampedRps);
+      shooterIO.runVelocity(clampedFrontRps, clampedBackRps);
     }
   }
 
@@ -99,7 +103,8 @@ public class ShooterSubsystem extends SubsystemBase {
               Pose2d robotPose = robotPoseSupplier.get();
               Pose2d targetPose = robotTargetSupplier.get();
               double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
-              double rotationsPerSecond = ShotCalculator.getShootVelocity(robotTargetDist);
+              double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
+              double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
               runVoltage(0);
 
               // does not actually pre-spin
