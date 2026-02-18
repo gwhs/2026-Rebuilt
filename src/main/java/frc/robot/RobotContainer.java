@@ -343,7 +343,11 @@ public class RobotContainer {
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
     // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
     controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
-    controller.povDown().negate().and(controller.rightTrigger().negate()).onTrue(shooter.stopShooter());
+    controller
+        .povDown()
+        .negate()
+        .and(controller.rightTrigger().negate())
+        .onTrue(shooter.stopShooter());
 
     controller.x().whileTrue(defenseMode());
   }
@@ -540,10 +544,10 @@ public class RobotContainer {
 
   public Command topoff() {
     return Commands.parallel(
-        indexer.index(),
-        groundIntakeExtension.extend(),
-        groundIntakeRoller.startIntake(),
-        shooter.runVelocity(10))
+            indexer.index(),
+            groundIntakeExtension.extend(),
+            groundIntakeRoller.startIntake(),
+            shooter.runVelocity(10))
         .withName("Topoff");
   }
 }
