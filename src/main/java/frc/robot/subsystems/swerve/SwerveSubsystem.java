@@ -236,6 +236,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   @Override
   public void periodic() {
+    cachedVirtualTarget = getVirtualTarget();
     /*
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
