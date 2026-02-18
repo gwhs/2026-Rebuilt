@@ -155,7 +155,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private boolean slewRateLimitAcceleration = false;
   private boolean driveAssist = false;
 
-  public Pose2d cachedVirtualTarget = null; 
+  public Pose2d cachedVirtualTarget = null;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -232,13 +232,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
               updateSimState(deltaTime, RobotController.getBatteryVoltage());
             });
     m_simNotifier.startPeriodic(kSimLoopPeriod);
-  }
-
-  public Pose2d getCachedVirtualTarget() { 
-    if (cachedVirtualTarget == null) { 
-      cachedVirtualTarget = getCachedVirtualTarget();
-    }
-    return cachedVirtualTarget;
   }
 
   @Override
@@ -409,7 +402,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
   }
 
-  public Pose2d getCachedVirtualTarget() {
+  public Pose2d getVirtualTarget() {
     Translation2d tar = EagleUtil.getRobotTarget(getState().Pose);
     Pose2d shotPos = EagleUtil.getShooterPos(getState().Pose);
     Pose2d target = EagleUtil.calcAimpoint(getState().Pose, getPose(1), tar);
@@ -475,5 +468,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     double timestamp = helper.timestamp;
 
     super.addVisionMeasurement(pos, timestamp, sd);
+  }
+
+  public Pose2d getCachedVirtualTarget() {
+    if (cachedVirtualTarget == null) {
+      cachedVirtualTarget = getVirtualTarget();
+    }
+    return cachedVirtualTarget;
   }
 }
