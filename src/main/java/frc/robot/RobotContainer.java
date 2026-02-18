@@ -305,6 +305,7 @@ public class RobotContainer {
     drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
     controller.b().whileTrue(agitateGroundIntake());
+
     controller
         .rightTrigger()
         .and(
@@ -340,7 +341,9 @@ public class RobotContainer {
 
     controller.povDown().whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
+    // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
     controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
+    controller.povDown().negate().and(controller.rightTrigger().negate()).onTrue(shooter.stopShooter());
 
     controller.x().whileTrue(defenseMode());
   }
@@ -540,6 +543,7 @@ public class RobotContainer {
         indexer.index(),
         groundIntakeExtension.extend(),
         groundIntakeRoller.startIntake(),
-        shooter.runVelocity(10));
+        shooter.runVelocity(10))
+        .withName("Topoff");
   }
 }
