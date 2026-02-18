@@ -236,7 +236,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public Pose2d getCachedVirtualTarget() { 
     if (cachedVirtualTarget == null) { 
-      cachedVirtualTarget = getVirtualTarget();
+      cachedVirtualTarget = getCachedVirtualTarget();
     }
     return cachedVirtualTarget;
   }
@@ -294,7 +294,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Drivetrain/Facing Goal", isFacingGoal.getAsBoolean());
     DogLog.log("Drivetrain/Facing Passing Goal", isFacingGoalPassing.getAsBoolean());
 
-    DogLog.log("Drivetrain/predictedTarget", getVirtualTarget());
+    DogLog.log("Drivetrain/predictedTarget", getCachedVirtualTarget());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -397,19 +397,19 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case NORMAL:
         return 0;
       case PASSING_DEPOT_SIDE:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getCachedVirtualTarget());
       case PASSING_OUTPOST_SIDE:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getCachedVirtualTarget());
       case TOWER:
         return 0;
       case HUB:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getCachedVirtualTarget());
       default:
         return 0;
     }
   }
 
-  public Pose2d getVirtualTarget() {
+  public Pose2d getCachedVirtualTarget() {
     Translation2d tar = EagleUtil.getRobotTarget(getState().Pose);
     Pose2d shotPos = EagleUtil.getShooterPos(getState().Pose);
     Pose2d target = EagleUtil.calcAimpoint(getState().Pose, getPose(1), tar);
