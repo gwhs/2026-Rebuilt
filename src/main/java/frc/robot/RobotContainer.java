@@ -450,7 +450,10 @@ public class RobotContainer {
   }
 
   public Command shootHub() {
-    return Commands.parallel(
+    return Commands.sequence(
+      indexer.reverse(),
+      Commands.waitSeconds(1),
+    Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.HUB),
             shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
@@ -462,11 +465,14 @@ public class RobotContainer {
                         .and(isHubActive)
                         .or(controller.leftTrigger()))
                 .repeatedly())
-        .withName("Shoot Hub");
+        .withName("Shoot Hub"));
   }
 
   public Command shootDepot() {
-    return Commands.parallel(
+    return Commands.sequence(
+    indexer.reverse(),
+    Commands.waitSeconds(1),
+    Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
             shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
@@ -477,11 +483,14 @@ public class RobotContainer {
                         .and(drivetrain.isFacingGoalPassing)
                         .or(controller.leftTrigger()))
                 .repeatedly())
-        .withName("Shoot Depot Side");
+        .withName("Shoot Depot Side"));
   }
 
   public Command shootOutpost() {
-    return Commands.parallel(
+    return Commands.sequence(
+      indexer.index(),
+      Commands.waitSeconds(1),
+    Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
             shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
@@ -492,7 +501,7 @@ public class RobotContainer {
                         .and(drivetrain.isFacingGoalPassing)
                         .or(controller.leftTrigger()))
                 .repeatedly())
-        .withName("Shoot Outpost Side");
+        .withName("Shoot Outpost Side"));
   }
 
   public Command unStuck() {
