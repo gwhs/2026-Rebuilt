@@ -411,28 +411,28 @@ public class RobotContainer {
 
     if (backRightCam != null) {
       backRightCam.updatePoseEstim();
-      DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+      DogLog.log("Loop Time/Robot Container/Back Right Cam", (HALUtil.getFPGATime() - startTime) / 1000);
     }
 
     startTime = HALUtil.getFPGATime();
 
     if (backLeftCam != null) {
       backLeftCam.updatePoseEstim();
-      DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+      DogLog.log("Loop Time/Robot Container/Back Left Cam", (HALUtil.getFPGATime() - startTime) / 1000);
     }
 
     startTime = HALUtil.getFPGATime();
 
     if (frontRightCam != null) {
       frontRightCam.updatePoseEstim();
-      DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+      DogLog.log("Loop Time/Robot Container/Front Right Cam", (HALUtil.getFPGATime() - startTime) / 1000);
     }
 
     startTime = HALUtil.getFPGATime();
 
     if (frontLeftCam != null) {
       frontLeftCam.updatePoseEstim();
-      DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+      DogLog.log("Loop Time/Robot Container/Front Left Cam", (HALUtil.getFPGATime() - startTime) / 1000);
     }
 
     // if (objDecCam != null) {
