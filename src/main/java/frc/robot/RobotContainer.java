@@ -41,6 +41,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
 import frc.robot.subsystems.swerve.TunerConstants_Anemone;
 import frc.robot.subsystems.swerve.TunerConstants_Mk4i;
 import frc.robot.subsystems.swerve.TunerConstants_mk4n;
+import frc.robot.subsystems.swerve.TunerConstants_mk5n;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -65,9 +66,9 @@ public class RobotContainer {
       return Robot.SIM;
     } else if (serialNumber.equals("032414F0")) {
       return Robot.ANEMONE;
-    } else if (serialNumber.equals("03223849")) {
+    } else if (serialNumber.equals("88888")) {
       return Robot.DEV;
-    } else if (serialNumber.equals("1234")) {
+    } else if (serialNumber.equals("03223849")) {
       return Robot.COMP;
     } else if (serialNumber.equals("03282BB2")) {
       return Robot.KITBOT;
@@ -171,7 +172,7 @@ public class RobotContainer {
 
     switch (getRobot()) {
       case COMP:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        drivetrain = TunerConstants_mk5n.createDrivetrain();
         shooter =
             ShooterSubsystem.createReal(
                 rioCanbus,
@@ -222,7 +223,7 @@ public class RobotContainer {
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         break;
       case SIM:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        drivetrain = TunerConstants_mk5n.createDrivetrain();
         shooter =
             ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createSim();
@@ -261,7 +262,7 @@ public class RobotContainer {
                 () -> drivetrain.getState().Speeds);
         break;
       default:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
+        drivetrain = TunerConstants_mk5n.createDrivetrain();
         shooter =
             ShooterSubsystem.createReal(
                 rioCanbus,
@@ -481,7 +482,7 @@ public class RobotContainer {
 
   private Command disableHandler() {
     return Commands.sequence(
-            shooter.runVoltage(0.0),
+            shooter.stopShooter(),
             drivetrain.setRotationCommand(RotationTarget.NORMAL),
             climber.runVoltage(0))
         .ignoringDisable(true)
@@ -491,7 +492,7 @@ public class RobotContainer {
   public Command shootHub() {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.HUB),
-            shooter.preSpin(),
+            shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
             Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(
@@ -569,7 +570,7 @@ public class RobotContainer {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.NORMAL),
             drivetrain.setSlowMode(false),
-            shooter.runVoltage(0))
+            shooter.stopShooter())
         .withName("Stop Shooting");
   }
 }
