@@ -451,57 +451,57 @@ public class RobotContainer {
 
   public Command shootHub() {
     return Commands.sequence(
-      indexer.reverse(),
-      Commands.waitSeconds(1),
-    Commands.parallel(
-            drivetrain.setRotationCommand(RotationTarget.HUB),
-            shooter.cruiseControl(),
-            drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Hub
-                        .and(drivetrain.isFacingGoal)
-                        .and(isHubActive)
-                        .or(controller.leftTrigger()))
-                .repeatedly())
-        .withName("Shoot Hub"));
+        indexer.reverse(),
+        Commands.waitSeconds(1),
+        Commands.parallel(
+                drivetrain.setRotationCommand(RotationTarget.HUB),
+                shooter.cruiseControl(),
+                drivetrain.setSlowMode(0.5, 1),
+                Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                    .onlyWhile(
+                        shooter
+                            .isAtGoalVelocity_Hub
+                            .and(drivetrain.isFacingGoal)
+                            .and(isHubActive)
+                            .or(controller.leftTrigger()))
+                    .repeatedly())
+            .withName("Shoot Hub"));
   }
 
   public Command shootDepot() {
     return Commands.sequence(
-    indexer.reverse(),
-    Commands.waitSeconds(1),
-    Commands.parallel(
-            drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
-            shooter.cruiseControl(),
-            drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Passing
-                        .and(drivetrain.isFacingGoalPassing)
-                        .or(controller.leftTrigger()))
-                .repeatedly())
-        .withName("Shoot Depot Side"));
+        indexer.reverse(),
+        Commands.waitSeconds(1),
+        Commands.parallel(
+                drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
+                shooter.cruiseControl(),
+                drivetrain.setSlowMode(0.5, 1),
+                Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                    .onlyWhile(
+                        shooter
+                            .isAtGoalVelocity_Passing
+                            .and(drivetrain.isFacingGoalPassing)
+                            .or(controller.leftTrigger()))
+                    .repeatedly())
+            .withName("Shoot Depot Side"));
   }
 
   public Command shootOutpost() {
     return Commands.sequence(
-      indexer.index(),
-      Commands.waitSeconds(1),
-    Commands.parallel(
-            drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
-            shooter.cruiseControl(),
-            drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Passing
-                        .and(drivetrain.isFacingGoalPassing)
-                        .or(controller.leftTrigger()))
-                .repeatedly())
-        .withName("Shoot Outpost Side"));
+        indexer.index(),
+        Commands.waitSeconds(1),
+        Commands.parallel(
+                drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
+                shooter.cruiseControl(),
+                drivetrain.setSlowMode(0.5, 1),
+                Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                    .onlyWhile(
+                        shooter
+                            .isAtGoalVelocity_Passing
+                            .and(drivetrain.isFacingGoalPassing)
+                            .or(controller.leftTrigger()))
+                    .repeatedly())
+            .withName("Shoot Outpost Side"));
   }
 
   public Command unStuck() {
