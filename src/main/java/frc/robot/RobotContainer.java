@@ -581,33 +581,33 @@ public class RobotContainer {
   }
 
   public Command autoClimb() {
-    Pose2d target = FieldConstants.getClimbPose(drivetrain.getState().Pose);
-
     return Commands.sequence(
         Commands.parallel(
             drivetrain
-                .driveToPose(() -> target)
+                .driveToPose(() -> FieldConstants.getClimbPose(drivetrain.getState().Pose))
                 .until(
                     () ->
                         drivetrain
                                 .getState()
                                 .Pose
                                 .getTranslation()
-                                .getDistance(target.getTranslation())
-                            < 0.10)),
-        Commands.parallel(
+                                .getDistance(FieldConstants.getClimbPose(drivetrain.getState().Pose).getTranslation())
+                            < 0.10),
             groundIntakeRoller.stopIntake(),
             shooter.stopShooter(),
+            Commands.sequence(
             groundIntakeExtension.retract(),
-            climber.runPosition(ClimberConstants.PREP_CLIMB)),
+            climber.runPosition(ClimberConstants.PREP_CLIMB))),
+        Commands.waitUntil(controller.start().debounce(0.1)),
         climber.runPosition(ClimberConstants.CLIMB_L1),
-        Commands.waitUntil(controller.start()),
-        climber.runPosition(ClimberConstants.CLIMB),
+        climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+        Commands.waitUntil(controller.start().debounce(0.1)),
         climber.runPosition(ClimberConstants.CLIMB_L2),
-        Commands.waitUntil(controller.start()),
-        climber.runPosition(ClimberConstants.CLIMB),
+        climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+        Commands.waitUntil(controller.start().debounce(0.1)),
         climber.runPosition(ClimberConstants.CLIMB_L3),
-        groundIntakeRoller.startIntake(),
+        Commands.waitUntil(controller.start().debounce(0.1)),
+        indexer.index(),
         shooter.cruiseControl()
         );
     // return drivetrain.driveToPose(() -> target);
