@@ -495,7 +495,7 @@ public class RobotContainer {
   }
 
   public Command shootOutpost() {
-        return Commands.sequence(
+    return Commands.sequence(
         indexer.index(),
         Commands.waitSeconds(1),
         Commands.parallel(
