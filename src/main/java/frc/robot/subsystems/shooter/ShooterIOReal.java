@@ -21,12 +21,12 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 
 public class ShooterIOReal implements ShooterIO {
 
-  private final TalonFX motor1;
-  private final TalonFX motor2;
-  private final TalonFX motor3;
-  private final TalonFX motor4;
-  private final TalonFX motor5;
-  private final TalonFX motor6;
+  private final TalonFX motor1; // Right Front
+  private final TalonFX motor2; // Right Back
+  private final TalonFX motor3; // Middle Front
+  private final TalonFX motor4; // Middle Back
+  private final TalonFX motor5; // Left Front
+  private final TalonFX motor6; // Left Back
 
   private final VelocityVoltage velocityRequest1 = new VelocityVoltage(0).withEnableFOC(true);
   private final VelocityVoltage velocityRequest2 = new VelocityVoltage(0).withEnableFOC(true);
@@ -78,17 +78,17 @@ public class ShooterIOReal implements ShooterIO {
   private final StatusSignal<Double> motor6ClosedLoopGoal;
 
   private final Alert motor1NotConnectedAlert =
-      new Alert("Motor 1 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 1 Not Connected", AlertType.kError);
   private final Alert motor2NotConnectedAlert =
-      new Alert("Motor 2 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 2 Not Connected", AlertType.kError);
   private final Alert motor3NotConnectedAlert =
-      new Alert("Motor 3 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 3 Not Connected", AlertType.kError);
   private final Alert motor4NotConnectedAlert =
-      new Alert("Motor 4 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 4 Not Connected", AlertType.kError);
   private final Alert motor5NotConnectedAlert =
-      new Alert("Motor 5 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 5 Not Connected", AlertType.kError);
   private final Alert motor6NotConnectedAlert =
-      new Alert("Motor 6 Not Connected", AlertType.kError);
+      new Alert("Shooter Motor 6 Not Connected", AlertType.kError);
 
   public ShooterIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {
@@ -233,19 +233,19 @@ public class ShooterIOReal implements ShooterIO {
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor1);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor2);
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor3);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor4);
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     setUpMotors(talonFXConfig, motor5);
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -268,6 +268,15 @@ public class ShooterIOReal implements ShooterIO {
     motor4.setControl(velocityRequest4.withVelocity(rotationsPerSecond));
     motor5.setControl(velocityRequest5.withVelocity(rotationsPerSecond));
     motor6.setControl(velocityRequest6.withVelocity(rotationsPerSecond));
+  }
+
+  public void runVelocity(double frontRPS, double backRPS) {
+    motor1.setControl(velocityRequest1.withVelocity(frontRPS));
+    motor2.setControl(velocityRequest2.withVelocity(backRPS));
+    motor3.setControl(velocityRequest3.withVelocity(frontRPS));
+    motor4.setControl(velocityRequest4.withVelocity(backRPS));
+    motor5.setControl(velocityRequest5.withVelocity(frontRPS));
+    motor6.setControl(velocityRequest6.withVelocity(backRPS));
   }
 
   public double getVelocity() {
@@ -340,6 +349,16 @@ public class ShooterIOReal implements ShooterIO {
     DogLog.log("Shooter/Motor 6 Temperature", motor6Temp.getValueAsDouble());
     DogLog.log("Shooter/Motor 6 Acceleration", motor6Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 6 Closed Loop Goal", motor6ClosedLoopGoal.getValueAsDouble());
+
+    DogLog.log(
+        "Shooter/Motor 1 and 2 Velocity Difference",
+        motor1Velocity.getValueAsDouble() - motor2Velocity.getValueAsDouble());
+    DogLog.log(
+        "Shooter/Motor 3 and 4 Velocity Difference",
+        motor3Velocity.getValueAsDouble() - motor4Velocity.getValueAsDouble());
+    DogLog.log(
+        "Shooter/Motor 5 and 6 Velocity Difference",
+        motor5Velocity.getValueAsDouble() - motor6Velocity.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
     motor2NotConnectedAlert.set(!motor2.isConnected());

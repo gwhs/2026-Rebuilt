@@ -75,8 +75,6 @@ public class IndexerIOReal implements IndexerIO {
           .set(true);
     }
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
     statusSignalCollection.addSignals(
         motor1Voltage,
         motor1StatorCurrent,
