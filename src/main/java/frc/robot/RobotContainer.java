@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -25,12 +26,12 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.HubTracker.Shift;
 import frc.robot.commands.DriveCommand;
-import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
 import frc.robot.subsystems.aprilTagCam.AprilTagCam;
 import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
@@ -582,37 +583,37 @@ public class RobotContainer {
 
   public Command autoClimb() {
     return Commands.sequence(
-        Commands.parallel(
-            drivetrain
-                .driveToPose(() -> FieldConstants.getClimbPose(drivetrain.getState().Pose))
-                .until(
-                    () ->
-                        drivetrain
-                                .getState()
-                                .Pose
-                                .getTranslation()
-                                .getDistance(FieldConstants.getClimbPose(drivetrain.getState().Pose).getTranslation())
-                            < 0.10),
-            groundIntakeRoller.stopIntake(),
-            shooter.stopShooter(),
-            Commands.sequence(
-            groundIntakeExtension.retract(),
-            climber.runPosition(ClimberConstants.PREP_CLIMB))),
-        Commands.waitUntil(controller.start().debounce(0.1)),
-        climber.runPosition(ClimberConstants.CLIMB_L1),
-        climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
-        Commands.waitUntil(controller.start().debounce(0.1)),
-        climber.runPosition(ClimberConstants.CLIMB_L2),
-        climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
-        Commands.waitUntil(controller.start().debounce(0.1)),
-        climber.runPosition(ClimberConstants.CLIMB_L3),
-        Commands.waitUntil(controller.start().debounce(0.1)),
-        indexer.index(),
-        shooter.cruiseControl()
-        );
-    // return drivetrain.driveToPose(() -> target);
-    // todo: add import frc.robot.subsystems.climber.ClimberSubsystem;
-    // todo: add private final ClimberSubsystem climber;
-
+            Commands.parallel(
+                drivetrain
+                    .driveToPose(() -> FieldConstants.getClimbPose(drivetrain.getState().Pose))
+                    .until(
+                        () ->
+                            drivetrain
+                                    .getState()
+                                    .Pose
+                                    .getTranslation()
+                                    .getDistance(
+                                        FieldConstants.getClimbPose(drivetrain.getState().Pose)
+                                            .getTranslation())
+                                < 0.10),
+                groundIntakeRoller.stopIntake(),
+                shooter.stopShooter(),
+                Commands.sequence(
+                    groundIntakeExtension.retract(),
+                    Commands.waitSeconds(5),
+                    climber.runPosition(ClimberConstants.PREP_CLIMB))),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L1),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L2),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L3),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            Commands.parallel(indexer.index(), shooter.cruiseControl()))
+        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 }
