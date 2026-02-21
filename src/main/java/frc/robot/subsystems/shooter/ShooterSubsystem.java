@@ -5,24 +5,23 @@ import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
+import frc.robot.ShotCalculator;
 import java.util.function.Supplier;
 
 public class ShooterSubsystem extends SubsystemBase {
 
   public static ShooterSubsystem createSim(
-      Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> velocity) {
-    return new ShooterSubsystem(new ShooterIOSim(), robotPose, velocity);
+      Supplier<Pose2d> robotPose, Supplier<Pose2d> robotTarget) {
+    return new ShooterSubsystem(new ShooterIOSim(), robotPose, robotTarget);
   }
 
   public static ShooterSubsystem createDisabled(
-      Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> velocity) {
-    return new ShooterSubsystem(new ShooterIODisabled(), robotPose, velocity);
+      Supplier<Pose2d> robotPose, Supplier<Pose2d> robotTarget) {
+    return new ShooterSubsystem(new ShooterIODisabled(), robotPose, robotTarget);
   }
 
   public static ShooterSubsystem createReal(
@@ -30,9 +29,9 @@ public class ShooterSubsystem extends SubsystemBase {
       CANBus canivoreCanbus,
       StatusSignalCollection signal,
       Supplier<Pose2d> robotPose,
-      Supplier<ChassisSpeeds> velocity) {
+      Supplier<Pose2d> robotTarget) {
     return new ShooterSubsystem(
-        new ShooterIOReal(rioCanbus, canivoreCanbus, signal), robotPose, velocity);
+        new ShooterIOReal(rioCanbus, canivoreCanbus, signal), robotPose, robotTarget);
   }
 
   private ShooterIO shooterIO;
@@ -40,7 +39,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double velocityGoal;
 
   private final Supplier<Pose2d> robotPoseSupplier;
-  private final Supplier<ChassisSpeeds> robotVelocitySupplier;
+  private final Supplier<Pose2d> robotTargetSupplier;
 
   public final Trigger isAtGoalVelocity_Passing =
       new Trigger(() -> MathUtil.isNear(velocityGoal, shooterIO.getVelocity(), 10));
@@ -48,46 +47,75 @@ public class ShooterSubsystem extends SubsystemBase {
       new Trigger(() -> MathUtil.isNear(velocityGoal, shooterIO.getVelocity(), 5));
 
   public ShooterSubsystem(
-      ShooterIO shooterIO, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> velocity) {
+      ShooterIO shooterIO, Supplier<Pose2d> robotPose, Supplier<Pose2d> robotTarget) {
     this.shooterIO = shooterIO;
-
+    robotTargetSupplier = robotTarget;
     robotPoseSupplier = robotPose;
-    robotVelocitySupplier = velocity;
   }
 
   public Command runVelocity(double rotationsPerSecond) {
-    return this.runOnce(
-        () -> {
-          velocityGoal = rotationsPerSecond;
-          shooterIO.runVelocity(rotationsPerSecond);
-        });
+    return this.run(
+            () -> {
+              runShooterWithClamp(rotationsPerSecond, rotationsPerSecond);
+            })
+        .withName("Run Velocity");
   }
 
   public Command runVoltage(double voltage) {
     return this.runOnce(
-        () -> {
-          shooterIO.runVoltage(voltage);
-        });
+            () -> {
+              shooterIO.runVoltage(voltage);
+            })
+        .withName("Run Voltage");
   }
 
   public Command cruiseControl() {
     return this.run(
-        () -> {
-          Pose2d robotPose = robotPoseSupplier.get();
-          ChassisSpeeds robotVelocity = robotVelocitySupplier.get();
-          Translation2d targetPose = EagleUtil.getRobotTarget(robotPose);
-          double rotationsPerSecond = 0;
-          // TODO ^ calc rps using above variables
+            () -> {
+              Pose2d robotPose = robotPoseSupplier.get();
+              Pose2d targetPose = robotTargetSupplier.get();
+              double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+              double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
+              double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
 
-          velocityGoal = rotationsPerSecond;
-          shooterIO.runVelocity(rotationsPerSecond);
-        });
+              runShooterWithClamp(frontRotationsPerSecond, backRotationsPerSecond);
+            })
+        .withName("Cruise Control");
+  }
+
+  private void runShooterWithClamp(double frontrps, double backrps) {
+    double clampedFrontRps =
+        Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, frontrps));
+    double clampedBackRps =
+        Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, backrps));
+    velocityGoal = clampedFrontRps;
+
+    if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
+      shooterIO.runVoltage(12);
+    } else {
+      shooterIO.runVelocity(clampedFrontRps, clampedBackRps);
+    }
+  }
+
+  public Command preSpin() {
+    return this.run(
+            () -> {
+              Pose2d robotPose = robotPoseSupplier.get();
+              Pose2d targetPose = robotTargetSupplier.get();
+              double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+              double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
+              double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
+              runVoltage(0);
+
+              // does not actually pre-spin
+            })
+        .withName("Pre Spin");
   }
 
   @Override
   public void periodic() {
     shooterIO.periodic();
-    DogLog.log("Shooter/ Current Velocity", shooterIO.getVelocity());
+    DogLog.log("Shooter/Current Velocity", shooterIO.getVelocity());
     DogLog.log("Shooter/Goal Velocity", velocityGoal);
     DogLog.log("Shooter/At Goal Velocity Hub", this.isAtGoalVelocity_Hub.getAsBoolean());
     DogLog.log("Shooter/At Goal Velocity Passing", this.isAtGoalVelocity_Passing.getAsBoolean());
@@ -98,5 +126,14 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public double getVelocity() {
     return shooterIO.getVelocity();
+  }
+
+  public Command stopShooter() {
+    return this.runOnce(
+            () -> {
+              shooterIO.runVoltage(0.0);
+              velocityGoal = 0.0;
+            })
+        .withName("Stop Shooter");
   }
 }
