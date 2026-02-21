@@ -596,8 +596,9 @@ public class RobotContainer {
                                 .getDistance(target.getTranslation())
                             < 0.10)),
         Commands.parallel(
-            groundIntakeRoller.startIntake(),
-            shooter.cruiseControl(),
+            groundIntakeRoller.stopIntake(),
+            shooter.stopShooter(),
+            groundIntakeExtension.retract(),
             climber.runPosition(ClimberConstants.PREP_CLIMB)),
         climber.runPosition(ClimberConstants.CLIMB_L1),
         Commands.waitUntil(controller.start()),
@@ -605,7 +606,10 @@ public class RobotContainer {
         climber.runPosition(ClimberConstants.CLIMB_L2),
         Commands.waitUntil(controller.start()),
         climber.runPosition(ClimberConstants.CLIMB),
-        climber.runPosition(ClimberConstants.CLIMB_L3));
+        climber.runPosition(ClimberConstants.CLIMB_L3),
+        groundIntakeRoller.startIntake(),
+        shooter.cruiseControl()
+        );
     // return drivetrain.driveToPose(() -> target);
     // todo: add import frc.robot.subsystems.climber.ClimberSubsystem;
     // todo: add private final ClimberSubsystem climber;
