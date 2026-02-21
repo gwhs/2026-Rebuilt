@@ -155,6 +155,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private boolean slewRateLimitAcceleration = false;
   private boolean driveAssist = false;
 
+  public Pose2d cachedVirtualTarget = null;
+
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
@@ -234,6 +236,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   @Override
   public void periodic() {
+    cachedVirtualTarget = getVirtualTarget();
     /*
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -285,7 +288,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Drivetrain/Facing Goal", isFacingGoal.getAsBoolean());
     DogLog.log("Drivetrain/Facing Passing Goal", isFacingGoalPassing.getAsBoolean());
 
-    DogLog.log("Drivetrain/predictedTarget", getVirtualTarget());
+    DogLog.log("Drivetrain/predictedTarget", getCachedVirtualTarget());
   }
 
   private double defualtSlowFactor = 0.25;
@@ -388,13 +391,13 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       case NORMAL:
         return 0;
       case PASSING_DEPOT_SIDE:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getCachedVirtualTarget());
       case PASSING_OUTPOST_SIDE:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getCachedVirtualTarget());
       case TOWER:
         return 0;
       case HUB:
-        return EagleUtil.getRobotTargetAngle(getState().Pose, getVirtualTarget());
+        return EagleUtil.getRobotTargetAngle(getState().Pose, getCachedVirtualTarget());
       default:
         return 0;
     }
@@ -466,5 +469,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     double timestamp = helper.timestamp;
 
     super.addVisionMeasurement(pos, timestamp, sd);
+  }
+
+  public Pose2d getCachedVirtualTarget() {
+    if (cachedVirtualTarget == null) {
+      cachedVirtualTarget = getVirtualTarget();
+    }
+    return cachedVirtualTarget;
   }
 }

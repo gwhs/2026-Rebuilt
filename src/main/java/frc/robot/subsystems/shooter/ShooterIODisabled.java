@@ -6,6 +6,9 @@ public class ShooterIODisabled implements ShooterIO {
   public void runVelocity(double rotationsPerSecond) {}
 
   @Override
+  public void runVelocity(double front, double back) {}
+
+  @Override
   public void runVoltage(double voltage) {}
 
   @Override

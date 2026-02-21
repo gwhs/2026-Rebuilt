@@ -270,6 +270,15 @@ public class ShooterIOReal implements ShooterIO {
     motor6.setControl(velocityRequest6.withVelocity(rotationsPerSecond));
   }
 
+  public void runVelocity(double frontRPS, double backRPS) {
+    motor1.setControl(velocityRequest1.withVelocity(frontRPS));
+    motor2.setControl(velocityRequest2.withVelocity(backRPS));
+    motor3.setControl(velocityRequest3.withVelocity(frontRPS));
+    motor4.setControl(velocityRequest4.withVelocity(backRPS));
+    motor5.setControl(velocityRequest5.withVelocity(frontRPS));
+    motor6.setControl(velocityRequest6.withVelocity(backRPS));
+  }
+
   public double getVelocity() {
     return (motor1Velocity.getValueAsDouble()
             + motor2Velocity.getValueAsDouble()
