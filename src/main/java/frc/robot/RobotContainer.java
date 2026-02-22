@@ -603,7 +603,7 @@ public class RobotContainer {
                 shooter.stopShooter(),
                 Commands.sequence(
                     groundIntakeExtension.retract(),
-                    Commands.waitSeconds(5),
+                    Commands.waitSeconds(0.5),
                     climber.runPosition(ClimberConstants.PREP_CLIMB))),
             Commands.waitUntil(controller.start().debounce(0.1)),
             climber.runPosition(ClimberConstants.CLIMB_L1),
