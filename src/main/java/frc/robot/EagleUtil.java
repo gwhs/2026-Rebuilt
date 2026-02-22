@@ -192,4 +192,8 @@ public class EagleUtil {
                 }))
         .repeatedly();
   }
+
+  public static Pose2d getClimbPose(Pose2d robotPose) {
+    return robotPose.nearest(FieldConstants.CLIMBPOSE);
+  }
 }
