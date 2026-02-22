@@ -64,10 +64,6 @@ public class FieldConstants {
       new ArrayList<>(
           Arrays.asList(BLUE_DEPOT_CLIMB, BLUE_OUTPOT_CLIMB, RED_DEPOT_CLIMB, RED_OUTPOT_CLIMB));
 
-  public static Pose2d getClimbPose(Pose2d robotPose) {
-    return robotPose.nearest(CLIMBPOSE);
-  }
-
   public static final double shooterAngleDegree = 72;
   public static final double shooterAngleRadian = Units.degreesToRadians(shooterAngleDegree);
   public static final double hubHeight = 1.8;

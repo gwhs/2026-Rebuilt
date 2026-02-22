@@ -324,13 +324,8 @@ public class RobotContainer {
     controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
     drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
 
-    controller
-        .rightTrigger()
-        .and(drivetrain.isInAllianceZone)
-        .whileTrue(shootHub().alongWith(drivetrain.setRotationCommand(RotationTarget.HUB)));
+    controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
 
-    // (drivetrain.setRotationCommand(RotationTarget.HUB)
-    controller.b().whileTrue(agitateGroundIntake());
     controller
         .rightTrigger()
         .and(
@@ -351,13 +346,15 @@ public class RobotContainer {
 
     controller.a().whileTrue(unStuck());
 
+    controller.b().whileTrue(agitateGroundIntake());
+
     controller
         .y()
         .whileTrue(drivetrain.setShootingRange(true))
         .onFalse(drivetrain.setShootingRange(false));
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
-    drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
+    drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
     controller
         .rightBumper()
@@ -591,7 +588,7 @@ public class RobotContainer {
     return Commands.sequence(
             Commands.parallel(
                 drivetrain
-                    .driveToPose(() -> FieldConstants.getClimbPose(drivetrain.getState().Pose))
+                    .driveToPose(() -> EagleUtil.getClimbPose(drivetrain.getState().Pose))
                     .until(
                         () ->
                             drivetrain
@@ -599,7 +596,7 @@ public class RobotContainer {
                                     .Pose
                                     .getTranslation()
                                     .getDistance(
-                                        FieldConstants.getClimbPose(drivetrain.getState().Pose)
+                                        EagleUtil.getClimbPose(drivetrain.getState().Pose)
                                             .getTranslation())
                                 < 0.10),
                 groundIntakeRoller.stopIntake(),
