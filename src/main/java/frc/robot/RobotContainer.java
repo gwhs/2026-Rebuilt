@@ -237,31 +237,31 @@ public class RobotContainer {
                 AprilTagCamConstants.BACK_RIGHT_CAM,
                 AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         backLeftCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_LEFT_CAM,
                 AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
 
         frontRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.FRONT_RIGHT_CAM,
                 AprilTagCamConstants.FRONT_RIGHT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
 
         frontLeftCam =
             new AprilTagCam(
                 AprilTagCamConstants.FRONT_LEFT_CAM,
                 AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
       default:
         drivetrain = TunerConstants_mk5n.createDrivetrain();
@@ -590,15 +590,15 @@ public class RobotContainer {
     return Commands.sequence(
             Commands.parallel(
                 drivetrain
-                    .driveToPose(() -> EagleUtil.getClimbPose(drivetrain.getState().Pose))
+                    .driveToPose(() -> EagleUtil.getClimbPose(drivetrain.getCachedState().Pose))
                     .until(
                         () ->
                             drivetrain
-                                    .getState()
+                                    .getCachedState()
                                     .Pose
                                     .getTranslation()
                                     .getDistance(
-                                        EagleUtil.getClimbPose(drivetrain.getState().Pose)
+                                        EagleUtil.getClimbPose(drivetrain.getCachedState().Pose)
                                             .getTranslation())
                                 < 0.10),
                 groundIntakeRoller.stopIntake(),
