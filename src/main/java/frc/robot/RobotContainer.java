@@ -92,14 +92,14 @@ public class RobotContainer {
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
 
-  private final RobotVisualizer robovisual = new RobotVisualizer();
-  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
-
   private final ShooterSubsystem shooter;
   private final GroundIntakeRollerSubsystem groundIntakeRoller;
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
   private ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
+
+  private final RobotVisualizer robovisual = new RobotVisualizer(GroundIntakeLinearExtensionSubsystem.createSim());
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public final Trigger isHubActive =
       new Trigger(
