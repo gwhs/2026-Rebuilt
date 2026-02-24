@@ -6,15 +6,29 @@
     "cameras": [
         {
             "name": "front left cam",
-            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -15}, {"axis": "z", "degrees": 0}],
-            "position": [0.15, 0.31, 0.24],
+            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": 100}],
+            "position": [0.309, 0.328, 0.734],
             "resolution": [1280, 800],
             "fov": 70
         },
         {
             "name": "front right cam",
-            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -15}, {"axis": "z", "degrees": 0}],
-            "position": [0.15, -0.31, 0.24],
+            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": -100}],
+            "position": [0.309, -0.328, 0.734],
+            "resolution": [1280, 800],
+            "fov": 70
+        },
+        {
+            "name": "back left cam",
+            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": 15}],
+            "position": [-0.302, 0.215, 0.735],
+            "resolution": [1280, 800],
+            "fov": 70
+        },
+        {
+            "name": "back right cam",
+            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": -15}],
+            "position": [-0.302, -0.215, 0.735],
             "resolution": [1280, 800],
             "fov": 70
         }

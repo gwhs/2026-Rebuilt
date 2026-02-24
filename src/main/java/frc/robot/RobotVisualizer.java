@@ -21,15 +21,14 @@ public class RobotVisualizer extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double groundIntakeExtension = ; //35cm full out
+    double groundIntakeExtension = linearExt.getRotation() * 3.5; //35cm full out
 
     Pose3d groundIntakePosition =
         new Pose3d(
-            -0.27, 0, 0.242, new Rotation3d(0,0,0));
-    Pose3d rollerPosition = new Pose3d(0.0, 0.0, 0.0, null);
+            -0.27, 0, 0.242, null);
 
     DogLog.log(
         "Robot Visualizer/Component Positions",
-        new Pose3d[] {groundIntakePosition, rollerPosition});
+        new Pose3d[] {groundIntakePosition});
   }
 }
