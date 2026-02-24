@@ -50,7 +50,7 @@ public class IndexerIOReal implements IndexerIO {
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 40;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 25;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;

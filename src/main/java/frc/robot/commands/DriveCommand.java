@@ -44,7 +44,7 @@ public class DriveCommand extends Command {
   private final double maxSpeed = 4.5;
   private final double maxAngularSpeed = 3.0 * Math.PI;
 
-  private final double deadband = 0.1;
+  private final double deadband = 0.06;
 
   // TO-DO determine correct max accleration
   public final ProfiledPIDController robotHeadingController =

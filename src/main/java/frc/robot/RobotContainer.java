@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -30,6 +31,7 @@ import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
 import frc.robot.subsystems.aprilTagCam.AprilTagCam;
 import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
@@ -153,7 +155,10 @@ public class RobotContainer {
             return HubTracker.isActive();
           });
 
-  private AprilTagCam testCamOne;
+  private AprilTagCam backRightCam;
+  private AprilTagCam backLeftCam;
+  private AprilTagCam frontRightCam;
+  private AprilTagCam frontLeftCam;
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -184,15 +189,6 @@ public class RobotContainer {
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
             GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-
-        testCamOne =
-            new AprilTagCam(
-                AprilTagCamConstants.TEST_CAM_ONE,
-                AprilTagCamConstants.TEST_CAM_ONE_LOCATION,
-                drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
-
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -236,6 +232,36 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createSim();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createSim();
+        backRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_RIGHT_CAM,
+                AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
+        backLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_LEFT_CAM,
+                AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
+
+        frontRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_RIGHT_CAM,
+                AprilTagCamConstants.FRONT_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
+
+        frontLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_LEFT_CAM,
+                AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getState().Pose,
+                () -> drivetrain.getState().Speeds);
         break;
       default:
         drivetrain = TunerConstants_mk5n.createDrivetrain();
@@ -295,10 +321,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
     RobotModeTriggers.disabled().onTrue(disableHandler());
-    controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
+    controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
     drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
+
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
-    controller.b().whileTrue(agitateGroundIntake());
+
     controller
         .rightTrigger()
         .and(
@@ -319,13 +346,15 @@ public class RobotContainer {
 
     controller.a().whileTrue(unStuck());
 
+    controller.b().whileTrue(agitateGroundIntake());
+
     controller
         .y()
         .whileTrue(drivetrain.setShootingRange(true))
         .onFalse(drivetrain.setShootingRange(false));
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
-    drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
+    drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
     controller
         .rightBumper()
@@ -336,6 +365,7 @@ public class RobotContainer {
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
+    controller.start().onTrue(autoClimb());
   }
 
   public Command getAutonomousCommand() {
@@ -385,10 +415,36 @@ public class RobotContainer {
 
     startTime = HALUtil.getFPGATime();
 
-    if (testCamOne != null) {
-      testCamOne.updatePoseEstim();
-      DogLog.log("Loop Time/Robot Container/Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+    if (backRightCam != null) {
+      backRightCam.updatePoseEstim();
+      DogLog.log(
+          "Loop Time/Robot Container/Back Right Cam", (HALUtil.getFPGATime() - startTime) / 1000);
     }
+
+    startTime = HALUtil.getFPGATime();
+
+    if (backLeftCam != null) {
+      backLeftCam.updatePoseEstim();
+      DogLog.log(
+          "Loop Time/Robot Container/Back Left Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+    }
+
+    startTime = HALUtil.getFPGATime();
+
+    if (frontRightCam != null) {
+      frontRightCam.updatePoseEstim();
+      DogLog.log(
+          "Loop Time/Robot Container/Front Right Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+    }
+
+    startTime = HALUtil.getFPGATime();
+
+    if (frontLeftCam != null) {
+      frontLeftCam.updatePoseEstim();
+      DogLog.log(
+          "Loop Time/Robot Container/Front Left Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+    }
+
     // if (objDecCam != null) {
     //   objDecCam.updateDetection();
     // }
@@ -526,5 +582,41 @@ public class RobotContainer {
             drivetrain.setSlowMode(false),
             shooter.stopShooter())
         .withName("Stop Shooting");
+  }
+
+  public Command autoClimb() {
+    return Commands.sequence(
+            Commands.parallel(
+                drivetrain
+                    .driveToPose(() -> EagleUtil.getClimbPose(drivetrain.getState().Pose))
+                    .until(
+                        () ->
+                            drivetrain
+                                    .getState()
+                                    .Pose
+                                    .getTranslation()
+                                    .getDistance(
+                                        EagleUtil.getClimbPose(drivetrain.getState().Pose)
+                                            .getTranslation())
+                                < 0.10),
+                groundIntakeRoller.stopIntake(),
+                shooter.stopShooter(),
+                Commands.sequence(
+                    groundIntakeExtension.retract(),
+                    Commands.waitSeconds(0.5),
+                    climber.runPosition(ClimberConstants.PREP_CLIMB))),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L1),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L2),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L3),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            Commands.parallel(indexer.index(), shooter.cruiseControl()))
+        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 }
