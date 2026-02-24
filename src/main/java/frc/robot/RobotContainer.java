@@ -100,8 +100,8 @@ public class RobotContainer {
   private ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
 
-  private final RobotVisualizer robovisual =
-      new RobotVisualizer(GroundIntakeLinearExtensionSubsystem.createSim());
+  private final RobotVisualizer robotVisualizer;
+
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public final Trigger isHubActive =
@@ -293,6 +293,8 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(defualtDriveCommand);
 
+    robotVisualizer = new RobotVisualizer(groundIntakeExtension);
+
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
@@ -465,7 +467,7 @@ public class RobotContainer {
         (HALUtil.getFPGATime() - startTime) / 1000);
 
     startTime = HALUtil.getFPGATime();
-    robovisual.periodic();
+    robotVisualizer.periodic();
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
 
