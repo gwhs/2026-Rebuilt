@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -30,6 +31,7 @@ import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
 import frc.robot.subsystems.aprilTagCam.AprilTagCam;
 import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
@@ -319,10 +321,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
     RobotModeTriggers.disabled().onTrue(disableHandler());
-    controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
-    // drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
+    controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
+    drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
+
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
-    controller.b().whileTrue(agitateGroundIntake());
+
     controller
         .rightTrigger()
         .and(
@@ -343,13 +346,15 @@ public class RobotContainer {
 
     controller.a().whileTrue(unStuck());
 
+    controller.b().whileTrue(agitateGroundIntake());
+
     controller
         .y()
         .whileTrue(drivetrain.setShootingRange(true))
         .onFalse(drivetrain.setShootingRange(false));
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
-    drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
+    drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
     controller
         .rightBumper()
@@ -360,6 +365,7 @@ public class RobotContainer {
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
+    controller.start().onTrue(autoClimb());
   }
 
   public Command getAutonomousCommand() {
@@ -576,5 +582,41 @@ public class RobotContainer {
             drivetrain.setSlowMode(false),
             shooter.stopShooter())
         .withName("Stop Shooting");
+  }
+
+  public Command autoClimb() {
+    return Commands.sequence(
+            Commands.parallel(
+                drivetrain
+                    .driveToPose(() -> EagleUtil.getClimbPose(drivetrain.getState().Pose))
+                    .until(
+                        () ->
+                            drivetrain
+                                    .getState()
+                                    .Pose
+                                    .getTranslation()
+                                    .getDistance(
+                                        EagleUtil.getClimbPose(drivetrain.getState().Pose)
+                                            .getTranslation())
+                                < 0.10),
+                groundIntakeRoller.stopIntake(),
+                shooter.stopShooter(),
+                Commands.sequence(
+                    groundIntakeExtension.retract(),
+                    Commands.waitSeconds(0.5),
+                    climber.runPosition(ClimberConstants.PREP_CLIMB))),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L1),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L2),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L3),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            Commands.parallel(indexer.index(), shooter.cruiseControl()))
+        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 }
