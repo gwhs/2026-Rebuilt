@@ -100,7 +100,8 @@ public class RobotContainer {
   private ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
 
-  private final RobotVisualizer robovisual = new RobotVisualizer(GroundIntakeLinearExtensionSubsystem.createSim());
+  private final RobotVisualizer robovisual =
+      new RobotVisualizer(GroundIntakeLinearExtensionSubsystem.createSim());
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public final Trigger isHubActive =
@@ -464,7 +465,7 @@ public class RobotContainer {
         (HALUtil.getFPGATime() - startTime) / 1000);
 
     startTime = HALUtil.getFPGATime();
-    robovisual.update();
+    robovisual.periodic();
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
 

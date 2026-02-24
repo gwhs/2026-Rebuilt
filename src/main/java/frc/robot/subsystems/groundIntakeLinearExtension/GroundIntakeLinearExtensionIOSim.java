@@ -18,7 +18,7 @@ public class GroundIntakeLinearExtensionIOSim implements GroundIntakeLinearExten
   public void periodic() {
     motor.update(.020);
     double error = targetPosition - getRotation();
-    double kP = 50;
+    double kP = 3;
     double voltage = kP * error;
     motor.setInputVoltage(voltage);
   }
