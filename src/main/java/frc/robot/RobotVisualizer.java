@@ -28,10 +28,6 @@ public class RobotVisualizer extends SubsystemBase {
         "Robot Visualizer/Component Positions",
         new Pose3d[] {groundIntakeRack, groundIntakePosition});
 
-<<<<<<< HEAD
-    DogLog.log("extantion", groundIntakeExtension);
-=======
     DogLog.log("get rotation", groundIntakeExtension);
->>>>>>> 6784cd7dc99444e4e167b535f3433bb507521240
   }
 }
