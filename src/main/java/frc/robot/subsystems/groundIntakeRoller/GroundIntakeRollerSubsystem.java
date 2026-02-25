@@ -56,6 +56,6 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     groundIntakeRollerIO.periodic();
-    DogLog.log("Ground Intake Roller/Goal Voltage", groundRollerVoltage);
+    DogLog.log("Ground Roller/Goal Voltage", groundRollerVoltage);
   }
 }
