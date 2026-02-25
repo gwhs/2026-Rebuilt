@@ -136,6 +136,8 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
               AlertType.kError)
           .set(true);
     }
+
+    setPosition(0);
   }
 
   @Override
