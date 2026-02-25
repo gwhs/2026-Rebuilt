@@ -6,9 +6,9 @@ public class GroundIntakeLinearExtensionConstants {
   public static final double MAX_VELOCITY = 1.2; // THINGSTODO
   public static final double MAX_ACCELERATION = 3.0; // TODO
 
-  public static final double MAX_ROTATION = 10; // TODO
+  public static final double MAX_ROTATION = 13.6; 
   public static final double MIN_ROTATION = 0;
 
-  public static final double EXTENSION_ROTATION = 10; // TODO
+  public static final double EXTENSION_ROTATION = 13.6; 
   public static final double RETRACT_ROTATION = 0;
 }
