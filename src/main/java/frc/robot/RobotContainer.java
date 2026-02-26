@@ -94,14 +94,15 @@ public class RobotContainer {
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
 
-  private final RobotVisualizer robovisual = new RobotVisualizer();
-  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
-
   private final ShooterSubsystem shooter;
   private final GroundIntakeRollerSubsystem groundIntakeRoller;
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
   private ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
+
+  private final RobotVisualizer robotVisualizer;
+
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public final Trigger isHubActive =
       new Trigger(
@@ -293,6 +294,8 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(defualtDriveCommand);
 
+    robotVisualizer = new RobotVisualizer(groundIntakeExtension);
+
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
@@ -323,7 +326,7 @@ public class RobotContainer {
   private void configureBindings() {
     RobotModeTriggers.disabled().onTrue(disableHandler());
     controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
-    drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
+    // drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
 
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
 
@@ -466,7 +469,7 @@ public class RobotContainer {
         (HALUtil.getFPGATime() - startTime) / 1000);
 
     startTime = HALUtil.getFPGATime();
-    robovisual.update();
+    robotVisualizer.periodic();
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
 

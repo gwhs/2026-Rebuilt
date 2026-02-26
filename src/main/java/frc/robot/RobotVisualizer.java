@@ -1,8 +1,38 @@
 package frc.robot;
 
-public class RobotVisualizer {
+import dev.doglog.DogLog;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionConstants;
+import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 
-  public RobotVisualizer() {}
+public class RobotVisualizer extends SubsystemBase {
+  private final GroundIntakeLinearExtensionSubsystem linearExt;
 
-  public void update() {}
+  public RobotVisualizer(GroundIntakeLinearExtensionSubsystem linearExt) {
+    this.linearExt = linearExt;
+  }
+
+  @Override
+  public void periodic() {
+    double groundIntakeExtension =
+        linearExt.getRotation()
+            * 0.35
+            / GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION; // 35cm full out
+
+    Pose3d groundIntakeRack = new Pose3d(groundIntakeExtension, 0, 0, new Rotation3d());
+    Pose3d groundIntakePosition =
+        new Pose3d(
+            groundIntakeExtension + 0.1375,
+            0,
+            0.198,
+            new Rotation3d(0, groundIntakeExtension / 0.35 * Math.PI / 2, 0)); // pi/2 full rotation
+
+    DogLog.log(
+        "Robot Visualizer/Component Positions",
+        new Pose3d[] {groundIntakeRack, groundIntakePosition});
+
+    DogLog.log("get rotation", groundIntakeExtension);
+  }
 }

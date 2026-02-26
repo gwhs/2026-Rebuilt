@@ -1,0 +1,46 @@
+{
+    "name": "5507 2026",
+    "disableSimplification": true,
+    "rotations": [{"axis": "x", "degrees": 90}, {"axis": "y", "degrees": 0}, {"axis": "z", "degrees": 90}],
+    "position": [0, 0, 0],
+    "cameras": [
+        {
+            "name": "front left cam",
+            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": 100}],
+            "position": [0.309, 0.328, 0.734],
+            "resolution": [1280, 800],
+            "fov": 70
+        },
+        {
+            "name": "front right cam",
+            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": -100}],
+            "position": [0.309, -0.328, 0.734],
+            "resolution": [1280, 800],
+            "fov": 70
+        },
+        {
+            "name": "back left cam",
+            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": 15}],
+            "position": [-0.2928874, 0.2258314, 0.7379462],
+            "resolution": [1280, 800],
+            "fov": 70
+        },
+        {
+            "name": "back right cam",
+            "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": -15}],
+            "position": [-0.2928874, -0.2258314, 0.7379462],
+            "resolution": [1280, 800],
+            "fov": 70
+        }
+    ],
+    "components": [
+        {
+            "zeroedRotations": [{"axis": "x", "degrees": 90}, {"axis": "y", "degrees": 0}, {"axis": "z", "degrees": 90}],
+            "zeroedPosition": [0, 0, 0]
+        },
+        {
+            "zeroedRotations": [{"axis": "x", "degrees": 90}, {"axis": "y", "degrees": 0}, {"axis": "z", "degrees": 90}],
+            "zeroedPosition": [-0.1375, 0, -0.198]
+        }
+    ]
+}
