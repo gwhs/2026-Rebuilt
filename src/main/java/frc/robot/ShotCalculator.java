@@ -24,9 +24,22 @@ public class ShotCalculator {
     backBeltMap.put(1.2, 40.0);
     backBeltMap.put(2.0, 60.0);
 
-    timeOfFlight.put(1.0, 1.0);
-    timeOfFlight.put(1.2, 1.5);
-    timeOfFlight.put(2.0, 2.0);
+    timeOfFlight.put(1.97, 1.26);
+    timeOfFlight.put(2.560, 1.31);
+    timeOfFlight.put(3.205, 1.80);
+    timeOfFlight.put(1.046, 0.84);
+    timeOfFlight.put(4.060, 1.65);
+    timeOfFlight.put(5.260, 2.07);
+    timeOfFlight.put(5.528, 2.04);
+    timeOfFlight.put(3.010, 2.01);
+    timeOfFlight.put(2.033, 1.57);
+    timeOfFlight.put(1.601, 1.02);
+    timeOfFlight.put(3.764, 1.48);
+    timeOfFlight.put(4.778, 2.0);
+    timeOfFlight.put(2.77, 1.99);
+    timeOfFlight.put(7.080, 2.41);
+    timeOfFlight.put(13.926, 4.44);
+    timeOfFlight.put(10.001, 4.39);
     // ^^ placeholder/testing data, add real control points later
   }
 

@@ -3,6 +3,7 @@ package frc.robot.subsystems.groundIntakeLinearExtension;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -60,7 +61,7 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
         this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(-2, true)),
         Commands.waitUntil(() -> groundIntakeLinearExtensionIO.getReverseLimit()),
         this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(0)),
-        this.runOnce(() -> groundIntakeLinearExtensionIO.setPosition(0)));
+        this.runOnce(() -> groundIntakeLinearExtensionIO.setPosition(0))).onlyIf(() -> RobotBase.isReal());
   }
 
   public double getRotation() {

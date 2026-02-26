@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
+import frc.robot.ShotCalculator;
 import frc.robot.commands.AlignToPose;
 import frc.robot.subsystems.aprilTagCam.AprilTagHelp;
 import java.util.function.Supplier;
@@ -428,6 +429,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     double t;
     for (int i = 0; i < 6; i++) {
       t = EagleUtil.getFuelTimeInAir(dist);
+      //t = ShotCalculator.getTimeOfFlight(dist);
       target = EagleUtil.calcAimpoint(getCachedState().Pose, getPose(t), tar);
       dist = EagleUtil.getRobotTargetDistance(shotPos, target);
     }
