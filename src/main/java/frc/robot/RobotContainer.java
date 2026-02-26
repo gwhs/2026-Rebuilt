@@ -94,14 +94,15 @@ public class RobotContainer {
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
 
-  private final RobotVisualizer robovisual = new RobotVisualizer();
-  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
-
   private final ShooterSubsystem shooter;
   private final GroundIntakeRollerSubsystem groundIntakeRoller;
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
   private ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
+
+  private final RobotVisualizer robotVisualizer;
+
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public final Trigger isHubActive =
       new Trigger(
@@ -237,31 +238,31 @@ public class RobotContainer {
                 AprilTagCamConstants.BACK_RIGHT_CAM,
                 AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         backLeftCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_LEFT_CAM,
                 AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
 
         frontRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.FRONT_RIGHT_CAM,
                 AprilTagCamConstants.FRONT_RIGHT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
 
         frontLeftCam =
             new AprilTagCam(
                 AprilTagCamConstants.FRONT_LEFT_CAM,
                 AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
       default:
         drivetrain = TunerConstants_mk5n.createDrivetrain();
@@ -285,12 +286,15 @@ public class RobotContainer {
 
     // objDecCam =
     //     new ObjectDetectionCam(
-    //         "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
+    //         "cam2026_01", ObjectDetectionConstants.robotToCam, () ->
+    // drivetrain.getCachedState().Pose);
 
     configureBindings();
     configureAutonomous();
 
     drivetrain.setDefaultCommand(defualtDriveCommand);
+
+    robotVisualizer = new RobotVisualizer(groundIntakeExtension);
 
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
@@ -322,7 +326,7 @@ public class RobotContainer {
   private void configureBindings() {
     RobotModeTriggers.disabled().onTrue(disableHandler());
     controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
-    drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
+    // drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
 
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
 
@@ -397,10 +401,11 @@ public class RobotContainer {
         0.660, // from left to right
         0.711, // from front to back
         0.127, // from floor to top of bumpers
-        () -> drivetrain.getState().Pose, // Supplier<Pose2d> of robot pose
+        () -> drivetrain.getCachedState().Pose, // Supplier<Pose2d> of robot pose
         () ->
             ChassisSpeeds.fromRobotRelativeSpeeds(
-                drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation()));
+                drivetrain.getCachedState().Speeds,
+                drivetrain.getCachedState().Pose.getRotation()));
     // Supplier<ChassisSpeeds> of field-centric chassis speeds
 
     // Register an intake to remove fuel from the field as a rectangular bounding box
@@ -464,7 +469,7 @@ public class RobotContainer {
         (HALUtil.getFPGATime() - startTime) / 1000);
 
     startTime = HALUtil.getFPGATime();
-    robovisual.update();
+    robotVisualizer.periodic();
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
 
@@ -588,15 +593,15 @@ public class RobotContainer {
     return Commands.sequence(
             Commands.parallel(
                 drivetrain
-                    .driveToPose(() -> EagleUtil.getClimbPose(drivetrain.getState().Pose))
+                    .driveToPose(() -> EagleUtil.getClimbPose(drivetrain.getCachedState().Pose))
                     .until(
                         () ->
                             drivetrain
-                                    .getState()
+                                    .getCachedState()
                                     .Pose
                                     .getTranslation()
                                     .getDistance(
-                                        EagleUtil.getClimbPose(drivetrain.getState().Pose)
+                                        EagleUtil.getClimbPose(drivetrain.getCachedState().Pose)
                                             .getTranslation())
                                 < 0.10),
                 groundIntakeRoller.stopIntake(),

@@ -158,7 +158,7 @@ public class EagleUtil {
             Commands.runOnce(
                 () -> {
                   if (RobotBase.isSimulation()) {
-                    Pose2d shotPos = EagleUtil.getShooterPos(drivetrain.getState().Pose);
+                    Pose2d shotPos = EagleUtil.getShooterPos(drivetrain.getCachedState().Pose);
                     Translation3d initPosition =
                         new Translation3d(shotPos.getX(), shotPos.getY(), 0.635);
                     Pose2d tar = drivetrain.getCachedVirtualTarget();
@@ -171,11 +171,12 @@ public class EagleUtil {
 
                     ChassisSpeeds robotVelocityChassis =
                         ChassisSpeeds.fromRobotRelativeSpeeds(
-                            drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation());
+                            drivetrain.getCachedState().Speeds,
+                            drivetrain.getCachedState().Pose.getRotation());
                     double robotDx = robotVelocityChassis.vxMetersPerSecond;
                     double robotDy = robotVelocityChassis.vyMetersPerSecond;
 
-                    double a = drivetrain.getState().Pose.getRotation().getRadians();
+                    double a = drivetrain.getCachedState().Pose.getRotation().getRadians();
                     Translation3d initVelocity =
                         new Translation3d(
                             (v * Math.cos(FieldConstants.shooterAngleRadian) * Math.cos(a))

@@ -62,4 +62,8 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
         this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(0)),
         this.runOnce(() -> groundIntakeLinearExtensionIO.setPosition(0)));
   }
+
+  public double getRotation() {
+    return groundIntakeLinearExtensionIO.getRotation();
+  }
 }
