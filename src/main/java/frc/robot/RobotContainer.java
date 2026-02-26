@@ -348,9 +348,9 @@ public class RobotContainer {
         .whileTrue(shootOutpost());
     controller.rightTrigger().onFalse(stopShoot());
 
-    controller.a().whileTrue(unStuck());
+    controller.b().whileTrue(unStuck());
 
-    controller.b().whileTrue(agitateGroundIntake());
+    controller.a().whileTrue(agitateGroundIntake());
 
     controller
         .y()
@@ -562,6 +562,14 @@ public class RobotContainer {
             groundIntakeExtension.extend(),
             drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
         .withName("Deploy Ground Intake");
+  }
+
+  public Command retractGroundIntake() {
+    return Commands.parallel(
+            groundIntakeRoller.stopIntake(),
+            groundIntakeExtension.retract(),
+            drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
+        .withName("Retract Ground Intake");
   }
 
   public Command defenseMode() {
