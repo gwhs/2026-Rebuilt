@@ -58,4 +58,9 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
     groundIntakeRollerIO.periodic();
     DogLog.log("Ground Intake Roller/Goal Voltage", groundRollerVoltage);
   }
+
+  public double getGoalRollerVoltage()
+  {
+    return groundRollerVoltage;
+  }
 }
