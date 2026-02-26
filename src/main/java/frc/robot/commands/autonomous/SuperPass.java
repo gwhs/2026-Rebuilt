@@ -37,7 +37,7 @@ public class SuperPass extends SequentialCommandGroup {
               .deadlineFor(groundIntakeExtend.extend(), groundIntakeRoller.startIntake())
               .alongWith(
                   Commands.sequence(
-                      Commands.waitSeconds(2.5),
+                      Commands.waitSeconds(5.2),
                       Commands.parallel(
                           indexer.index(),
                           shooter.cruiseControl(),

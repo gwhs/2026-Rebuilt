@@ -17,6 +17,27 @@
      "exp":"4.5 m / s",
      "val":4.5
     }
+   },
+   "safe_auto_limit":{
+    "dimension":"Length",
+    "var":{
+     "exp":"8.56 m",
+     "val":8.56
+    }
+   },
+   "target_x":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.9 m",
+     "val":0.9
+    }
+   },
+   "target_y":{
+    "dimension":"Length",
+    "var":{
+     "exp":"0.75 m",
+     "val":0.75
+    }
    }
   },
   "poses":{}
