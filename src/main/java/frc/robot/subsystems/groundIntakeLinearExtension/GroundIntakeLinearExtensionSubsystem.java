@@ -58,10 +58,11 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
 
   public Command homingCommand() {
     return Commands.sequence(
-        this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(-2, true)),
-        Commands.waitUntil(() -> groundIntakeLinearExtensionIO.getReverseLimit()),
-        this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(0)),
-        this.runOnce(() -> groundIntakeLinearExtensionIO.setPosition(0))).onlyIf(() -> RobotBase.isReal());
+            this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(-2, true)),
+            Commands.waitUntil(() -> groundIntakeLinearExtensionIO.getReverseLimit()),
+            this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(0)),
+            this.runOnce(() -> groundIntakeLinearExtensionIO.setPosition(0)))
+        .onlyIf(() -> RobotBase.isReal());
   }
 
   public double getRotation() {

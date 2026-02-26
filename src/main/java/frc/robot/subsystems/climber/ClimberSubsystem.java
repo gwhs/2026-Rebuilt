@@ -60,10 +60,11 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public Command homingCommand() {
     return Commands.sequence(
-        Commands.runOnce(() -> climberIO.runVoltage(-3, true)),
-        Commands.waitUntil(() -> climberIO.getReverseLimitSwitch()),
-        Commands.runOnce(() -> climberIO.runVoltage(0)),
-        Commands.runOnce(() -> climberIO.setPosition(0))).onlyIf(() -> RobotBase.isReal());
+            Commands.runOnce(() -> climberIO.runVoltage(-3, true)),
+            Commands.waitUntil(() -> climberIO.getReverseLimitSwitch()),
+            Commands.runOnce(() -> climberIO.runVoltage(0)),
+            Commands.runOnce(() -> climberIO.setPosition(0)))
+        .onlyIf(() -> RobotBase.isReal());
   }
 
   @Override
