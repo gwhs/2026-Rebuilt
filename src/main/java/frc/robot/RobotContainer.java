@@ -370,7 +370,9 @@ public class RobotContainer {
 
     // temp
     controller.povLeft().whileTrue(backupShoot1());
+    controller.povLeft().whileTrue(stopShoot());
     controller.povRight().whileTrue(backupShoot2());
+    controller.povRight().whileTrue(stopShoot());
   }
 
   public Command getAutonomousCommand() {
