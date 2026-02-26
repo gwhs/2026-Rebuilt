@@ -631,14 +631,22 @@ public class RobotContainer {
   public Command backupShoot1() {
     return Commands.parallel(
             shooter.runVelocity(85),
-            Commands.parallel(indexer.index(), drivetrain.setRotationCommand(RotationTarget.NORMAL), EagleUtil.shootInSim(drivetrain)).repeatedly())
+            Commands.parallel(
+                    indexer.index(),
+                    drivetrain.setRotationCommand(RotationTarget.NORMAL),
+                    EagleUtil.shootInSim(drivetrain))
+                .repeatedly())
         .withName("Shoot Hub Backup 1");
   }
 
   public Command backupShoot2() {
     return Commands.parallel(
             shooter.runVelocity(90),
-            Commands.parallel(indexer.index(), drivetrain.setRotationCommand(RotationTarget.NORMAL), EagleUtil.shootInSim(drivetrain)).repeatedly())
+            Commands.parallel(
+                    indexer.index(),
+                    drivetrain.setRotationCommand(RotationTarget.NORMAL),
+                    EagleUtil.shootInSim(drivetrain))
+                .repeatedly())
         .withName("Shoot Hub Backup 2");
   }
 }
