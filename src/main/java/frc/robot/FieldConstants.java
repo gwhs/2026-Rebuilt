@@ -26,8 +26,10 @@ public class FieldConstants {
   public static double RED_BUMP_X2 =
       Units.inchesToMeters(446.91 + BUMP_WIDTH + ROBOT_DIAGIONAL_WIDTH / 2);
 
-  public static final double ALLIANCE_ZONE_LINE_BLUE = 3.977894 + Units.inchesToMeters(BUMP_WIDTH) / 2;
-  public static final double ALLIANCE_ZONE_LINE_RED = 12.535154 - Units.inchesToMeters(BUMP_WIDTH) / 2;
+  public static final double ALLIANCE_ZONE_LINE_BLUE =
+      3.977894 + Units.inchesToMeters(BUMP_WIDTH) / 2;
+  public static final double ALLIANCE_ZONE_LINE_RED =
+      12.535154 - Units.inchesToMeters(BUMP_WIDTH) / 2;
 
   public static final double FIELD_WIDTH = 8.042656;
   public static final double FIELD_HEIGHT = 16.513048;

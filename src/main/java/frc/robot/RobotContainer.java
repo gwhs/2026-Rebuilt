@@ -564,14 +564,6 @@ public class RobotContainer {
         .withName("Deploy Ground Intake");
   }
 
-  public Command retractGroundIntake() {
-    return Commands.parallel(
-            groundIntakeRoller.stopIntake(),
-            groundIntakeExtension.retract(),
-            drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
-        .withName("Retract Ground Intake");
-  }
-
   public Command defenseMode() {
     return Commands.parallel(
             drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake())
