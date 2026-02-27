@@ -428,6 +428,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     double t;
     for (int i = 0; i < 6; i++) {
       t = EagleUtil.getFuelTimeInAir(dist);
+      // t = ShotCalculator.getTimeOfFlight(dist);
       target = EagleUtil.calcAimpoint(getCachedState().Pose, getPose(t), tar);
       dist = EagleUtil.getRobotTargetDistance(shotPos, target);
     }

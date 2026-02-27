@@ -370,6 +370,12 @@ public class RobotContainer {
 
     controller.x().whileTrue(defenseMode());
     controller.start().onTrue(autoClimb());
+
+    // temp
+    controller.povLeft().whileTrue(backupShoot1());
+    controller.povLeft().onFalse(stopShoot());
+    controller.povRight().whileTrue(backupShoot2());
+    controller.povRight().onFalse(stopShoot());
   }
 
   public Command getAutonomousCommand() {
@@ -410,7 +416,13 @@ public class RobotContainer {
 
     // Register an intake to remove fuel from the field as a rectangular bounding box
     instance.registerIntake(
-        0.350, 0.700, -0.330, 0.330); // robot-centric coordinates for bounding box
+        0.350,
+        0.700,
+        -0.330,
+        0.330,
+        () ->
+            (groundIntakeRoller.getGoalRollerVoltage()
+                > 0)); // robot-centric coordinates for bounding box
 
     instance.start();
   }
@@ -623,5 +635,27 @@ public class RobotContainer {
             Commands.waitUntil(controller.start().debounce(0.1)),
             Commands.parallel(indexer.index(), shooter.cruiseControl()))
         .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+  }
+
+  public Command backupShoot1() {
+    return Commands.parallel(
+            shooter.runVelocity(85),
+            Commands.parallel(
+                    indexer.index(),
+                    drivetrain.setRotationCommand(RotationTarget.NORMAL),
+                    EagleUtil.shootInSim(drivetrain))
+                .repeatedly())
+        .withName("Shoot Hub Backup 1");
+  }
+
+  public Command backupShoot2() {
+    return Commands.parallel(
+            shooter.runVelocity(90),
+            Commands.parallel(
+                    indexer.index(),
+                    drivetrain.setRotationCommand(RotationTarget.NORMAL),
+                    EagleUtil.shootInSim(drivetrain))
+                .repeatedly())
+        .withName("Shoot Hub Backup 2");
   }
 }
