@@ -348,9 +348,9 @@ public class RobotContainer {
         .whileTrue(shootOutpost());
     controller.rightTrigger().onFalse(stopShoot());
 
-    controller.a().whileTrue(unStuck());
+    controller.b().whileTrue(unStuck());
 
-    controller.b().whileTrue(agitateGroundIntake());
+    controller.a().whileTrue(agitateGroundIntake());
 
     controller
         .y()
