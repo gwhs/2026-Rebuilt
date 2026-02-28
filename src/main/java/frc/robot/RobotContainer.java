@@ -188,8 +188,7 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeExtension =
-            GroundIntakeLinearExtensionSubsystem.createDisabled();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
 
         backRightCam =
             new AprilTagCam(
@@ -292,8 +291,7 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeExtension =
-            GroundIntakeLinearExtensionSubsystem.createDisabled();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         backRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_RIGHT_CAM,
@@ -501,9 +499,9 @@ public class RobotContainer {
 
     startTime = HALUtil.getFPGATime();
 
-    if (RobotBase.isReal()) {
-      signalList.refreshAll();
-    }
+    // if (RobotBase.isReal()) {
+    //   signalList.refreshAll();
+    // }
 
     DogLog.log(
         "Loop Time/Robot Container/Refresh Signal List",
