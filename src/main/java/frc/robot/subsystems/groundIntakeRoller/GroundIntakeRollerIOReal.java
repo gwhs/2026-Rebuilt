@@ -81,7 +81,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
     // talonFXConfig.Slot0.kI = 0;
     // talonFXConfig.Slot0.kD = 0;
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
 
