@@ -23,7 +23,7 @@ public class ShooterIOReal implements ShooterIO {
 
   private final TalonFX motor1; // Right Front
   private final TalonFX motor2; // Right Back
-  private final TalonFX motor3; // Middle Front
+  private final TalonFX motor3; // Middle Fronth
   private final TalonFX motor4; // Middle Back
   private final TalonFX motor5; // Left Front
   private final TalonFX motor6; // Left Back

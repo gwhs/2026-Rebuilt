@@ -19,17 +19,19 @@ public class AprilTagCamConstants {
 
   public static final Transform3d BACK_RIGHT_CAM_LOCATION =
       new Transform3d(
-          -0.302,
-          -0.215,
-          0.735,
-          new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(-15)));
+          -Units.inchesToMeters(11.531),
+          -Units.inchesToMeters(8.891),
+          Units.inchesToMeters(29.052),
+          new Rotation3d(
+              Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(-15)));
 
   public static final Transform3d BACK_LEFT_CAM_LOCATION =
       new Transform3d(
-          -0.302,
-          0.215,
-          0.735,
-          new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(15)));
+          -Units.inchesToMeters(11.531),
+          Units.inchesToMeters(8.891),
+          Units.inchesToMeters(29.052),
+          new Rotation3d(
+              Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(15)));
 
   public static final Transform3d FRONT_RIGHT_CAM_LOCATION =
       new Transform3d(

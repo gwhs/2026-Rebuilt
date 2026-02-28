@@ -44,7 +44,7 @@ public class DriveCommand extends Command {
   private final double maxSpeed = 4.5;
   private final double maxAngularSpeed = 3.0 * Math.PI;
 
-  private final double deadband = 0.1;
+  private final double deadband = 0.06;
 
   // TO-DO determine correct max accleration
   public final ProfiledPIDController robotHeadingController =
@@ -80,7 +80,7 @@ public class DriveCommand extends Command {
     double yInput = -controller.getLeftX();
     double rotationalInput = -controller.getRightX();
 
-    Pose2d currentRobotPose = drivetrain.getState().Pose;
+    Pose2d currentRobotPose = drivetrain.getCachedState().Pose;
     double currentRobotHeading = currentRobotPose.getRotation().getDegrees();
     Optional<Pose2d> currentGamePiecePose = GamePieceTracker.getGamePiece();
 
@@ -101,7 +101,7 @@ public class DriveCommand extends Command {
         resetAutoRotate = false;
         robotHeadingController.reset(
             currentRobotHeading,
-            Units.radiansToDegrees(drivetrain.getState().Speeds.omegaRadiansPerSecond));
+            Units.radiansToDegrees(drivetrain.getCachedState().Speeds.omegaRadiansPerSecond));
       }
 
       robotHeadingController.setGoal(drivetrain.getGoalHeading());
@@ -118,7 +118,7 @@ public class DriveCommand extends Command {
     }
 
     if (drivetrain.goingToShootingRange()) {
-      SwerveDriveState state = drivetrain.getState();
+      SwerveDriveState state = drivetrain.getCachedState();
       Translation2d hub =
           EagleUtil.isRedAlliance() ? FieldConstants.RED_HUB : FieldConstants.BLUE_HUB;
       Translation2d robotToHub = hub.minus(state.Pose.getTranslation());

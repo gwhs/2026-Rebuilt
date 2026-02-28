@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -30,6 +31,7 @@ import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
 import frc.robot.subsystems.aprilTagCam.AprilTagCam;
 import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
@@ -92,14 +94,15 @@ public class RobotContainer {
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
 
-  private final RobotVisualizer robovisual = new RobotVisualizer();
-  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
-
   private final ShooterSubsystem shooter;
   private final GroundIntakeRollerSubsystem groundIntakeRoller;
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
   private ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
+
+  private final RobotVisualizer robotVisualizer;
+
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public final Trigger isHubActive =
       new Trigger(
@@ -235,31 +238,31 @@ public class RobotContainer {
                 AprilTagCamConstants.BACK_RIGHT_CAM,
                 AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         backLeftCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_LEFT_CAM,
                 AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
 
         frontRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.FRONT_RIGHT_CAM,
                 AprilTagCamConstants.FRONT_RIGHT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
 
         frontLeftCam =
             new AprilTagCam(
                 AprilTagCamConstants.FRONT_LEFT_CAM,
                 AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
-                () -> drivetrain.getState().Pose,
-                () -> drivetrain.getState().Speeds);
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
       default:
         drivetrain = TunerConstants_mk5n.createDrivetrain();
@@ -283,12 +286,15 @@ public class RobotContainer {
 
     // objDecCam =
     //     new ObjectDetectionCam(
-    //         "cam2026_01", ObjectDetectionConstants.robotToCam, () -> drivetrain.getState().Pose);
+    //         "cam2026_01", ObjectDetectionConstants.robotToCam, () ->
+    // drivetrain.getCachedState().Pose);
 
     configureBindings();
     configureAutonomous();
 
     drivetrain.setDefaultCommand(defualtDriveCommand);
+
+    robotVisualizer = new RobotVisualizer(groundIntakeExtension);
 
     CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
@@ -319,10 +325,10 @@ public class RobotContainer {
    */
   private void configureBindings() {
     RobotModeTriggers.disabled().onTrue(disableHandler());
-    controller.leftBumper().whileTrue(drivetrain.temporarilyDisableRotation());
-    drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
+    controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
+    // drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
+
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
-    controller.b().whileTrue(agitateGroundIntake());
 
     controller
         .rightTrigger()
@@ -342,7 +348,9 @@ public class RobotContainer {
         .whileTrue(shootOutpost());
     controller.rightTrigger().onFalse(stopShoot());
 
-    controller.a().whileTrue(unStuck());
+    controller.b().whileTrue(unStuck());
+
+    controller.a().whileTrue(agitateGroundIntake());
 
     controller
         .y()
@@ -350,7 +358,7 @@ public class RobotContainer {
         .onFalse(drivetrain.setShootingRange(false));
 
     drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
-    drivetrain.isInAllianceZone.onTrue(shooter.cruiseControl());
+    drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
     controller
         .rightBumper()
@@ -368,6 +376,13 @@ public class RobotContainer {
         .onTrue(shooter.stopShooter());
 
     controller.x().whileTrue(defenseMode());
+    controller.start().onTrue(autoClimb());
+
+    // temp
+    controller.povLeft().whileTrue(backupShoot1());
+    controller.povLeft().onFalse(stopShoot());
+    controller.povRight().whileTrue(backupShoot2());
+    controller.povRight().onFalse(stopShoot());
   }
 
   public Command getAutonomousCommand() {
@@ -399,15 +414,22 @@ public class RobotContainer {
         0.660, // from left to right
         0.711, // from front to back
         0.127, // from floor to top of bumpers
-        () -> drivetrain.getState().Pose, // Supplier<Pose2d> of robot pose
+        () -> drivetrain.getCachedState().Pose, // Supplier<Pose2d> of robot pose
         () ->
             ChassisSpeeds.fromRobotRelativeSpeeds(
-                drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation()));
+                drivetrain.getCachedState().Speeds,
+                drivetrain.getCachedState().Pose.getRotation()));
     // Supplier<ChassisSpeeds> of field-centric chassis speeds
 
     // Register an intake to remove fuel from the field as a rectangular bounding box
     instance.registerIntake(
-        0.350, 0.700, -0.330, 0.330); // robot-centric coordinates for bounding box
+        0.350,
+        0.700,
+        -0.330,
+        0.330,
+        () ->
+            (groundIntakeRoller.getGoalRollerVoltage()
+                > 0)); // robot-centric coordinates for bounding box
 
     instance.start();
   }
@@ -466,7 +488,7 @@ public class RobotContainer {
         (HALUtil.getFPGATime() - startTime) / 1000);
 
     startTime = HALUtil.getFPGATime();
-    robovisual.update();
+    robotVisualizer.periodic();
     DogLog.log(
         "Loop Time/Robot Container/Robot Visualizer", (HALUtil.getFPGATime() - startTime) / 1000);
 
@@ -602,5 +624,63 @@ public class RobotContainer {
             groundIntakeRoller.startIntake(),
             shooter.runVelocity(10))
         .withName("Topoff");
+  }
+  
+  public Command autoClimb() {
+    return Commands.sequence(
+            Commands.parallel(
+                drivetrain
+                    .driveToPose(() -> EagleUtil.getClimbPose(drivetrain.getCachedState().Pose))
+                    .until(
+                        () ->
+                            drivetrain
+                                    .getCachedState()
+                                    .Pose
+                                    .getTranslation()
+                                    .getDistance(
+                                        EagleUtil.getClimbPose(drivetrain.getCachedState().Pose)
+                                            .getTranslation())
+                                < 0.10),
+                groundIntakeRoller.stopIntake(),
+                shooter.stopShooter(),
+                Commands.sequence(
+                    groundIntakeExtension.retract(),
+                    Commands.waitSeconds(0.5),
+                    climber.runPosition(ClimberConstants.PREP_CLIMB))),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L1),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L2),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.PREP_CLIMB_MIDDLE),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            climber.runPosition(ClimberConstants.CLIMB_L3),
+            Commands.waitUntil(controller.start().debounce(0.1)),
+            Commands.parallel(indexer.index(), shooter.cruiseControl()))
+        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+  }
+
+  public Command backupShoot1() {
+    return Commands.parallel(
+            shooter.runVelocity(85),
+            Commands.parallel(
+                    indexer.index(),
+                    drivetrain.setRotationCommand(RotationTarget.NORMAL),
+                    EagleUtil.shootInSim(drivetrain))
+                .repeatedly())
+        .withName("Shoot Hub Backup 1");
+  }
+
+  public Command backupShoot2() {
+    return Commands.parallel(
+            shooter.runVelocity(90),
+            Commands.parallel(
+                    indexer.index(),
+                    drivetrain.setRotationCommand(RotationTarget.NORMAL),
+                    EagleUtil.shootInSim(drivetrain))
+                .repeatedly())
+        .withName("Shoot Hub Backup 2");
   }
 }

@@ -55,7 +55,7 @@ public class TunerConstants_mk5n {
 
   // The stator current at which the wheels start to slip;
   // This needs to be tuned to your individual robot
-  private static final Current kSlipCurrent = Amps.of(120);
+  private static final Current kSlipCurrent = Amps.of(60);
 
   // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
   // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
@@ -289,9 +289,9 @@ public class TunerConstants_mk5n {
      * @param odometryUpdateFrequency The frequency to run the odometry loop. If unspecified or set
      *     to 0 Hz, this is 250 Hz on CAN FD, and 100 Hz on CAN 2.0.
      * @param odometryStandardDeviation The standard deviation for odometry calculation in the form
-     *     [x, y, theta]áµ€, with units in meters and radians
+     *     [x, y, theta], with units in meters and radians
      * @param visionStandardDeviation The standard deviation for vision calculation in the form [x,
-     *     y, theta]áµ€, with units in meters and radians
+     *     y, theta], with units in meters and radians
      * @param modules Constants for each specific module
      */
     public TunerSwerveDrivetrain(
