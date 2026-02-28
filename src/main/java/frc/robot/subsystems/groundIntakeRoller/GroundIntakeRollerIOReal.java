@@ -9,9 +9,10 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.StatusSignalCollection;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -24,8 +25,8 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 
 public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
-  private final TalonFX motor1;
-  private final TalonFX motor2;
+  private final TalonFXS motor1;
+  private final TalonFXS motor2;
 
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
@@ -46,11 +47,12 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   private final Alert motor2NotConnectedAlert =
       new Alert("Ground Intake Roller Motor 2 Not Connected ", AlertType.kError);
 
+  @SuppressWarnings("resource")
   public GroundIntakeRollerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
 
-    motor1 = new TalonFX(GroundIntakeRollerConstants.MOTOR_1_ID, rioCanbus);
-    motor2 = new TalonFX(GroundIntakeRollerConstants.MOTOR_2_ID, rioCanbus);
+    motor1 = new TalonFXS(GroundIntakeRollerConstants.MOTOR_1_ID, rioCanbus);
+    motor2 = new TalonFXS(GroundIntakeRollerConstants.MOTOR_2_ID, rioCanbus);
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
@@ -66,22 +68,16 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
     motor2Acceleration = motor2.getAcceleration();
     motor2ClosedLoopGoal = motor2.getClosedLoopReference();
 
-    TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
+    TalonFXSConfiguration talonFXConfig = new TalonFXSConfiguration();
 
     talonFXConfig.CurrentLimits.StatorCurrentLimit = 80;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    talonFXConfig.Slot0.kS = 0.125;
-    talonFXConfig.Slot0.kG = 0;
-    talonFXConfig.Slot0.kA = 0;
-    talonFXConfig.Slot0.kV = 0.1125;
-    talonFXConfig.Slot0.kP = 0.5;
-    talonFXConfig.Slot0.kI = 0;
-    talonFXConfig.Slot0.kD = 0;
-
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    talonFXConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
 
