@@ -367,6 +367,13 @@ public class RobotContainer {
 
     controller.povDown().whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
+    // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
+    controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
+    controller
+        .povDown()
+        .negate()
+        .and(controller.rightTrigger().negate())
+        .onTrue(shooter.stopShooter());
 
     controller.x().whileTrue(defenseMode());
     controller.start().onTrue(autoClimb());
@@ -517,49 +524,58 @@ public class RobotContainer {
   }
 
   public Command shootHub() {
-    return Commands.parallel(
-            drivetrain.setRotationCommand(RotationTarget.HUB),
-            shooter.cruiseControl(),
-            drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Hub
-                        .and(drivetrain.isFacingGoal)
-                        .and(isHubActive)
-                        .or(controller.leftTrigger()))
-                .repeatedly())
-        .withName("Shoot Hub");
+    return Commands.sequence(
+        indexer.reverse(),
+        Commands.waitSeconds(1),
+        Commands.parallel(
+                drivetrain.setRotationCommand(RotationTarget.HUB),
+                shooter.cruiseControl(),
+                drivetrain.setSlowMode(0.5, 1),
+                Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                    .onlyWhile(
+                        shooter
+                            .isAtGoalVelocity_Hub
+                            .and(drivetrain.isFacingGoal)
+                            .and(isHubActive)
+                            .or(controller.leftTrigger()))
+                    .repeatedly())
+            .withName("Shoot Hub"));
   }
 
   public Command shootDepot() {
-    return Commands.parallel(
-            drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
-            shooter.cruiseControl(),
-            drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Passing
-                        .and(drivetrain.isFacingGoalPassing)
-                        .or(controller.leftTrigger()))
-                .repeatedly())
-        .withName("Shoot Depot Side");
+    return Commands.sequence(
+        indexer.reverse(),
+        Commands.waitSeconds(1),
+        Commands.parallel(
+                drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
+                shooter.cruiseControl(),
+                drivetrain.setSlowMode(0.5, 1),
+                Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                    .onlyWhile(
+                        shooter
+                            .isAtGoalVelocity_Passing
+                            .and(drivetrain.isFacingGoalPassing)
+                            .or(controller.leftTrigger()))
+                    .repeatedly())
+            .withName("Shoot Depot Side"));
   }
 
   public Command shootOutpost() {
-    return Commands.parallel(
-            drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
-            shooter.cruiseControl(),
-            drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Passing
-                        .and(drivetrain.isFacingGoalPassing)
-                        .or(controller.leftTrigger()))
-                .repeatedly())
-        .withName("Shoot Outpost Side");
+    return Commands.sequence(
+        indexer.index(),
+        Commands.waitSeconds(1),
+        Commands.parallel(
+                drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
+                shooter.cruiseControl(),
+                drivetrain.setSlowMode(0.5, 1),
+                Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
+                    .onlyWhile(
+                        shooter
+                            .isAtGoalVelocity_Passing
+                            .and(drivetrain.isFacingGoalPassing)
+                            .or(controller.leftTrigger()))
+                    .repeatedly())
+            .withName("Shoot Outpost Side"));
   }
 
   public Command unStuck() {
@@ -601,6 +617,15 @@ public class RobotContainer {
         .withName("Stop Shooting");
   }
 
+  public Command topoff() {
+    return Commands.parallel(
+            indexer.index(),
+            groundIntakeExtension.extend(),
+            groundIntakeRoller.startIntake(),
+            shooter.runVelocity(10))
+        .withName("Topoff");
+  }
+  
   public Command autoClimb() {
     return Commands.sequence(
             Commands.parallel(
