@@ -398,7 +398,7 @@ public class RobotContainer {
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
-    controller.start().onTrue(autoClimb());
+    //controller.start().onTrue(autoClimb());
 
     // temp
     controller.povLeft().whileTrue(backupShoot1());
