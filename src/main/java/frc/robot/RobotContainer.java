@@ -189,7 +189,7 @@ public class RobotContainer {
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
-            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+            GroundIntakeLinearExtensionSubsystem.createDisabled();
 
         backRightCam =
             new AprilTagCam(
@@ -293,7 +293,7 @@ public class RobotContainer {
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
-            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+            GroundIntakeLinearExtensionSubsystem.createDisabled();
         backRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_RIGHT_CAM,
