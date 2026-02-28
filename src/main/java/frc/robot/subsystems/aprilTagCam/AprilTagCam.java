@@ -112,8 +112,8 @@ public class AprilTagCam {
       if (optionalEstimPose.isEmpty()) {
         optionalEstimPose = photonEstimator.estimateAverageBestTargetsPose(targetPose);
         if (optionalEstimPose.isEmpty()) {
-        continue;
-              }
+          continue;
+        }
       }
 
       Pose3d estimPose3d = optionalEstimPose.get().estimatedPose;
