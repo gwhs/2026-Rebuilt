@@ -145,6 +145,20 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   }
 
   public void periodic() {
+    BaseStatusSignal.refreshAll(
+        motor1Voltage,
+        motor1StatorCurrent,
+        motor1Velocity,
+        motor1Temp,
+        motor1Acceleration,
+        motor1ClosedLoopGoal,
+        motor2Voltage,
+        motor2StatorCurrent,
+        motor2Velocity,
+        motor2Temp,
+        motor2Acceleration,
+        motor2ClosedLoopGoal);
+
     DogLog.log("Ground Roller/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 1 Velocity", motor1Velocity.getValueAsDouble());

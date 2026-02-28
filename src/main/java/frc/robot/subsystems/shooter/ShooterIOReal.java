@@ -308,6 +308,45 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   public void periodic() {
+
+    BaseStatusSignal.refreshAll(
+        motor1Voltage,
+        motor1StatorCurrent,
+        motor1Velocity,
+        motor1Temp,
+        motor1Acceleration,
+        motor1ClosedLoopGoal,
+        motor2Voltage,
+        motor2StatorCurrent,
+        motor2Velocity,
+        motor2Temp,
+        motor2Acceleration,
+        motor2ClosedLoopGoal,
+        motor3Voltage,
+        motor3StatorCurrent,
+        motor3Velocity,
+        motor3Temp,
+        motor3Acceleration,
+        motor3ClosedLoopGoal,
+        motor4Voltage,
+        motor4StatorCurrent,
+        motor4Velocity,
+        motor4Temp,
+        motor4Acceleration,
+        motor4ClosedLoopGoal,
+        motor5Voltage,
+        motor5StatorCurrent,
+        motor5Velocity,
+        motor5Temp,
+        motor5Acceleration,
+        motor5ClosedLoopGoal,
+        motor6Voltage,
+        motor6StatorCurrent,
+        motor6Velocity,
+        motor6Temp,
+        motor6Acceleration,
+        motor6ClosedLoopGoal);
+
     DogLog.log("Shooter/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Shooter/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
     DogLog.log("Shooter/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
