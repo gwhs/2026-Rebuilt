@@ -36,7 +36,8 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   public void periodic() {
     groundIntakeLinearExtensionIO.periodic();
     DogLog.log(
-        "Ground Intake Extension/Current Rotation", groundIntakeLinearExtensionIO.getRotation());
+        "GroundIntakeLinearExtension/Current Rotation",
+        groundIntakeLinearExtensionIO.getRotation());
   }
 
   public Command extend() {

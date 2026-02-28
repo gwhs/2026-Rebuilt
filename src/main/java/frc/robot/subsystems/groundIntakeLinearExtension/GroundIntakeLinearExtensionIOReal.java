@@ -90,7 +90,7 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 20;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 40;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -136,6 +136,8 @@ public class GroundIntakeLinearExtensionIOReal implements GroundIntakeLinearExte
               AlertType.kError)
           .set(true);
     }
+
+    setPosition(0);
   }
 
   @Override
