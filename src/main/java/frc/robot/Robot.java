@@ -39,18 +39,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-      double startTime = HALUtil.getFPGATime();
-      CommandScheduler.getInstance().run();
-      DogLog.log("Loop Time/Command Scheduler", (HALUtil.getFPGATime() - startTime) / 1000);
-      double endTime = HALUtil.getFPGATime();
-      m_robotContainer.periodic();
-      DogLog.log("Loop Time/Robot Container", (HALUtil.getFPGATime() - endTime) / 1000);
+    double startTime = HALUtil.getFPGATime();
+    CommandScheduler.getInstance().run();
+    DogLog.log("Loop Time/Command Scheduler", (HALUtil.getFPGATime() - startTime) / 1000);
+    double endTime = HALUtil.getFPGATime();
+    m_robotContainer.periodic();
+    DogLog.log("Loop Time/Robot Container", (HALUtil.getFPGATime() - endTime) / 1000);
 
-      gcStatsCollector.update();
+    gcStatsCollector.update();
 
-      double currentTime = HALUtil.getFPGATime();
-      DogLog.log("Loop Time/Total", (currentTime - prevTime) / 1000);
-      prevTime = currentTime;
+    double currentTime = HALUtil.getFPGATime();
+    DogLog.log("Loop Time/Total", (currentTime - prevTime) / 1000);
+    prevTime = currentTime;
   }
 
   @Override

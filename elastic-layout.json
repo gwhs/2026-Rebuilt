@@ -10,7 +10,7 @@
           {
             "title": "autonomous",
             "x": 1280.0,
-            "y": 384.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
@@ -53,84 +53,11 @@
             }
           },
           {
-            "title": "Back Left Cam",
-            "x": 0.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/Robot/Loop Time/Robot Container/Back Left Cam",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Back Right Cam",
-            "x": 256.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/Robot/Loop Time/Robot Container/Back Right Cam",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Front Left Cam",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 384.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/Robot/Loop Time/Robot Container/Front Left Cam",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Front Right Cam",
-            "x": 384.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 384.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/Robot/Loop Time/Robot Container/Front Right Cam",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Is Active",
-            "x": 768.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 512.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/Robot/Hub Status/Is Active",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "Current Shift",
             "x": 896.0,
             "y": 384.0,
             "width": 384.0,
-            "height": 256.0,
+            "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/Robot/Hub Status/Current Shift",
@@ -140,7 +67,7 @@
           },
           {
             "title": "Alerts",
-            "x": 512.0,
+            "x": 0.0,
             "y": 384.0,
             "width": 256.0,
             "height": 256.0,
@@ -153,7 +80,7 @@
           {
             "title": "Climber Homing Command",
             "x": 256.0,
-            "y": 640.0,
+            "y": 512.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -166,8 +93,8 @@
           },
           {
             "title": "Ground Intake Extension Homing Command",
-            "x": 0.0,
-            "y": 640.0,
+            "x": 256.0,
+            "y": 384.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -198,7 +125,7 @@
           {
             "title": "At Goal Velocity Hub",
             "x": 1408.0,
-            "y": 512.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -215,7 +142,7 @@
           {
             "title": "Facing Goal",
             "x": 1280.0,
-            "y": 512.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -227,6 +154,42 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "photonvision_Port_1184_Output_MJPEG_Server",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/photonvision_Port_1184_Output_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "fps": 5,
+              "resolution": [
+                300.0,
+                300.0
+              ]
+            }
+          },
+          {
+            "title": "photonvision_Port_1182_Output_MJPEG_Server",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/photonvision_Port_1182_Output_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "fps": 5,
+              "resolution": [
+                300.0,
+                300.0
+              ]
             }
           }
         ]
