@@ -5,7 +5,6 @@ import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,9 +39,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    try {
-      //Threads.setCurrentThreadPriority(true, 99);
-
       double startTime = HALUtil.getFPGATime();
       CommandScheduler.getInstance().run();
       DogLog.log("Loop Time/Command Scheduler", (HALUtil.getFPGATime() - startTime) / 1000);
@@ -55,9 +51,6 @@ public class Robot extends TimedRobot {
       double currentTime = HALUtil.getFPGATime();
       DogLog.log("Loop Time/Total", (currentTime - prevTime) / 1000);
       prevTime = currentTime;
-    } finally {
-      //Threads.setCurrentThreadPriority(false, 10);
-    }
   }
 
   @Override
