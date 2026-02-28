@@ -184,12 +184,26 @@ public class RobotContainer {
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
 
-        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeExtension =
-            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
+
+        backRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_RIGHT_CAM,
+                AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        backLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_LEFT_CAM,
+                AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -273,12 +287,25 @@ public class RobotContainer {
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
-        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeExtension =
-            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
+        backRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_RIGHT_CAM,
+                AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        backLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_LEFT_CAM,
+                AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
     }
 
@@ -369,7 +396,7 @@ public class RobotContainer {
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
-    controller.start().onTrue(autoClimb());
+    // controller.start().onTrue(autoClimb());
 
     // temp
     controller.povLeft().whileTrue(backupShoot1());
@@ -472,9 +499,9 @@ public class RobotContainer {
 
     startTime = HALUtil.getFPGATime();
 
-    if (RobotBase.isReal()) {
-      signalList.refreshAll();
-    }
+    // if (RobotBase.isReal()) {
+    //   signalList.refreshAll();
+    // }
 
     DogLog.log(
         "Loop Time/Robot Container/Refresh Signal List",
@@ -650,7 +677,7 @@ public class RobotContainer {
 
   public Command backupShoot2() {
     return Commands.parallel(
-            shooter.runVelocity(90),
+            shooter.runVelocity(75),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),

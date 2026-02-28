@@ -53,6 +53,34 @@
             }
           },
           {
+            "title": "Back Left Cam",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/Robot/Loop Time/Robot Container/Back Left Cam",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Back Right Cam",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/Robot/Loop Time/Robot Container/Back Right Cam",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
             "title": "Current Shift",
             "x": 896.0,
             "y": 384.0,
@@ -154,42 +182,6 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
-            }
-          },
-          {
-            "title": "photonvision_Port_1184_Output_MJPEG_Server",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 384.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/photonvision_Port_1184_Output_MJPEG_Server",
-              "period": 0.06,
-              "rotation_turns": 0,
-              "fps": 5,
-              "resolution": [
-                256.0,
-                160.0
-              ]
-            }
-          },
-          {
-            "title": "photonvision_Port_1182_Output_MJPEG_Server",
-            "x": 384.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 384.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/photonvision_Port_1182_Output_MJPEG_Server",
-              "period": 0.06,
-              "rotation_turns": 0,
-              "fps": 5,
-              "resolution": [
-                256.0,
-                160.0
-              ]
             }
           }
         ]

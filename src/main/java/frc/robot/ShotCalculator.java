@@ -16,13 +16,19 @@ public class ShotCalculator {
   private static final InterpolatingDoubleTreeMap timeOfFlight = new InterpolatingDoubleTreeMap();
 
   static {
-    frontBeltMap.put(1.0, 36.0);
-    frontBeltMap.put(1.2, 40.0);
-    frontBeltMap.put(2.0, 60.0);
+    frontBeltMap.put(1.0, 60.0);
+    frontBeltMap.put(1.2, 60.0);
+    frontBeltMap.put(2.0, 70.0);
+    frontBeltMap.put(3.0, 80.0);
+    frontBeltMap.put(3.5, 85.0);
+    frontBeltMap.put(4.0, 90.0);
 
-    backBeltMap.put(1.0, 36.0);
-    backBeltMap.put(1.2, 40.0);
-    backBeltMap.put(2.0, 60.0);
+    backBeltMap.put(1.0, 60.0);
+    backBeltMap.put(1.2, 60.0);
+    backBeltMap.put(2.0, 70.0);
+    backBeltMap.put(3.0, 80.0);
+    backBeltMap.put(3.5, 85.0);
+    backBeltMap.put(4.0, 90.0);
 
     timeOfFlight.put(1.97, 1.26);
     timeOfFlight.put(2.560, 1.31);
