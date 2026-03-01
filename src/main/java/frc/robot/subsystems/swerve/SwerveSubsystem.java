@@ -38,6 +38,9 @@ import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToPose;
 import frc.robot.subsystems.aprilTagCam.AprilTagHelp;
+
+import static edu.wpi.first.units.Units.Rotation;
+
 import java.util.function.Supplier;
 
 /**
@@ -394,7 +397,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public Command setRotationCommand(RotationTarget rotationTarget) {
     return Commands.runOnce(
             () -> {
-              this.rotationTarget = rotationTarget;
+              this.rotationTarget = RotationTarget.NORMAL;
             })
         .withName("Set Rotation: " + rotationTarget.name());
   }
