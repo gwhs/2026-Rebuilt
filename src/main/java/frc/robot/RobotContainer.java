@@ -29,6 +29,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
+import frc.robot.commands.autonomous.Preload;
 import frc.robot.subsystems.aprilTagCam.AprilTagCam;
 import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
 import frc.robot.subsystems.climber.ClimberConstants;
@@ -397,6 +398,7 @@ public class RobotContainer {
         "Depot 1 Cycle",
         new DepotPathAuto_1c(
             drivetrain, shooter, groundIntakeExtension, groundIntakeRoller, climber));
+    autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
