@@ -186,8 +186,7 @@ public class RobotContainer {
 
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeRoller =
-            GroundIntakeRollerSubsystem.createDisabled();
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
 
         backRightCam =
