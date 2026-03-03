@@ -36,7 +36,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
   public final TalonFX motor;
 
-  public CANcoder groundIntakePivotEncoder = new CANcoder(GroundIntakeLinearExtensionConstants.MOTOR_ID, "rio")
+  public CANcoder groundIntakePivotEncoder = new CANcoder(GroundIntakeLinearExtensionConstants.MOTOR_ID, "rio");
 
   private final StatusSignal<Voltage> motorVoltage;
   private final StatusSignal<Current> motorStatorCurrent;
@@ -148,7 +148,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
     CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
-    encoderConfig.MagnetSensor.MagnetOffset = SensorDirectionValue.Clockwise_Positive;
+    encoderConfig.MagnetSensor.MagnetOffset = SensorDirectionValue.CounterClockwise_Positive;
     encoderConfig.MagnetSensor.SensorDirection = 0.0;
 
     for (int i = 0; i < 5; i++){
