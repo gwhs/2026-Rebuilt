@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
@@ -102,6 +103,12 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
+    talonFXConfig.Feedback.FeedbackRotorOffset = 0;
+    talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    talonFXConfig.Feedback.FeedbackRemoteSensorID = GroundIntakeLinearExtensionConstants.MOTOR_ID;
+    talonFXConfig.Feedback.SensorToMechanismRatio = 2;
+
+
     talonFXConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     talonFXConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
         GroundIntakeLinearExtensionConstants.MAX_ROTATION;
@@ -160,7 +167,6 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
         System.out.println("Could not Configure this device: " + status.toString());
       }
     }
-  }
 
   @Override
   public void periodic() {
