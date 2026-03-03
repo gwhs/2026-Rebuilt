@@ -18,12 +18,13 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.RobotController;
 
 public class ShooterIOReal implements ShooterIO {
 
   private final TalonFX motor1; // Right Front
   private final TalonFX motor2; // Right Back
-  private final TalonFX motor3; // Middle Fronth
+  private final TalonFX motor3; // Middle Front
   private final TalonFX motor4; // Middle Back
   private final TalonFX motor5; // Left Front
   private final TalonFX motor6; // Left Back
@@ -366,5 +367,21 @@ public class ShooterIOReal implements ShooterIO {
     motor4NotConnectedAlert.set(!motor4.isConnected());
     motor5NotConnectedAlert.set(!motor5.isConnected());
     motor6NotConnectedAlert.set(!motor6.isConnected());
+
+    if (RobotController.getBatteryVoltage() < 11) {
+      motor5.setVoltage(0);
+      motor6.setVoltage(0);
+      DogLog.log("Shooter/Left Shooter Disabled", true);
+    } else {
+      DogLog.log("Shooter/Left Shooter Disabled", false);
+    }
+
+    if (RobotController.getBatteryVoltage() < 10) {
+      motor1.setVoltage(0);
+      motor2.setVoltage(0);
+      DogLog.log("Shooter/Right Shooter Disabled", true);
+    } else {
+      DogLog.log("Shooter/Right Shooter Disabled", false);
+    }
   }
 }
