@@ -376,6 +376,8 @@ public class RobotContainer {
     controller.povLeft().onFalse(stopShoot());
     controller.povRight().whileTrue(backupShoot2());
     controller.povRight().onFalse(stopShoot());
+
+    controller.rightStick().whileTrue(bumpJump()); // double check binding works git a
   }
 
   public Command getAutonomousCommand() {
@@ -657,5 +659,11 @@ public class RobotContainer {
                     EagleUtil.shootInSim(drivetrain))
                 .repeatedly())
         .withName("Shoot Hub Backup 2");
+  }
+
+  public Command bumpJump() { 
+    return Commands.parallel(
+      drivetrain.setRotationCommand(RotationTarget.FORTY_FIVE)
+    );
   }
 }
