@@ -8,6 +8,6 @@ public class GroundIntakeRollerConstants {
   public static final int MOTOR_1_ID = 40;
   public static final int MOTOR_2_ID = 41;
 
-  public static final double DEFAULT_INTAKE_VOLTAGE = 12;
+  public static final double DEFAULT_INTAKE_VOLTAGE = 4;
   public static final double REVERSE_INTAKE_VOLTAGE = -5;
 }

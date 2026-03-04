@@ -110,7 +110,10 @@ public class AprilTagCam {
       optionalEstimPose = photonEstimator.estimateCoprocMultiTagPose(targetPose);
 
       if (optionalEstimPose.isEmpty()) {
-        continue;
+        optionalEstimPose = photonEstimator.estimateAverageBestTargetsPose(targetPose);
+        if (optionalEstimPose.isEmpty()) {
+          continue;
+        }
       }
 
       Pose3d estimPose3d = optionalEstimPose.get().estimatedPose;

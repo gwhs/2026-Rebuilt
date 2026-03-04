@@ -290,6 +290,7 @@ public class ShooterIOReal implements ShooterIO {
         / 6; // rotations per second
   }
 
+  @SuppressWarnings("resource")
   private boolean setUpMotors(TalonFXConfiguration talonFXConfig, TalonFX motor) {
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
@@ -309,6 +310,7 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   public void periodic() {
+
     DogLog.log("Shooter/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Shooter/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
     DogLog.log("Shooter/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
