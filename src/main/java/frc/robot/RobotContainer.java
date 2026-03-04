@@ -398,9 +398,9 @@ public class RobotContainer {
     // controller.start().onTrue(autoClimb());
 
     // temp
-    controller.povLeft().whileTrue(backupShoot1());
+    controller.povLeft().whileTrue(backupShootHub());
     controller.povLeft().onFalse(stopShoot());
-    controller.povRight().whileTrue(backupShoot2());
+    controller.povRight().whileTrue(backupShootTrench());
     controller.povRight().onFalse(stopShoot());
   }
 
@@ -658,18 +658,18 @@ public class RobotContainer {
         .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
-  public Command backupShoot1() {
+  public Command backupShootHub() {
     return Commands.parallel(
-            shooter.runVelocity(85),
+            shooter.runVelocity(55),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),
                     EagleUtil.shootInSim(drivetrain))
                 .repeatedly())
-        .withName("Shoot Hub Backup 1");
+        .withName("Shoot Hub Backup");
   }
 
-  public Command backupShoot2() {
+  public Command backupShootTrench() {
     return Commands.parallel(
             shooter.runVelocity(75),
             Commands.parallel(
@@ -677,6 +677,6 @@ public class RobotContainer {
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),
                     EagleUtil.shootInSim(drivetrain))
                 .repeatedly())
-        .withName("Shoot Hub Backup 2");
+        .withName("Shoot Trench Backup");
   }
 }
