@@ -17,13 +17,13 @@ public class Preload extends SequentialCommandGroup {
 
     try {
 
-      Pose2d startingPose = new Pose2d(3.57, 3.41, new Rotation2d(0.53));
+      Pose2d startingPose = new Pose2d(3.51, 4.03, new Rotation2d(0));
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           Commands.parallel(
               indexer.index(),
-              shooter.cruiseControl(),
+              shooter.runVelocity(55),
               EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())));
 
     } catch (Exception e) {
