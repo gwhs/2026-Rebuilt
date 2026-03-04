@@ -23,10 +23,10 @@ public class Preload extends SequentialCommandGroup {
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           Commands.waitSeconds(5)
               .deadlineFor(
-                  Commands.parallel(
-                      indexer.index(),
-                      shooter.runVelocity(55),
-                      EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation()))));
+                  indexer.index(),
+                  shooter.runVelocity(55),
+                  EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
+          Commands.parallel(shooter.runVoltage(0), indexer.runVoltage(0)));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
