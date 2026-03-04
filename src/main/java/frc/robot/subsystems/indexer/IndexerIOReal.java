@@ -36,6 +36,7 @@ public class IndexerIOReal implements IndexerIO {
   private final Alert motor1NotConnectedAlert =
       new Alert("Indexer Motor 1 Not Connected ", AlertType.kError);
 
+  @SuppressWarnings("resource")
   public IndexerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {
 
@@ -50,18 +51,10 @@ public class IndexerIOReal implements IndexerIO {
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 35;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 50;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
-    talonFXConfig.Slot0.kS = 0.125;
-    talonFXConfig.Slot0.kG = 0;
-    talonFXConfig.Slot0.kA = 0;
-    talonFXConfig.Slot0.kV = 0.065;
-    talonFXConfig.Slot0.kP = 0.5;
-    talonFXConfig.Slot0.kI = 0;
-    talonFXConfig.Slot0.kD = 0;
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
