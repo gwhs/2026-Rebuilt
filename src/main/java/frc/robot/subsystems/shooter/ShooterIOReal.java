@@ -289,6 +289,7 @@ public class ShooterIOReal implements ShooterIO {
         / 6; // rotations per second
   }
 
+  @SuppressWarnings("resource")
   private boolean setUpMotors(TalonFXConfiguration talonFXConfig, TalonFX motor) {
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
