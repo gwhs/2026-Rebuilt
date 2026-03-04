@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.aprilTagCam.*;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
@@ -66,19 +65,22 @@ public class DriveCommand extends Command {
     yVelocityLimiter = new SlewRateLimiter(1);
 
     addRequirements(drivetrain);
+
+    
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
 
   @Override
   public void execute() {
     double xInput = -controller.getLeftY();
     double yInput = -controller.getLeftX();
     double rotationalInput = -controller.getRightX();
+    double vel = Math.hypot(xInput, yInput); 
 
     Pose2d currentRobotPose = drivetrain.getCachedState().Pose;
     double currentRobotHeading = currentRobotPose.getRotation().getDegrees();
@@ -116,6 +118,16 @@ public class DriveCommand extends Command {
     } else {
       resetAutoRotate = true;
     }
+
+    if (drivetrain.isSlowingDown()) {
+	    Translation2d velT2D = new Translation2d(xInput, yInput);
+	    double vLen = velT2D.getNorm();
+	    double twentyP = 0.2 / vLen; 
+	    Translation2d newVel = velT2D.times(twentyP);
+	    xInput = newVel.getX();
+	    yInput = newVel.getX();
+    }
+
 
     if (drivetrain.goingToShootingRange()) {
       SwerveDriveState state = drivetrain.getCachedState();
