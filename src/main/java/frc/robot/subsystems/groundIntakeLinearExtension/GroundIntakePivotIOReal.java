@@ -12,16 +12,11 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
-import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -31,13 +26,12 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 
 public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
-  public final TalonFX motor;
+  private final TalonFX motor;
 
-  public CANcoder groundIntakePivotEncoder = new CANcoder(GroundIntakeLinearExtensionConstants.MOTOR_ID, "rio");
+  private final CANcoder groundIntakePivotEncoder;
 
   private final StatusSignal<Voltage> motorVoltage;
   private final StatusSignal<Current> motorStatorCurrent;
@@ -59,7 +53,10 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
   @SuppressWarnings("resource")
   public GroundIntakePivotIOReal(
       CANBus rioCanbus, CANBus canivoreCanBus, StatusSignalCollection statusSignalCollection) {
-    motor = new TalonFX(GroundIntakeLinearExtensionConstants.MOTOR_ID);
+    motor = new TalonFX(GroundIntakeLinearExtensionConstants.MOTOR_ID, rioCanbus);
+
+    groundIntakePivotEncoder =
+        new CANcoder(GroundIntakeLinearExtensionConstants.PIVOT_MOTOR_ID, rioCanbus);
 
     motorVoltage = motor.getMotorVoltage();
     motorStatorCurrent = motor.getStatorCurrent();
@@ -96,7 +93,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // TODO
 
     talonFXConfig.CurrentLimits.StatorCurrentLimit = 40;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -105,9 +102,10 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
     talonFXConfig.Feedback.FeedbackRotorOffset = 0;
     talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    talonFXConfig.Feedback.FeedbackRemoteSensorID = GroundIntakeLinearExtensionConstants.MOTOR_ID;
-    talonFXConfig.Feedback.SensorToMechanismRatio = 2;
-
+    talonFXConfig.Feedback.FeedbackRemoteSensorID =
+        GroundIntakeLinearExtensionConstants.PIVOT_MOTOR_ID;
+    talonFXConfig.Feedback.SensorToMechanismRatio = 2; // TODO
+    talonFXConfig.Feedback.RotorToSensorRatio = 0.0; // TODO
 
     talonFXConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     talonFXConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
@@ -120,14 +118,6 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
         GroundIntakeLinearExtensionConstants.MAX_ACCELERATION;
     talonFXConfig.MotionMagic.MotionMagicCruiseVelocity =
         GroundIntakeLinearExtensionConstants.MAX_VELOCITY;
-
-    talonFXConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
-    talonFXConfig.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
-    talonFXConfig.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
-
-    talonFXConfig.HardwareLimitSwitch.ReverseLimitEnable = true;
-    talonFXConfig.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
-    talonFXConfig.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
 
     talonFXConfig.Slot0.kP = 0.5;
     talonFXConfig.Slot0.kI = 0;
@@ -151,22 +141,20 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
           .set(true);
     }
 
-    setPosition(0);
-
     CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
-    encoderConfig.MagnetSensor.MagnetOffset = SensorDirectionValue.CounterClockwise_Positive;
-    encoderConfig.MagnetSensor.SensorDirection = 0.0;
+    encoderConfig.MagnetSensor.MagnetOffset = 0.0; // TODO
+    encoderConfig.MagnetSensor.SensorDirection =
+        SensorDirectionValue.CounterClockwise_Positive; // TODO
 
-    for (int i = 0; i < 5; i++){
+    for (int i = 0; i < 5; i++) {
       status = groundIntakePivotEncoder.getConfigurator().apply(encoderConfig);
-      if(status.isOK()) 
-        break;
-      }
-      if(!status.isOK()){
-        System.out.println("Could not Configure this device: " + status.toString());
-      }
+      if (status.isOK()) break;
     }
+    if (!status.isOK()) {
+      System.out.println("Could not Configure this device: " + status.toString());
+    }
+  }
 
   @Override
   public void periodic() {
