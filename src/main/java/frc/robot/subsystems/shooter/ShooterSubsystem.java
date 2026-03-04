@@ -90,11 +90,7 @@ public class ShooterSubsystem extends SubsystemBase {
         Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, backrps));
     velocityGoal = clampedFrontRps;
 
-    if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
-      shooterIO.runVoltage(12);
-    } else {
-      shooterIO.runVelocity(clampedFrontRps, clampedBackRps);
-    }
+    shooterIO.runVelocity(clampedFrontRps, clampedBackRps);
   }
 
   public Command preSpin() {
