@@ -403,8 +403,6 @@ public class RobotContainer {
     controller.povLeft().onFalse(stopShoot());
     controller.povRight().whileTrue(backupShootTrench());
     controller.povRight().onFalse(stopShoot());
-
-    controller.rightStick().whileTrue(bumpJump()); // double check binding works git a
   }
 
   public Command getAutonomousCommand() {
