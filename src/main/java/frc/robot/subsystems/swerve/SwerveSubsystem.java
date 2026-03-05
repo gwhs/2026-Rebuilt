@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -160,7 +159,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double rotationalSlowFactor = 1;
   private boolean slowMode = false;
   private boolean shootingRange = false;
-  private boolean slowingDown = false;
+  private boolean bumpSpeed = false;
   private boolean slewRateLimitAcceleration = false;
   private boolean driveAssist = false;
 
@@ -188,9 +187,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
-
-    SmartDashboard.putData("Slow down", Commands.run(() -> setSlowingDown(true)));
-    SmartDashboard.putData("Speed up", Commands.run(() -> setSlowingDown(true)));
   }
 
   private void configureAutoBuilder() {
@@ -286,7 +282,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
     DogLog.log("Current Zone/On Bump", isOnBump.getAsBoolean());
     DogLog.log("In shooting range", isInShootingRange.getAsBoolean());
-
+    DogLog.log("Bump Speed", bumpSpeed);
     DogLog.log(
         "Distance to hub",
         getCachedState()
@@ -381,12 +377,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return shootingRange;
   }
 
-  public void setSlowingDown(boolean newValue) {
-	this.slowingDown = newValue;
+  public void setBumpSpeed(boolean newValue) {
+    this.bumpSpeed = newValue;
   }
 
-  public boolean isSlowingDown() {
-	  return slowingDown;
+  public boolean isBumpSpeed() {
+    return bumpSpeed;
   }
 
   public boolean getdisableAutoRotate() {
