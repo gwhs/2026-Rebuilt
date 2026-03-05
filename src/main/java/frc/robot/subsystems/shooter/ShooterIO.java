@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.wpilibj2.command.Command;
+
 public interface ShooterIO {
   public void runVelocity(double rotationsPerSecond);
 
@@ -10,4 +12,6 @@ public interface ShooterIO {
   public double getVelocity();
 
   public void periodic();
+
+
 }
