@@ -184,12 +184,25 @@ public class RobotContainer {
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
 
-        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeRoller =
-            GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeExtension =
-            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
+
+        backRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_RIGHT_CAM,
+                AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        backLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_LEFT_CAM,
+                AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -273,12 +286,25 @@ public class RobotContainer {
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
-        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeExtension =
-            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
+        backRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_RIGHT_CAM,
+                AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        backLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_LEFT_CAM,
+                AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
     }
 
@@ -369,15 +395,13 @@ public class RobotContainer {
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
-    controller.start().onTrue(autoClimb());
+    // controller.start().onTrue(autoClimb());
 
     // temp
-    controller.povLeft().whileTrue(backupShoot1());
+    controller.povLeft().whileTrue(backupShootHub());
     controller.povLeft().onFalse(stopShoot());
-    controller.povRight().whileTrue(backupShoot2());
+    controller.povRight().whileTrue(backupShootTrench());
     controller.povRight().onFalse(stopShoot());
-
-    controller.rightStick().whileTrue(bumpJump()); // double check binding works git a
   }
 
   public Command getAutonomousCommand() {
@@ -521,15 +545,10 @@ public class RobotContainer {
   public Command shootHub() {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.HUB),
-            shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Hub
-                        .and(drivetrain.isFacingGoal)
-                        .and(isHubActive)
-                        .or(controller.leftTrigger()))
+            Commands.parallel(
+                    indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger()))
                 .repeatedly())
         .withName("Shoot Hub");
   }
@@ -639,20 +658,20 @@ public class RobotContainer {
         .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
-  public Command backupShoot1() {
+  public Command backupShootHub() {
     return Commands.parallel(
-            shooter.runVelocity(85),
+            shooter.runVelocity(55),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),
                     EagleUtil.shootInSim(drivetrain))
                 .repeatedly())
-        .withName("Shoot Hub Backup 1");
+        .withName("Shoot Hub Backup");
   }
 
-  public Command backupShoot2() {
+  public Command backupShootTrench() {
     return Commands.parallel(
-            shooter.runVelocity(90),
+            shooter.runVelocity(75),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),

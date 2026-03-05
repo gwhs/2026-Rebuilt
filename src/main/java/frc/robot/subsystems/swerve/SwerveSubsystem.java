@@ -159,6 +159,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double rotationalSlowFactor = 1;
   private boolean slowMode = false;
   private boolean shootingRange = false;
+  private boolean bumpSpeed = false;
   private boolean slewRateLimitAcceleration = false;
   private boolean driveAssist = false;
 
@@ -281,7 +282,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
     DogLog.log("Current Zone/On Bump", isOnBump.getAsBoolean());
     DogLog.log("In shooting range", isInShootingRange.getAsBoolean());
-
+    DogLog.log("Bump Speed", bumpSpeed);
     DogLog.log(
         "Distance to hub",
         getCachedState()
@@ -374,6 +375,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
   public boolean goingToShootingRange() {
     return shootingRange;
+  }
+
+  public void setBumpSpeed(boolean newValue) {
+    this.bumpSpeed = newValue;
+  }
+
+  public boolean isBumpSpeed() {
+    return bumpSpeed;
   }
 
   public boolean getdisableAutoRotate() {
