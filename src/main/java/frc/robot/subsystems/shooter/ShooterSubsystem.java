@@ -112,6 +112,20 @@ public class ShooterSubsystem extends SubsystemBase {
         .withName("Pre Spin");
   }
 
+  public Command setLeftShooterEnabled(boolean enable) {
+    return this.runOnce(
+        () -> {
+          setLeftShooterEnabled(enable);
+        });
+  }
+
+  public Command setRightShooterEnabled(boolean enable) {
+    return this.runOnce(
+        () -> {
+          setRightShooterEnabled(enable);
+        });
+  }
+
   @Override
   public void periodic() {
     shooterIO.periodic();

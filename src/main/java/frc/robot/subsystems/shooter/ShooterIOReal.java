@@ -18,7 +18,6 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.RobotController;
 
 public class ShooterIOReal implements ShooterIO {
 
@@ -77,6 +76,9 @@ public class ShooterIOReal implements ShooterIO {
   private final StatusSignal<AngularAcceleration> motor6Acceleration;
   private final StatusSignal<Temperature> motor6Temp;
   private final StatusSignal<Double> motor6ClosedLoopGoal;
+
+  private boolean isLeftEnabled;
+  private boolean isRightEnabled;
 
   private final Alert motor1NotConnectedAlert =
       new Alert("Shooter Motor 1 Not Connected", AlertType.kError);
@@ -262,6 +264,14 @@ public class ShooterIOReal implements ShooterIO {
     motor6.setVoltage(voltage);
   }
 
+  public void enableLeftShooter(boolean enable) {
+    isLeftEnabled = enable;
+  }
+
+  public void enableRightShooter(boolean enable) {
+    isRightEnabled = enable;
+  }
+
   public void runVelocity(double rotationsPerSecond) {
     motor1.setControl(velocityRequest1.withVelocity(rotationsPerSecond));
     motor2.setControl(velocityRequest2.withVelocity(rotationsPerSecond));
@@ -351,6 +361,9 @@ public class ShooterIOReal implements ShooterIO {
     DogLog.log("Shooter/Motor 6 Acceleration", motor6Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 6 Closed Loop Goal", motor6ClosedLoopGoal.getValueAsDouble());
 
+    DogLog.log("Shooter/Left Shooter Enabled", isLeftEnabled);
+    DogLog.log("Shooter/Right Shooter Enabled", isRightEnabled);
+
     DogLog.log(
         "Shooter/Motor 1 and 2 Velocity Difference",
         motor1Velocity.getValueAsDouble() - motor2Velocity.getValueAsDouble());
@@ -368,20 +381,13 @@ public class ShooterIOReal implements ShooterIO {
     motor5NotConnectedAlert.set(!motor5.isConnected());
     motor6NotConnectedAlert.set(!motor6.isConnected());
 
-    if (RobotController.getBatteryVoltage() < 11) {
+    if (!isLeftEnabled) {
       motor5.setVoltage(0);
       motor6.setVoltage(0);
-      DogLog.log("Shooter/Left Shooter Disabled", true);
-    } else {
-      DogLog.log("Shooter/Left Shooter Disabled", false);
     }
-
-    if (RobotController.getBatteryVoltage() < 10) {
+    if (!isRightEnabled) {
       motor1.setVoltage(0);
       motor2.setVoltage(0);
-      DogLog.log("Shooter/Right Shooter Disabled", true);
-    } else {
-      DogLog.log("Shooter/Right Shooter Disabled", false);
     }
   }
 }
