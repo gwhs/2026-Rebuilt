@@ -127,13 +127,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public Command alternateLeftRight() {
     return Commands.sequence(
-      setLeftShooterEnabled(true),
-      setRightShooterEnabled(false),
-      Commands.waitSeconds(5),
-      setLeftShooterEnabled(false),
-      setRightShooterEnabled(true),
-      Commands.waitSeconds(5))
-      .repeatedly().withName("Alternate turning on/off right and left shooter"); 
+            setLeftShooterEnabled(true),
+            setRightShooterEnabled(false),
+            Commands.waitSeconds(5),
+            setLeftShooterEnabled(false),
+            setRightShooterEnabled(true),
+            Commands.waitSeconds(5))
+        .repeatedly()
+        .withName("Alternate turning on/off right and left shooter");
   }
 
   @Override
