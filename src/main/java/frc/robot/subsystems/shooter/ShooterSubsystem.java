@@ -114,14 +114,14 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command setLeftShooterEnabled(boolean enable) {
     return this.runOnce(
         () -> {
-          setLeftShooterEnabled(enable);
+          shooterIO.enableLeftShooter(enable);
         });
   }
 
   public Command setRightShooterEnabled(boolean enable) {
     return this.runOnce(
         () -> {
-          setRightShooterEnabled(enable);
+          shooterIO.enableRightShooter(enable);
         });
   }
 

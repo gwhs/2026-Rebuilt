@@ -35,6 +35,12 @@ public class ShooterIOSim implements ShooterIO {
     return motor.getAngularVelocity().in(RotationsPerSecond);
   }
 
+    @Override
+  public void enableLeftShooter(boolean b) {}
+
+  @Override
+  public void enableRightShooter(boolean b) {}
+
   @Override
   public void periodic() {
     motor.update(.020);
