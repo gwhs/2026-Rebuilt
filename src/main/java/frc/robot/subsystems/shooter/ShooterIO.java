@@ -12,6 +12,4 @@ public interface ShooterIO {
   public double getVelocity();
 
   public void periodic();
-
-
 }
