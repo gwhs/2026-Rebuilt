@@ -77,8 +77,8 @@ public class ShooterIOReal implements ShooterIO {
   private final StatusSignal<Temperature> motor6Temp;
   private final StatusSignal<Double> motor6ClosedLoopGoal;
 
-  private boolean isLeftEnabled;
-  private boolean isRightEnabled;
+  private boolean isLeftEnabled = true;
+  private boolean isRightEnabled = true;
 
   private final Alert motor1NotConnectedAlert =
       new Alert("Shooter Motor 1 Not Connected", AlertType.kError);
