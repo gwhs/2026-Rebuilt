@@ -498,20 +498,21 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return cachedVirtualTarget;
   }
 
-  public Command setCurrentLimit(double newLimit){
-  return Commands.runOnce(()->{
-    CurrentLimitsConfigs config = new CurrentLimitsConfigs();
-    config.StatorCurrentLimit = newLimit;
-    config.StatorCurrentLimitEnable = true;
+  public Command setCurrentLimit(double newLimit) {
+    return Commands.runOnce(
+        () -> {
+          CurrentLimitsConfigs config = new CurrentLimitsConfigs();
+          config.StatorCurrentLimit = newLimit;
+          config.StatorCurrentLimitEnable = true;
 
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i <= 5; i++) {
-      status = frontLeftDrive.getConfigurator().apply(config);
-      status = frontRightDrive.getConfigurator().apply(config);
-      status = backLeftDrive.getConfigurator().apply(config);
-      status = backRightDrive.getConfigurator().apply(config);
-      if (status.isOK()) break;
-    }
-  });
+          StatusCode status = StatusCode.StatusCodeNotInitialized;
+          for (int i = 0; i <= 5; i++) {
+            status = frontLeftDrive.getConfigurator().apply(config);
+            status = frontRightDrive.getConfigurator().apply(config);
+            status = backLeftDrive.getConfigurator().apply(config);
+            status = backRightDrive.getConfigurator().apply(config);
+            if (status.isOK()) break;
+          }
+        });
   }
 }
