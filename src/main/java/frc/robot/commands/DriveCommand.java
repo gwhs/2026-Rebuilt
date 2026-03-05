@@ -65,22 +65,17 @@ public class DriveCommand extends Command {
     yVelocityLimiter = new SlewRateLimiter(1);
 
     addRequirements(drivetrain);
-
-    
-
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-
   @Override
   public void execute() {
     double xInput = -controller.getLeftY();
     double yInput = -controller.getLeftX();
     double rotationalInput = -controller.getRightX();
-    double vel = Math.hypot(xInput, yInput); 
 
     Pose2d currentRobotPose = drivetrain.getCachedState().Pose;
     double currentRobotHeading = currentRobotPose.getRotation().getDegrees();
@@ -119,15 +114,14 @@ public class DriveCommand extends Command {
       resetAutoRotate = true;
     }
 
-    if (drivetrain.isSlowingDown()) {
-	    Translation2d velT2D = new Translation2d(xInput, yInput);
-	    double vLen = velT2D.getNorm();
-	    double twentyP = 0.2 / vLen; 
-	    Translation2d newVel = velT2D.times(twentyP);
-	    xInput = newVel.getX();
-	    yInput = newVel.getX();
+    if (drivetrain.isBumpSpeed()) {
+      Translation2d velT2D = new Translation2d(xInput, yInput);
+      double vLen = velT2D.getNorm();
+      double twentyP = 0.4 / vLen;
+      Translation2d newVel = velT2D.times(twentyP);
+      xInput = newVel.getX();
+      yInput = newVel.getY();
     }
-
 
     if (drivetrain.goingToShootingRange()) {
       SwerveDriveState state = drivetrain.getCachedState();
