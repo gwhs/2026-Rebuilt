@@ -415,6 +415,17 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 0;
       case HUB:
         return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getCachedVirtualTarget());
+      case FORTY_FIVE:
+        double currentRobotHeading = this.getCachedState().Pose.getRotation().getDegrees();
+        if (currentRobotHeading >= 0 && currentRobotHeading <= 90) {
+          return 45;
+        } else if (currentRobotHeading >= 90 && currentRobotHeading <= 180) {
+          return 135;
+        } else if (currentRobotHeading <= 0 && currentRobotHeading >= -90) {
+          return -45;
+        } else {
+          return -135;
+        }
       default:
         return 0;
     }

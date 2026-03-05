@@ -661,9 +661,7 @@ public class RobotContainer {
         .withName("Shoot Hub Backup 2");
   }
 
-  public Command bumpJump() { 
-    return Commands.parallel(
-      drivetrain.setRotationCommand(RotationTarget.FORTY_FIVE)
-    );
+  public Command bumpJump() {
+    return Commands.parallel(drivetrain.setRotationCommand(RotationTarget.FORTY_FIVE));
   }
 }
