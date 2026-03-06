@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.HubTracker.Shift;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.autonomous.DepotOutpost;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
@@ -421,6 +422,8 @@ public class RobotContainer {
         new DepotPathAuto_1c(
             drivetrain, shooter, groundIntakeExtension, groundIntakeRoller, climber));
     autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
+    autoChooser.addOption(
+        "Depot-Outpost", new DepotOutpost(drivetrain, shooter, indexer, groundIntakeRoller));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
