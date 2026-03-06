@@ -377,8 +377,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return shootingRange;
   }
 
-  public void setBumpSpeed(boolean newValue) {
-    this.bumpSpeed = newValue;
+  public Command setBumpSpeed(boolean newValue) {
+    return Commands.runOnce(() -> this.bumpSpeed = newValue);
   }
 
   public boolean isBumpSpeed() {
