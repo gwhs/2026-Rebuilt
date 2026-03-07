@@ -1,6 +1,8 @@
 package frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -514,5 +516,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       cachedVirtualTarget = getVirtualTarget();
     }
     return cachedVirtualTarget;
+  }
+
+  public Command setCurrentLimit(double newLimit) {
+    return Commands.runOnce(
+        () -> {
+          CurrentLimitsConfigs config = new CurrentLimitsConfigs();
+          config.StatorCurrentLimit = newLimit;
+          config.StatorCurrentLimitEnable = true;
+
+          StatusCode status = StatusCode.StatusCodeNotInitialized;
+          for (int i = 0; i <= 5; i++) {
+            status = frontLeftDrive.getConfigurator().apply(config);
+            status = frontRightDrive.getConfigurator().apply(config);
+            status = backLeftDrive.getConfigurator().apply(config);
+            status = backRightDrive.getConfigurator().apply(config);
+            if (status.isOK()) break;
+          }
+        });
   }
 }
