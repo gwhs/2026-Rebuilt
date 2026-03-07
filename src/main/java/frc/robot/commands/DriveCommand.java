@@ -117,7 +117,7 @@ public class DriveCommand extends Command {
     if (drivetrain.isBumpSpeed()) {
       Translation2d velT2D = new Translation2d(xInput, yInput);
       double vLen = velT2D.getNorm();
-      double twentyP = 0.4 / vLen;
+      double twentyP = 3 / maxSpeed / vLen;
       Translation2d newVel = velT2D.times(twentyP);
       xInput = newVel.getX();
       yInput = newVel.getY();
