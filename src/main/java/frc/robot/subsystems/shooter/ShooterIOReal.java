@@ -23,7 +23,7 @@ public class ShooterIOReal implements ShooterIO {
 
   private final TalonFX motor1; // Right Front
   private final TalonFX motor2; // Right Back
-  private final TalonFX motor3; // Middle Fronth
+  private final TalonFX motor3; // Middle Front
   private final TalonFX motor4; // Middle Back
   private final TalonFX motor5; // Left Front
   private final TalonFX motor6; // Left Back
@@ -76,6 +76,9 @@ public class ShooterIOReal implements ShooterIO {
   private final StatusSignal<AngularAcceleration> motor6Acceleration;
   private final StatusSignal<Temperature> motor6Temp;
   private final StatusSignal<Double> motor6ClosedLoopGoal;
+
+  private boolean isLeftEnabled = true;
+  private boolean isRightEnabled = true;
 
   private final Alert motor1NotConnectedAlert =
       new Alert("Shooter Motor 1 Not Connected", AlertType.kError);
@@ -253,30 +256,50 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   public void runVoltage(double voltage) {
-    motor1.setVoltage(voltage);
-    motor2.setVoltage(voltage);
+    if (isRightEnabled) {
+      motor1.setVoltage(voltage);
+      motor2.setVoltage(voltage);
+    }
     motor3.setVoltage(voltage);
     motor4.setVoltage(voltage);
-    motor5.setVoltage(voltage);
-    motor6.setVoltage(voltage);
+    if (isLeftEnabled) {
+      motor5.setVoltage(voltage);
+      motor6.setVoltage(voltage);
+    }
+  }
+
+  public void enableLeftShooter(boolean enable) {
+    isLeftEnabled = enable;
+  }
+
+  public void enableRightShooter(boolean enable) {
+    isRightEnabled = enable;
   }
 
   public void runVelocity(double rotationsPerSecond) {
-    motor1.setControl(velocityRequest1.withVelocity(rotationsPerSecond));
-    motor2.setControl(velocityRequest2.withVelocity(rotationsPerSecond));
+    if (isRightEnabled) {
+      motor1.setControl(velocityRequest1.withVelocity(rotationsPerSecond));
+      motor2.setControl(velocityRequest2.withVelocity(rotationsPerSecond));
+    }
     motor3.setControl(velocityRequest3.withVelocity(rotationsPerSecond));
     motor4.setControl(velocityRequest4.withVelocity(rotationsPerSecond));
-    motor5.setControl(velocityRequest5.withVelocity(rotationsPerSecond));
-    motor6.setControl(velocityRequest6.withVelocity(rotationsPerSecond));
+    if (isLeftEnabled) {
+      motor5.setControl(velocityRequest5.withVelocity(rotationsPerSecond));
+      motor6.setControl(velocityRequest6.withVelocity(rotationsPerSecond));
+    }
   }
 
   public void runVelocity(double frontRPS, double backRPS) {
-    motor1.setControl(velocityRequest1.withVelocity(frontRPS));
-    motor2.setControl(velocityRequest2.withVelocity(backRPS));
+    if (isRightEnabled) {
+      motor1.setControl(velocityRequest1.withVelocity(frontRPS));
+      motor2.setControl(velocityRequest2.withVelocity(backRPS));
+    }
     motor3.setControl(velocityRequest3.withVelocity(frontRPS));
     motor4.setControl(velocityRequest4.withVelocity(backRPS));
-    motor5.setControl(velocityRequest5.withVelocity(frontRPS));
-    motor6.setControl(velocityRequest6.withVelocity(backRPS));
+    if (isLeftEnabled) {
+      motor5.setControl(velocityRequest5.withVelocity(frontRPS));
+      motor6.setControl(velocityRequest6.withVelocity(backRPS));
+    }
   }
 
   public double getVelocity() {
@@ -352,6 +375,9 @@ public class ShooterIOReal implements ShooterIO {
     DogLog.log("Shooter/Motor 6 Acceleration", motor6Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 6 Closed Loop Goal", motor6ClosedLoopGoal.getValueAsDouble());
 
+    DogLog.log("Shooter/Left Shooter Enabled", isLeftEnabled);
+    DogLog.log("Shooter/Right Shooter Enabled", isRightEnabled);
+
     DogLog.log(
         "Shooter/Motor 1 and 2 Velocity Difference",
         motor1Velocity.getValueAsDouble() - motor2Velocity.getValueAsDouble());
@@ -368,5 +394,14 @@ public class ShooterIOReal implements ShooterIO {
     motor4NotConnectedAlert.set(!motor4.isConnected());
     motor5NotConnectedAlert.set(!motor5.isConnected());
     motor6NotConnectedAlert.set(!motor6.isConnected());
+
+    if (!isLeftEnabled) {
+      motor5.setVoltage(0);
+      motor6.setVoltage(0);
+    }
+    if (!isRightEnabled) {
+      motor1.setVoltage(0);
+      motor2.setVoltage(0);
+    }
   }
 }
