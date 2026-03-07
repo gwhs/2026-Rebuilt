@@ -256,12 +256,16 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   public void runVoltage(double voltage) {
+    if(isRightEnabled){
     motor1.setVoltage(voltage);
     motor2.setVoltage(voltage);
+    }
     motor3.setVoltage(voltage);
     motor4.setVoltage(voltage);
+    if(isRightEnabled){
     motor5.setVoltage(voltage);
     motor6.setVoltage(voltage);
+    }
   }
 
   public void enableLeftShooter(boolean enable) {
@@ -273,21 +277,29 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   public void runVelocity(double rotationsPerSecond) {
+    if(isRightEnabled){
     motor1.setControl(velocityRequest1.withVelocity(rotationsPerSecond));
     motor2.setControl(velocityRequest2.withVelocity(rotationsPerSecond));
+    }
     motor3.setControl(velocityRequest3.withVelocity(rotationsPerSecond));
     motor4.setControl(velocityRequest4.withVelocity(rotationsPerSecond));
+    if(isLeftEnabled){
     motor5.setControl(velocityRequest5.withVelocity(rotationsPerSecond));
     motor6.setControl(velocityRequest6.withVelocity(rotationsPerSecond));
+    }
   }
 
   public void runVelocity(double frontRPS, double backRPS) {
+    if(isRightEnabled){
     motor1.setControl(velocityRequest1.withVelocity(frontRPS));
     motor2.setControl(velocityRequest2.withVelocity(backRPS));
+    }
     motor3.setControl(velocityRequest3.withVelocity(frontRPS));
     motor4.setControl(velocityRequest4.withVelocity(backRPS));
+    if(isLeftEnabled){
     motor5.setControl(velocityRequest5.withVelocity(frontRPS));
     motor6.setControl(velocityRequest6.withVelocity(backRPS));
+    }
   }
 
   public double getVelocity() {
