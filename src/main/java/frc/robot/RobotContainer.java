@@ -398,14 +398,14 @@ public class RobotContainer {
     controller.x().whileTrue(defenseMode());
     // controller.start().onTrue(autoClimb());
 
-    controller.rightStick().whileTrue(bumpJump());
-    controller.rightStick().onFalse(stopBumpJump());
+    controller.povRight().whileTrue(bumpJump());
+    controller.povRight().onFalse(stopBumpJump());
 
     // temp
-    controller.povLeft().whileTrue(backupShootHub());
-    controller.povLeft().onFalse(stopShoot());
-    controller.povRight().whileTrue(backupShootTrench());
-    controller.povRight().onFalse(stopShoot());
+    controller.rightStick().whileTrue(backupShootHub());
+    controller.rightStick().onFalse(stopShoot());
+    controller.leftStick().whileTrue(backupShootTrench());
+    controller.leftStick().onFalse(stopShoot());
   }
 
   public Command getAutonomousCommand() {
