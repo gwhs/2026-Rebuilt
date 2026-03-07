@@ -398,6 +398,9 @@ public class RobotContainer {
     controller.x().whileTrue(defenseMode());
     // controller.start().onTrue(autoClimb());
 
+    controller.rightStick().whileTrue(bumpJump());
+    controller.rightStick().onFalse(stopBumpJump());
+
     // temp
     controller.povLeft().whileTrue(backupShootHub());
     controller.povLeft().onFalse(stopShoot());
@@ -668,5 +671,15 @@ public class RobotContainer {
                     EagleUtil.shootInSim(drivetrain))
                 .repeatedly())
         .withName("Shoot Trench Backup");
+  }
+
+  public Command bumpJump() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.FORTY_FIVE), drivetrain.setBumpSpeed(true));
+  }
+
+  public Command stopBumpJump() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.NORMAL), drivetrain.setBumpSpeed(false));
   }
 }
