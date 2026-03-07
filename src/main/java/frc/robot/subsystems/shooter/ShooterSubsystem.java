@@ -6,6 +6,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
@@ -94,18 +95,19 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command preSpin() {
-    return this.run(
-            () -> {
-              Pose2d robotPose = robotPoseSupplier.get();
-              Pose2d targetPose = robotTargetSupplier.get();
-              double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
-              double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
-              double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
-              runVoltage(0);
+    // return this.run(
+    //         () -> {
+    //           Pose2d robotPose = robotPoseSupplier.get();
+    //           Pose2d targetPose = robotTargetSupplier.get();
+    //           double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+    //           double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
+    //           double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
+    //           runVoltage(0);
 
-              // does not actually pre-spin
-            })
-        .withName("Pre Spin");
+    //           // does not actually pre-spin
+    //         })
+    //     .withName("Pre Spin");
+    return Commands.none();
   }
 
   @Override
