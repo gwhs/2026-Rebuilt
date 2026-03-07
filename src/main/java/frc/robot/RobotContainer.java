@@ -683,8 +683,7 @@ public class RobotContainer {
 
   public Command bumpJump() {
     return Commands.parallel(
-        drivetrain.setRotationCommand(RotationTarget.FORTY_FIVE),
-        drivetrain.setBumpSpeed(true));
+        drivetrain.setRotationCommand(RotationTarget.FORTY_FIVE), drivetrain.setBumpSpeed(true));
   }
 
   public Command stopBumpJump() {
