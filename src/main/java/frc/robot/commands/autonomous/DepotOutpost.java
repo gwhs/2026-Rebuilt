@@ -36,10 +36,11 @@ public class DepotOutpost extends SequentialCommandGroup {
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
           AutoBuilder.followPath(startingPath).deadlineFor(groundIntakeRoller.startIntake()),
+          Commands.waitSeconds(3),
           AutoBuilder.followPath(scorePath)
               .alongWith(
                   Commands.sequence(
-                      Commands.waitSeconds(1),
+                      Commands.waitSeconds(1.8),
                       Commands.parallel(
                           groundIntakeRoller.stopIntake(),
                           indexer.index(),
