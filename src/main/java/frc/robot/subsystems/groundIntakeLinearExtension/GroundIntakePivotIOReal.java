@@ -56,7 +56,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     motor = new TalonFX(GroundIntakeLinearExtensionConstants.MOTOR_ID, rioCanbus);
 
     groundIntakePivotEncoder =
-        new CANcoder(GroundIntakeLinearExtensionConstants.PIVOT_MOTOR_ID, rioCanbus);
+        new CANcoder(GroundIntakeLinearExtensionConstants.PIVOT_ENCODER_ID, rioCanbus);
 
     motorVoltage = motor.getMotorVoltage();
     motorStatorCurrent = motor.getStatorCurrent();
@@ -103,7 +103,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     talonFXConfig.Feedback.FeedbackRotorOffset = 0;
     talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     talonFXConfig.Feedback.FeedbackRemoteSensorID =
-        GroundIntakeLinearExtensionConstants.PIVOT_MOTOR_ID;
+        GroundIntakeLinearExtensionConstants.PIVOT_ENCODER_ID;
     talonFXConfig.Feedback.SensorToMechanismRatio = 36.0 / 18.0;
     talonFXConfig.Feedback.RotorToSensorRatio = 42.0 / 12.0 * 42.0 / 38.0 * 62.0 / 18.0;
 
