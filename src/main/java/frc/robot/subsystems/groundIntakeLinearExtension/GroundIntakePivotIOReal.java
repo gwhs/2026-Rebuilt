@@ -104,7 +104,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     talonFXConfig.Feedback.FeedbackRemoteSensorID =
         GroundIntakeLinearExtensionConstants.PIVOT_MOTOR_ID;
-    talonFXConfig.Feedback.SensorToMechanismRatio = 2; // TODO
+    talonFXConfig.Feedback.SensorToMechanismRatio = 42 / 12 * 42 / 38 * 62 / 18 * 36 / 18; // TODO
     talonFXConfig.Feedback.RotorToSensorRatio = 0.0; // TODO
 
     talonFXConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
