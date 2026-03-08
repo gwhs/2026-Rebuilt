@@ -93,7 +93,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // TODO
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; 
 
     talonFXConfig.CurrentLimits.StatorCurrentLimit = 40;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
