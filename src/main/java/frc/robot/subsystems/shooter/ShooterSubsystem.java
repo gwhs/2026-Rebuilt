@@ -5,6 +5,7 @@ import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -52,6 +53,7 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterIO = shooterIO;
     robotTargetSupplier = robotTarget;
     robotPoseSupplier = robotPose;
+    SmartDashboard.putData("Shooter Alternate Right/Left Command", alternateLeftRight());
   }
 
   public Command runVelocity(double rotationsPerSecond) {
@@ -108,6 +110,32 @@ public class ShooterSubsystem extends SubsystemBase {
     //         })
     //     .withName("Pre Spin");
     return Commands.none();
+  }
+
+  public Command setLeftShooterEnabled(boolean enable) {
+    return this.runOnce(
+        () -> {
+          shooterIO.enableLeftShooter(enable);
+        });
+  }
+
+  public Command setRightShooterEnabled(boolean enable) {
+    return this.runOnce(
+        () -> {
+          shooterIO.enableRightShooter(enable);
+        });
+  }
+
+  public Command alternateLeftRight() {
+    return Commands.sequence(
+            setLeftShooterEnabled(true),
+            setRightShooterEnabled(false),
+            Commands.waitSeconds(5),
+            setLeftShooterEnabled(false),
+            setRightShooterEnabled(true),
+            Commands.waitSeconds(5))
+        .repeatedly()
+        .withName("Alternate turning on/off right and left shooter");
   }
 
   @Override
