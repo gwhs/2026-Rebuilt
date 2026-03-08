@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -165,7 +166,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private boolean driveAssist = false;
 
   private SwerveDriveState cachedState = null;
-  public Pose2d cachedVirtualTarget = null;
+  public Pose2d cachedVirtualTarget = null; 
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -188,7 +189,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
+
+    SmartDashboard.putData("Change current limit to 60", setCurrentLimit(60));
+    SmartDashboard.putData("Change current limit to 80", setCurrentLimit(80));
+    SmartDashboard.putData("Change current limit to 100", setCurrentLimit(100));
   }
+  
 
   private void configureAutoBuilder() {
     try {
