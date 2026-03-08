@@ -187,8 +187,10 @@ public class RobotContainer {
 
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeRoller = GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeRoller =
+            GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension =
+            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
 
         backRightCam =
             new AprilTagCam(
@@ -291,7 +293,8 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension =
+            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         backRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_RIGHT_CAM,
