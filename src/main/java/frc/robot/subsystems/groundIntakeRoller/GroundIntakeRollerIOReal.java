@@ -75,7 +75,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     talonFXConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
 
