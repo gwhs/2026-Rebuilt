@@ -166,7 +166,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private boolean driveAssist = false;
 
   private SwerveDriveState cachedState = null;
-  public Pose2d cachedVirtualTarget = null; 
+  public Pose2d cachedVirtualTarget = null;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -190,11 +190,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
 
-    SmartDashboard.putData("Change current limit to 60", setCurrentLimit(60));
-    SmartDashboard.putData("Change current limit to 80", setCurrentLimit(80));
-    SmartDashboard.putData("Change current limit to 100", setCurrentLimit(100));
+    SmartDashboard.putData("Change drive motor current limit to 60", setCurrentLimit(60));
+    SmartDashboard.putData("Change drive motor current limit to 80", setCurrentLimit(80));
+    SmartDashboard.putData("Change drive motor current limit to 100", setCurrentLimit(100));
   }
-  
 
   private void configureAutoBuilder() {
     try {
