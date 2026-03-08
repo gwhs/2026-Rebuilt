@@ -191,9 +191,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
 
-    SmartDashboard.putData("Change drive motor current limit to 60", setCurrentLimit(60));
-    SmartDashboard.putData("Change drive motor current limit to 80", setCurrentLimit(80));
-    SmartDashboard.putData("Change drive motor current limit to 100", setCurrentLimit(100));
+    SmartDashboard.putData("Current limit: 60", setCurrentLimit(60));
+    SmartDashboard.putData("Current limit: 80", setCurrentLimit(80));
+    SmartDashboard.putData("Current limit: 100", setCurrentLimit(100));
   }
 
   private void configureAutoBuilder() {

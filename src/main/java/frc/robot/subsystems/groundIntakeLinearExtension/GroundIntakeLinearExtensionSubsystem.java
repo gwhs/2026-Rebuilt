@@ -28,8 +28,6 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   public GroundIntakeLinearExtensionSubsystem(
       GroundIntakeLinearExtensionIO groundIntakeLinearExtensionIO) {
     this.groundIntakeLinearExtensionIO = groundIntakeLinearExtensionIO;
-
-    SmartDashboard.putData("Ground Intake Extension Homing Command", homingCommand());
   }
 
   @Override
