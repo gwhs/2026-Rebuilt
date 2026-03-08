@@ -1,6 +1,8 @@
 package frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -29,6 +31,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -187,6 +190,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     }
     configureAutoBuilder();
     registerTelemetry(logger::telemeterize);
+
+    SmartDashboard.putData("Change drive motor current limit to 60", setCurrentLimit(60));
+    SmartDashboard.putData("Change drive motor current limit to 80", setCurrentLimit(80));
+    SmartDashboard.putData("Change drive motor current limit to 100", setCurrentLimit(100));
   }
 
   private void configureAutoBuilder() {
@@ -514,5 +521,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       cachedVirtualTarget = getVirtualTarget();
     }
     return cachedVirtualTarget;
+  }
+
+  public Command setCurrentLimit(double newLimit) {
+    return Commands.runOnce(
+        () -> {
+          CurrentLimitsConfigs config = new CurrentLimitsConfigs();
+          config.StatorCurrentLimit = newLimit;
+          config.StatorCurrentLimitEnable = true;
+
+          StatusCode status = StatusCode.StatusCodeNotInitialized;
+          for (int i = 0; i <= 5; i++) {
+            status = frontLeftDrive.getConfigurator().apply(config);
+            status = frontRightDrive.getConfigurator().apply(config);
+            status = backLeftDrive.getConfigurator().apply(config);
+            status = backRightDrive.getConfigurator().apply(config);
+            if (status.isOK()) break;
+          }
+        });
   }
 }
