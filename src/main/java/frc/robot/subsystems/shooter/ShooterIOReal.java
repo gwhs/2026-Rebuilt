@@ -225,10 +225,10 @@ public class ShooterIOReal implements ShooterIO {
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    talonFXConfig.Slot0.kS = 0.125;
+    talonFXConfig.Slot0.kS = 0.2;
     talonFXConfig.Slot0.kG = 0;
     talonFXConfig.Slot0.kA = 0;
-    talonFXConfig.Slot0.kV = 0.1125;
+    talonFXConfig.Slot0.kV = 0.12;
     talonFXConfig.Slot0.kP = 4.00;
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
