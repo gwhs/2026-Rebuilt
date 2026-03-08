@@ -101,7 +101,6 @@ public class AprilTagCam {
 
     List<PhotonPipelineResult> results = cam.getAllUnreadResults();
     DogLog.log(ntKey + "Number of Results/", results.size());
-    DogLog.log(ntKey + "counter", counter);
     if (results.isEmpty()) {
       return;
     }
@@ -110,7 +109,7 @@ public class AprilTagCam {
       optionalEstimPose = photonEstimator.estimateCoprocMultiTagPose(targetPose);
 
       if (optionalEstimPose.isEmpty()) {
-        optionalEstimPose = photonEstimator.estimateAverageBestTargetsPose(targetPose);
+        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(targetPose);
         if (optionalEstimPose.isEmpty()) {
           continue;
         }

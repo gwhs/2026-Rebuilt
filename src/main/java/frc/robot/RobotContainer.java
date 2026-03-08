@@ -398,14 +398,14 @@ public class RobotContainer {
     controller.x().whileTrue(defenseMode());
     // controller.start().onTrue(autoClimb());
 
-    controller.rightStick().whileTrue(bumpJump());
-    controller.rightStick().onFalse(stopBumpJump());
+    controller.povRight().whileTrue(bumpJump());
+    controller.povRight().onFalse(stopBumpJump());
 
     // temp
-    controller.povLeft().whileTrue(backupShootHub());
-    controller.povLeft().onFalse(stopShoot());
-    controller.povRight().whileTrue(backupShootTrench());
-    controller.povRight().onFalse(stopShoot());
+    controller.rightStick().whileTrue(backupShootHub());
+    controller.rightStick().onFalse(stopShoot());
+    controller.leftStick().whileTrue(backupShootTrench());
+    controller.leftStick().onFalse(stopShoot());
   }
 
   public Command getAutonomousCommand() {
@@ -557,14 +557,10 @@ public class RobotContainer {
   public Command shootDepot() {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
-            shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Passing
-                        .and(drivetrain.isFacingGoalPassing)
-                        .or(controller.leftTrigger()))
+            Commands.parallel(
+                    indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(drivetrain.isFacingGoalPassing.or(controller.leftTrigger()))
                 .repeatedly())
         .withName("Shoot Depot Side");
   }
@@ -572,14 +568,10 @@ public class RobotContainer {
   public Command shootOutpost() {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
-            shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Passing
-                        .and(drivetrain.isFacingGoalPassing)
-                        .or(controller.leftTrigger()))
+            Commands.parallel(
+                    indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(drivetrain.isFacingGoalPassing.or(controller.leftTrigger()))
                 .repeatedly())
         .withName("Shoot Outpost Side");
   }
