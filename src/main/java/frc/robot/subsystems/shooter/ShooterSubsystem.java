@@ -5,7 +5,9 @@ import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
@@ -51,6 +53,7 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterIO = shooterIO;
     robotTargetSupplier = robotTarget;
     robotPoseSupplier = robotPose;
+    SmartDashboard.putData("Shooter Alternate Right/Left Command", alternateLeftRight());
   }
 
   public Command runVelocity(double rotationsPerSecond) {
@@ -90,26 +93,49 @@ public class ShooterSubsystem extends SubsystemBase {
         Math.max(ShooterConstants.MIN_RPS, Math.min(ShooterConstants.MAX_RPS, backrps));
     velocityGoal = clampedFrontRps;
 
-    if (shooterIO.getVelocity() <= velocityGoal - ShooterConstants.VELOCITY_TOLERANCE) {
-      shooterIO.runVoltage(12);
-    } else {
-      shooterIO.runVelocity(clampedFrontRps, clampedBackRps);
-    }
+    shooterIO.runVelocity(clampedFrontRps, clampedBackRps);
   }
 
   public Command preSpin() {
-    return this.run(
-            () -> {
-              Pose2d robotPose = robotPoseSupplier.get();
-              Pose2d targetPose = robotTargetSupplier.get();
-              double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
-              double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
-              double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
-              runVoltage(0);
+    // return this.run(
+    //         () -> {
+    //           Pose2d robotPose = robotPoseSupplier.get();
+    //           Pose2d targetPose = robotTargetSupplier.get();
+    //           double robotTargetDist = EagleUtil.getRobotTargetDistance(robotPose, targetPose);
+    //           double frontRotationsPerSecond = ShotCalculator.getFrontVelocity(robotTargetDist);
+    //           double backRotationsPerSecond = ShotCalculator.getBackVelocity(robotTargetDist);
+    //           runVoltage(0);
 
-              // does not actually pre-spin
-            })
-        .withName("Pre Spin");
+    //           // does not actually pre-spin
+    //         })
+    //     .withName("Pre Spin");
+    return Commands.none();
+  }
+
+  public Command setLeftShooterEnabled(boolean enable) {
+    return this.runOnce(
+        () -> {
+          shooterIO.enableLeftShooter(enable);
+        });
+  }
+
+  public Command setRightShooterEnabled(boolean enable) {
+    return this.runOnce(
+        () -> {
+          shooterIO.enableRightShooter(enable);
+        });
+  }
+
+  public Command alternateLeftRight() {
+    return Commands.sequence(
+            setLeftShooterEnabled(true),
+            setRightShooterEnabled(false),
+            Commands.waitSeconds(5),
+            setLeftShooterEnabled(false),
+            setRightShooterEnabled(true),
+            Commands.waitSeconds(5))
+        .repeatedly()
+        .withName("Alternate turning on/off right and left shooter");
   }
 
   @Override

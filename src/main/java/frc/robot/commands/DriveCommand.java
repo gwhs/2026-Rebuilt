@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
-import frc.robot.subsystems.aprilTagCam.*;
 import frc.robot.subsystems.objectDetection.GamePieceTracker;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem.RotationTarget;
@@ -72,8 +71,6 @@ public class DriveCommand extends Command {
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
-
   @Override
   public void execute() {
     double xInput = -controller.getLeftY();
@@ -115,6 +112,15 @@ public class DriveCommand extends Command {
       DogLog.log("Drive Command/rotational input", rotationalInput);
     } else {
       resetAutoRotate = true;
+    }
+
+    if (drivetrain.isBumpSpeed()) {
+      Translation2d velT2D = new Translation2d(xInput, yInput);
+      double vLen = velT2D.getNorm();
+      double twentyP = 3 / maxSpeed / vLen;
+      Translation2d newVel = velT2D.times(twentyP);
+      xInput = newVel.getX();
+      yInput = newVel.getY();
     }
 
     if (drivetrain.goingToShootingRange()) {

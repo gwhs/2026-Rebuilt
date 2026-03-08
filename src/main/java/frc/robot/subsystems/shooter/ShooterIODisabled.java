@@ -18,4 +18,10 @@ public class ShooterIODisabled implements ShooterIO {
 
   @Override
   public void periodic() {}
+
+  @Override
+  public void enableLeftShooter(boolean b) {}
+
+  @Override
+  public void enableRightShooter(boolean b) {}
 }

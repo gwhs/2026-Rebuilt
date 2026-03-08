@@ -21,14 +21,14 @@
         {
             "name": "back left cam",
             "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": 15}],
-            "position": [-0.2928874, 0.2258314, 0.7379462],
+            "position": [-0.290, 0.199, 0.743],
             "resolution": [1280, 800],
             "fov": 70
         },
         {
             "name": "back right cam",
             "rotations": [{"axis": "x", "degrees": 0}, {"axis": "y", "degrees": -20}, {"axis": "z", "degrees": -15}],
-            "position": [-0.2928874, -0.2258314, 0.7379462],
+            "position": [-0.290, -0.212, 0.743],
             "resolution": [1280, 800],
             "fov": 70
         }
