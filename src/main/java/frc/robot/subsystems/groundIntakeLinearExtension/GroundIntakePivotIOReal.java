@@ -40,9 +40,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
   private final StatusSignal<Temperature> motorTemp;
   private final StatusSignal<Double> motorClosedLoopGoal;
   private final StatusSignal<Angle> motorPosition;
-  private final StatusSignal<ForwardLimitValue> motorForwardLimit;
-  private final StatusSignal<ReverseLimitValue> motorReverseLimit;
-
+  
   private final MotionMagicVoltage request = new MotionMagicVoltage(0).withEnableFOC(true);
 
   private final VoltageOut voltageOutRequest = new VoltageOut(0).withEnableFOC(true);
@@ -65,9 +63,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     motorAcceleration = motor.getAcceleration();
     motorClosedLoopGoal = motor.getClosedLoopReference();
     motorPosition = motor.getPosition();
-    motorForwardLimit = motor.getForwardLimit();
-    motorReverseLimit = motor.getReverseLimit();
-
+  
     statusSignalCollection.addSignals(
         motorVoltage,
         motorStatorCurrent,
@@ -75,9 +71,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
         motorTemp,
         motorAcceleration,
         motorClosedLoopGoal,
-        motorPosition,
-        motorForwardLimit,
-        motorReverseLimit);
+        motorPosition);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
@@ -87,9 +81,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
         motorTemp,
         motorAcceleration,
         motorClosedLoopGoal,
-        motorPosition,
-        motorForwardLimit,
-        motorReverseLimit);
+        motorPosition);
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
@@ -170,13 +162,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
         "GroundIntakeLinearExtension/Motor 1 Closed Loop Goal",
         motorClosedLoopGoal.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Position", motorPosition.getValueAsDouble());
-    DogLog.log(
-        "GroundIntakeLinearExtension/Limit Switch Value (Forward)",
-        motorForwardLimit.getValueAsDouble());
-    DogLog.log(
-        "GroundIntakeLinearExtension/Limit Switch Value (Reverse)",
-        motorReverseLimit.getValueAsDouble());
-
+  
     motorNotConnectedAlert.set(!motor.isConnected());
   }
 
@@ -207,10 +193,10 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
   }
 
   public boolean getForwardLimit() {
-    return motorForwardLimit.getValue() == ForwardLimitValue.ClosedToGround;
+    return true;
   }
 
   public boolean getReverseLimit() {
-    return motorReverseLimit.getValue() == ReverseLimitValue.ClosedToGround;
+    return true;
   }
 }
