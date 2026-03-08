@@ -36,6 +36,12 @@ public class ShooterIOSim implements ShooterIO {
   }
 
   @Override
+  public void enableLeftShooter(boolean b) {}
+
+  @Override
+  public void enableRightShooter(boolean b) {}
+
+  @Override
   public void periodic() {
     motor.update(.020);
     double error = targetVelocity - getVelocity();
