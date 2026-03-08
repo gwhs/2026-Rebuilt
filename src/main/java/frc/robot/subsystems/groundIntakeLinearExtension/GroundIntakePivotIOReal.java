@@ -12,10 +12,8 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.ReverseLimitValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.Angle;
@@ -40,7 +38,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
   private final StatusSignal<Temperature> motorTemp;
   private final StatusSignal<Double> motorClosedLoopGoal;
   private final StatusSignal<Angle> motorPosition;
-  
+
   private final MotionMagicVoltage request = new MotionMagicVoltage(0).withEnableFOC(true);
 
   private final VoltageOut voltageOutRequest = new VoltageOut(0).withEnableFOC(true);
@@ -63,7 +61,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     motorAcceleration = motor.getAcceleration();
     motorClosedLoopGoal = motor.getClosedLoopReference();
     motorPosition = motor.getPosition();
-  
+
     statusSignalCollection.addSignals(
         motorVoltage,
         motorStatorCurrent,
@@ -162,7 +160,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
         "GroundIntakeLinearExtension/Motor 1 Closed Loop Goal",
         motorClosedLoopGoal.getValueAsDouble());
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Position", motorPosition.getValueAsDouble());
-  
+
     motorNotConnectedAlert.set(!motor.isConnected());
   }
 
