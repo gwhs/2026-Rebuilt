@@ -630,7 +630,7 @@ public class RobotContainer {
             shooter.runVelocity(10))
         .withName("Topoff");
   }
-  
+
   public Command autoClimb() {
     return Commands.sequence(
             Commands.parallel(
