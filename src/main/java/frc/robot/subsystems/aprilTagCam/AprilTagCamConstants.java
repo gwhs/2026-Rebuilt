@@ -12,7 +12,7 @@ public class AprilTagCamConstants {
   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1.0, 1.0, 8);
   public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
-  public static final String BACK_RIGHT_CAM = "cam_back_right";
+  public static final String BACK_RIGHT_CAM = "back_right_cam";
   public static final String BACK_LEFT_CAM = "cam_back_left";
   public static final String FRONT_LEFT_CAM = "cam_front_left";
   public static final String FRONT_RIGHT_CAM = "cam_front_right";
