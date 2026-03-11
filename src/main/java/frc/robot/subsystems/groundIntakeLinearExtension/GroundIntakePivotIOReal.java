@@ -62,15 +62,6 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     motorClosedLoopGoal = motor.getClosedLoopReference();
     motorPosition = motor.getPosition();
 
-    statusSignalCollection.addSignals(
-        motorVoltage,
-        motorStatorCurrent,
-        motorVelocity,
-        motorTemp,
-        motorAcceleration,
-        motorClosedLoopGoal,
-        motorPosition);
-
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
         motorVoltage,
@@ -162,6 +153,15 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Position", motorPosition.getValueAsDouble());
 
     motorNotConnectedAlert.set(!motor.isConnected());
+
+    BaseStatusSignal.refreshAll(
+        motorVoltage,
+        motorStatorCurrent,
+        motorVelocity,
+        motorTemp,
+        motorAcceleration,
+        motorClosedLoopGoal,
+        motorPosition);
   }
 
   @Override
