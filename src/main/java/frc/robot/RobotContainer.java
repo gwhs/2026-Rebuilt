@@ -387,7 +387,6 @@ public class RobotContainer {
         .whileTrue(drivetrain.setShootingRange(true))
         .onFalse(drivetrain.setShootingRange(false));
 
-    drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
     controller
