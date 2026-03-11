@@ -41,12 +41,22 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
         });
   }
 
+  public Command runVoltage(double top, double bottom) {
+    return this.runOnce(
+        () -> {
+          groundIntakeRollerIO.runVoltage(top, bottom);
+          groundRollerVoltage = top;
+        });
+  }
+
   public Command stopIntake() {
     return runVoltage(0);
   }
 
   public Command startIntake() {
-    return runVoltage(GroundIntakeRollerConstants.DEFAULT_INTAKE_VOLTAGE);
+    return runVoltage(
+        GroundIntakeRollerConstants.TOP_INTAKE_VOLTAGE,
+        GroundIntakeRollerConstants.BOTTOM_INTAKE_VOLTAGE);
   }
 
   public Command reverseIntake() {
