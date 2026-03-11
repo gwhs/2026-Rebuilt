@@ -53,7 +53,7 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterIO = shooterIO;
     robotTargetSupplier = robotTarget;
     robotPoseSupplier = robotPose;
-    SmartDashboard.putData("Shooter Alternate Right Left Command", alternateLeftRight());
+    SmartDashboard.putData("Alternate Shooter", alternateLeftRight());
   }
 
   public Command runVelocity(double rotationsPerSecond) {
