@@ -49,10 +49,10 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
   @SuppressWarnings("resource")
   public GroundIntakePivotIOReal(
       CANBus rioCanbus, CANBus canivoreCanBus, StatusSignalCollection statusSignalCollection) {
-    motor = new TalonFX(GroundIntakeLinearExtensionConstants.MOTOR_ID, rioCanbus);
+    motor = new TalonFX(GroundIntakeLinearExtensionConstants.MOTOR_ID, canivoreCanBus);
 
     groundIntakePivotEncoder =
-        new CANcoder(GroundIntakeLinearExtensionConstants.PIVOT_ENCODER_ID, rioCanbus);
+        new CANcoder(GroundIntakeLinearExtensionConstants.PIVOT_ENCODER_ID, canivoreCanBus);
 
     motorVoltage = motor.getMotorVoltage();
     motorStatorCurrent = motor.getStatorCurrent();
