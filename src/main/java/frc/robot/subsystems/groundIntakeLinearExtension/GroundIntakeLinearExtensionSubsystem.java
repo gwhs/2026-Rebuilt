@@ -38,25 +38,25 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   }
 
   public Command extend() {
-    return this.runOnce(
-        () -> {
-          groundIntakeLinearExtensionIO.runPosition(
-              GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
-        });
-  }
-
-  public Command retract() {
     return Commands.sequence(
         this.runOnce(
             () -> {
               groundIntakeLinearExtensionIO.runPosition(
-                  GroundIntakeLinearExtensionConstants.RETRACT_ROTATION);
+                  GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
             }),
         Commands.waitSeconds(0.6),
         this.runOnce(
             () -> {
               groundIntakeLinearExtensionIO.runVoltage(0);
             }));
+  }
+
+  public Command retract() {
+    return this.runOnce(
+            () -> {
+              groundIntakeLinearExtensionIO.runPosition(
+                  GroundIntakeLinearExtensionConstants.RETRACT_ROTATION);
+            });
   }
 
   public Command homingCommand() {
