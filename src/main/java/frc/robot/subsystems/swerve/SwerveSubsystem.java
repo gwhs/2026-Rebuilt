@@ -314,7 +314,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Drivetrain/Facing Passing Goal", isFacingGoalPassing.getAsBoolean());
 
     DogLog.log("Drivetrain/Virtual Target", getCachedVirtualTarget());
-    DogLog.log("Drivetrain/Distance to Virtual Target", EagleUtil.getRobotTargetDistance(getCachedState().Pose, getCachedVirtualTarget()));
+    DogLog.log(
+        "Drivetrain/Distance to Virtual Target",
+        EagleUtil.getRobotTargetDistance(getCachedState().Pose, getCachedVirtualTarget()));
   }
 
   private double defualtSlowFactor = 0.25;
