@@ -33,7 +33,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public ClimberSubsystem(ClimberIO climberIO) {
     this.climberIO = climberIO;
-    SmartDashboard.putData("Climber Homing Command", homingCommand());
+    // SmartDashboard.putData("Climber Homing Command", homingCommand());
   }
 
   public Command runVoltage(double voltage) {
