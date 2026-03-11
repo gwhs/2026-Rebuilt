@@ -655,7 +655,7 @@ public class RobotContainer {
 
   public Command backupShootHub() {
     return Commands.parallel(
-            shooter.runVelocity(55),
+            shooter.runVelocity(65),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),
