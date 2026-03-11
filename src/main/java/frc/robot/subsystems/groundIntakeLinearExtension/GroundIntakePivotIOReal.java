@@ -79,7 +79,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     talonFXConfig.CurrentLimits.StatorCurrentLimit = 15;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     talonFXConfig.Feedback.FeedbackRotorOffset = 0;
     talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
