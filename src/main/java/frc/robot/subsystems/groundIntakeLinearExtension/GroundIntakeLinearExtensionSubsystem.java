@@ -55,7 +55,7 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
         Commands.waitSeconds(0.6),
         this.runOnce(
             () -> {
-              groundIntakeLinearExtensionIO.runVoltage(0);
+              groundIntakeLinearExtensionIO.runVoltage(0);z
             }));
   }
 
