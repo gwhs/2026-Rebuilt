@@ -455,6 +455,9 @@ public class RobotContainer {
   }
 
   public void periodic() {
+
+    DogLog.log("Auto Winner", HubTracker.getAutoWinner().toString());
+
     double startTime = HALUtil.getFPGATime();
 
     startTime = HALUtil.getFPGATime();

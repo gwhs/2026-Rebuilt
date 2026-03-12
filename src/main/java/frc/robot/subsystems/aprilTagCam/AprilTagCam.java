@@ -39,7 +39,6 @@ public class AprilTagCam {
   private final Transform3d robotToCam;
   private final Supplier<Pose2d> currRobotPose;
   private final Supplier<ChassisSpeeds> currRobotSpeed;
-  private int counter;
   private final String ntKey;
   private boolean isConnected;
 
@@ -76,8 +75,6 @@ public class AprilTagCam {
     photonEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, robotToCam);
 
     ntKey = "/Vision/" + name + "/";
-
-    counter = 0;
   }
 
   /**
@@ -85,7 +82,6 @@ public class AprilTagCam {
    * NOTE: also updates the connection check for the camera
    */
   public void updatePoseEstim() {
-    counter++;
     isConnected = cam.isConnected();
     Pose2d robotPose = currRobotPose.get();
     Pose3d robotPose3d = new Pose3d(robotPose);
