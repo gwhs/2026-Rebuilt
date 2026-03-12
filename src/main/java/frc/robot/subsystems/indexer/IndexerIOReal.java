@@ -28,10 +28,7 @@ public class IndexerIOReal implements IndexerIO {
 
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
-  private final StatusSignal<AngularVelocity> motor1Velocity;
-  private final StatusSignal<AngularAcceleration> motor1Acceleration;
   private final StatusSignal<Temperature> motor1Temp;
-  private final StatusSignal<Double> motor1ClosedLoopGoal;
 
   private final Alert motor1NotConnectedAlert =
       new Alert("Indexer Motor 1 Not Connected ", AlertType.kError);
@@ -44,10 +41,7 @@ public class IndexerIOReal implements IndexerIO {
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
-    motor1Velocity = motor1.getVelocity();
     motor1Temp = motor1.getDeviceTemp();
-    motor1Acceleration = motor1.getAcceleration();
-    motor1ClosedLoopGoal = motor1.getClosedLoopReference();
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
@@ -71,28 +65,19 @@ public class IndexerIOReal implements IndexerIO {
     statusSignalCollection.addSignals(
         motor1Voltage,
         motor1StatorCurrent,
-        motor1Velocity,
-        motor1Temp,
-        motor1Acceleration,
-        motor1ClosedLoopGoal);
+        motor1Temp);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
         motor1Voltage,
         motor1StatorCurrent,
-        motor1Velocity,
-        motor1Temp,
-        motor1Acceleration,
-        motor1ClosedLoopGoal);
+        motor1Temp);
   }
 
   public void periodic() {
     DogLog.log("Indexer/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Indexer/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
     DogLog.log("Indexer/Motor 1 Temperature", motor1Temp.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Acceleration", motor1Acceleration.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Closed Loop Goal", motor1ClosedLoopGoal.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
   }

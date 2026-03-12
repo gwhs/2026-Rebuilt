@@ -33,9 +33,6 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
   private final StatusSignal<Voltage> motorVoltage;
   private final StatusSignal<Current> motorStatorCurrent;
-  private final StatusSignal<AngularVelocity> motorVelocity;
-  private final StatusSignal<AngularAcceleration> motorAcceleration;
-  private final StatusSignal<Temperature> motorTemp;
   private final StatusSignal<Double> motorClosedLoopGoal;
   private final StatusSignal<Angle> motorPosition;
 
@@ -56,9 +53,6 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
     motorVoltage = motor.getMotorVoltage();
     motorStatorCurrent = motor.getStatorCurrent();
-    motorVelocity = motor.getVelocity();
-    motorTemp = motor.getDeviceTemp();
-    motorAcceleration = motor.getAcceleration();
     motorClosedLoopGoal = motor.getClosedLoopReference();
     motorPosition = motor.getPosition();
 
@@ -66,9 +60,6 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
         50,
         motorVoltage,
         motorStatorCurrent,
-        motorVelocity,
-        motorTemp,
-        motorAcceleration,
         motorClosedLoopGoal,
         motorPosition);
 
@@ -142,10 +133,6 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     DogLog.log(
         "GroundIntakeLinearExtension/Motor 1 Stator Current",
         motorStatorCurrent.getValueAsDouble());
-    DogLog.log("GroundIntakeLinearExtension/Motor 1 Velocity", motorVelocity.getValueAsDouble());
-    DogLog.log("GroundIntakeLinearExtension/Motor 1 Temperature", motorTemp.getValueAsDouble());
-    DogLog.log(
-        "GroundIntakeLinearExtension/Motor 1 Acceleration", motorAcceleration.getValueAsDouble());
     DogLog.log(
         "GroundIntakeLinearExtension/Motor 1 Closed Loop Goal",
         motorClosedLoopGoal.getValueAsDouble());
@@ -156,9 +143,6 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     BaseStatusSignal.refreshAll(
         motorVoltage,
         motorStatorCurrent,
-        motorVelocity,
-        motorTemp,
-        motorAcceleration,
         motorClosedLoopGoal,
         motorPosition);
   }
