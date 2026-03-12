@@ -107,11 +107,11 @@ public class AprilTagCam {
     int n = results.size();
     if (n > 5) {
       List<PhotonPipelineResult> newResults = new ArrayList<PhotonPipelineResult>(5);
-      newResults.set(0, results.get(n - 5));
-      newResults.set(1, results.get(n - 4));
-      newResults.set(2, results.get(n - 3));
-      newResults.set(3, results.get(n - 2));
-      newResults.set(4, results.get(n - 1));
+      newResults.add(results.get(n - 5));
+      newResults.add(results.get(n - 4));
+      newResults.add(results.get(n - 3));
+      newResults.add(results.get(n - 2));
+      newResults.add(results.get(n - 1));
 
       results = newResults;
     }
