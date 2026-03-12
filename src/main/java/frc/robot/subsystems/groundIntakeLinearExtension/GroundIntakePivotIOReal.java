@@ -17,10 +17,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -57,11 +54,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     motorPosition = motor.getPosition();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50,
-        motorVoltage,
-        motorStatorCurrent,
-        motorClosedLoopGoal,
-        motorPosition);
+        50, motorVoltage, motorStatorCurrent, motorClosedLoopGoal, motorPosition);
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
@@ -141,10 +134,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     motorNotConnectedAlert.set(!motor.isConnected());
 
     BaseStatusSignal.refreshAll(
-        motorVoltage,
-        motorStatorCurrent,
-        motorClosedLoopGoal,
-        motorPosition);
+        motorVoltage, motorStatorCurrent, motorClosedLoopGoal, motorPosition);
   }
 
   @Override
