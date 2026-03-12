@@ -30,17 +30,11 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
-  private final StatusSignal<AngularVelocity> motor1Velocity;
-  private final StatusSignal<AngularAcceleration> motor1Acceleration;
   private final StatusSignal<Temperature> motor1Temp;
-  private final StatusSignal<Double> motor1ClosedLoopGoal;
 
   private final StatusSignal<Voltage> motor2Voltage;
   private final StatusSignal<Current> motor2StatorCurrent;
-  private final StatusSignal<AngularVelocity> motor2Velocity;
-  private final StatusSignal<AngularAcceleration> motor2Acceleration;
   private final StatusSignal<Temperature> motor2Temp;
-  private final StatusSignal<Double> motor2ClosedLoopGoal;
 
   private final Alert motor1NotConnectedAlert =
       new Alert("Ground Intake Roller Motor 1 Not Connected ", AlertType.kError);
@@ -56,17 +50,11 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
-    motor1Velocity = motor1.getVelocity();
     motor1Temp = motor1.getDeviceTemp();
-    motor1Acceleration = motor1.getAcceleration();
-    motor1ClosedLoopGoal = motor1.getClosedLoopReference();
 
     motor2Voltage = motor2.getMotorVoltage();
     motor2StatorCurrent = motor2.getStatorCurrent();
-    motor2Velocity = motor2.getVelocity();
     motor2Temp = motor2.getDeviceTemp();
-    motor2Acceleration = motor2.getAcceleration();
-    motor2ClosedLoopGoal = motor2.getClosedLoopReference();
 
     TalonFXSConfiguration talonFXConfig = new TalonFXSConfiguration();
 
@@ -108,31 +96,19 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
     signal.addSignals(
         motor1Voltage,
         motor1StatorCurrent,
-        motor1Velocity,
         motor1Temp,
-        motor1Acceleration,
-        motor1ClosedLoopGoal,
         motor2Voltage,
         motor2StatorCurrent,
-        motor2Velocity,
-        motor2Temp,
-        motor2Acceleration,
-        motor2ClosedLoopGoal);
+        motor2Temp);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
         motor1Voltage,
         motor1StatorCurrent,
-        motor1Velocity,
         motor1Temp,
-        motor1Acceleration,
-        motor1ClosedLoopGoal,
         motor2Voltage,
         motor2StatorCurrent,
-        motor2Velocity,
-        motor2Temp,
-        motor2Acceleration,
-        motor2ClosedLoopGoal);
+        motor2Temp);
   }
 
   public void runVoltage(double voltage) {
@@ -148,16 +124,10 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   public void periodic() {
     DogLog.log("Ground Roller/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
-    DogLog.log("Ground Roller/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 1 Temperature", motor1Temp.getValueAsDouble());
-    DogLog.log("Ground Roller/Motor 1 Acceleration", motor1Acceleration.getValueAsDouble());
-    DogLog.log("Ground Roller/Motor 1 Closed Loop Goal", motor1ClosedLoopGoal.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 2 Voltage", motor2Voltage.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 2 Stator Current", motor2StatorCurrent.getValueAsDouble());
-    DogLog.log("Ground Roller/Motor 2 Velocity", motor2Velocity.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 2 Temperature", motor2Temp.getValueAsDouble());
-    DogLog.log("Ground Roller/Motor 2 Acceleration", motor2Acceleration.getValueAsDouble());
-    DogLog.log("Ground Roller/Motor 2 Closed Loop Goal", motor2ClosedLoopGoal.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
     motor2NotConnectedAlert.set(!motor2.isConnected());
