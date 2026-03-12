@@ -382,6 +382,7 @@ public class RobotContainer {
     controller.b().onFalse(groundIntakeRoller.stopIntake());
 
     controller.a().whileTrue(agitateGroundIntake());
+    controller.a().onFalse(groundIntakeRoller.stopIntake());
 
     controller
         .y()
@@ -601,11 +602,11 @@ public class RobotContainer {
 
   public Command agitateGroundIntake() {
     return Commands.sequence(
+      groundIntakeRoller.startIntake(),
             groundIntakeExtension.extend(),
             Commands.waitSeconds(.3),
             groundIntakeExtension.retract(),
-            Commands.waitSeconds(.3),
-            groundIntakeRoller.stopIntake())
+            Commands.waitSeconds(.3))
         .repeatedly()
         .withName("Start? Ground Intake");
   }
