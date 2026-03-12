@@ -379,6 +379,8 @@ public class RobotContainer {
     controller.rightTrigger().onFalse(stopShoot());
 
     controller.b().whileTrue(unStuck());
+    controller.b().onFalse(groundIntakeRoller.stopIntake());
+
 
     controller.a().whileTrue(agitateGroundIntake());
 
