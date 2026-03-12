@@ -100,10 +100,23 @@ public class AprilTagCam {
     // we need to give the info of where the robot is to the drive train so it knows where to move
 
     List<PhotonPipelineResult> results = cam.getAllUnreadResults();
-    DogLog.log(ntKey + "Number of Results/", results.size());
     if (results.isEmpty()) {
       return;
     }
+
+    int n = results.size();
+    if (n > 5){
+      List<PhotonPipelineResult> newResults = new ArrayList<PhotonPipelineResult>(5);
+      newResults.set(0, results.get(n - 5));
+      newResults.set(1, results.get(n - 4));
+      newResults.set(2, results.get(n - 3));
+      newResults.set(3, results.get(n - 2));
+      newResults.set(5, results.get(n - 1));
+
+      results = newResults;
+    }
+
+    DogLog.log(ntKey + "Number of Results/", results.size());
 
     for (PhotonPipelineResult targetPose : results) {
       optionalEstimPose = photonEstimator.estimateCoprocMultiTagPose(targetPose);
