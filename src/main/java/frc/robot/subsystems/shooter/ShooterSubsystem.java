@@ -64,6 +64,14 @@ public class ShooterSubsystem extends SubsystemBase {
         .withName("Run Velocity");
   }
 
+  public Command runVelocity(double frontrps, double backrps) {
+    return this.run(
+            () -> {
+              runShooterWithClamp(frontrps, backrps);
+            })
+        .withName("Run Velocity");
+  }
+
   public Command runVoltage(double voltage) {
     return this.runOnce(
             () -> {
