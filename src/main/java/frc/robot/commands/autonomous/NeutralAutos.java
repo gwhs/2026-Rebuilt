@@ -79,8 +79,8 @@ public class NeutralAutos extends SequentialCommandGroup {
       addCommands(
           Commands.sequence(
                   AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-                  cyclePath(cycle, true),
-                  cyclePath(cycletwo, false).onlyIf(() -> twoCycle),
+                  cyclePath(cycle, cycletwo, true),
+                  cyclePath(cycletwo, cycletwo, false).onlyIf(() -> twoCycle),
                   climbPath(climb).onlyIf(() -> !twoCycle))
               .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
@@ -104,7 +104,7 @@ public class NeutralAutos extends SequentialCommandGroup {
     return score;
   }
 
-  private Command cyclePath(PathPlannerPath path, boolean homing) {
+  private Command cyclePath(PathPlannerPath path, PathPlannerPath align, boolean homing) {
     return Commands.sequence(
         AutoBuilder.followPath(path)
             .deadlineFor(
@@ -123,7 +123,7 @@ public class NeutralAutos extends SequentialCommandGroup {
         Commands.waitSeconds(6)
             .deadlineFor(
                 drivetrain
-                    .driveToPose(() -> getScorePose(() -> path))
+                    .driveToPose(() -> getScorePose(() -> align))
                     .alongWith(
                         Commands.parallel(
                             indexer.index(),
