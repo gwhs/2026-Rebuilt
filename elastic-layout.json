@@ -54,9 +54,9 @@
           },
           {
             "title": "Current Shift",
-            "x": 896.0,
+            "x": 768.0,
             "y": 384.0,
-            "width": 384.0,
+            "width": 512.0,
             "height": 128.0,
             "type": "Large Text Display",
             "properties": {
@@ -162,6 +162,75 @@
                 256.0,
                 160.0
               ]
+            }
+          },
+          {
+            "title": "Auto Winner",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 256.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/Robot/Auto Winner",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "Shooter Alternate Right Left Command",
+            "x": 512.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter Alternate Right Left Command",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Current limit: 80",
+            "x": 256.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Current limit: 80",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Current limit: 60",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Current limit: 60",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Current limit: 100",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Current limit: 100",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
             }
           }
         ]

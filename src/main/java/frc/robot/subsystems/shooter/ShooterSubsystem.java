@@ -53,13 +53,21 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterIO = shooterIO;
     robotTargetSupplier = robotTarget;
     robotPoseSupplier = robotPose;
-    SmartDashboard.putData("Shooter Alternate Right/Left Command", alternateLeftRight());
+    SmartDashboard.putData("Alternate Shooter", alternateLeftRight());
   }
 
   public Command runVelocity(double rotationsPerSecond) {
     return this.run(
             () -> {
               runShooterWithClamp(rotationsPerSecond, rotationsPerSecond);
+            })
+        .withName("Run Velocity");
+  }
+
+  public Command runVelocity(double frontrps, double backrps) {
+    return this.run(
+            () -> {
+              runShooterWithClamp(frontrps, backrps);
             })
         .withName("Run Velocity");
   }
@@ -113,14 +121,14 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command setLeftShooterEnabled(boolean enable) {
-    return this.runOnce(
+    return Commands.runOnce(
         () -> {
           shooterIO.enableLeftShooter(enable);
         });
   }
 
   public Command setRightShooterEnabled(boolean enable) {
-    return this.runOnce(
+    return Commands.runOnce(
         () -> {
           shooterIO.enableRightShooter(enable);
         });
