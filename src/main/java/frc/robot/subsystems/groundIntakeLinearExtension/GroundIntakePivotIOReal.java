@@ -109,7 +109,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     encoderConfig.MagnetSensor.MagnetOffset = 1;
-    
+
     encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
     for (int i = 0; i < 5; i++) {
