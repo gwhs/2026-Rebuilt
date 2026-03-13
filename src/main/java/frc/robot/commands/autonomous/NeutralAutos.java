@@ -69,6 +69,7 @@ public class NeutralAutos extends SequentialCommandGroup {
       } else {
         cycle = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle");
         cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2");
+        
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb");
       }
 
@@ -109,12 +110,13 @@ public class NeutralAutos extends SequentialCommandGroup {
             .deadlineFor(
                 Commands.sequence(
                     Commands.parallel(
-                        groundIntakeExtend.homingCommand().onlyIf(() -> homing),
-                        climber.homingCommand().onlyIf(() -> homing)),
-                    Commands.parallel(
+                        climber.homingCommand().onlyIf(() -> homing),
                         shooter.stopShooter(),
-                        groundIntakeExtend.extend(),
-                        groundIntakeRoller.startIntake()),
+                        groundIntakeRoller.startIntake(),
+                        Commands.sequence(
+                            Commands.waitSeconds(1.2).onlyIf(() -> homing),
+                            Commands.waitSeconds(2.3).onlyIf(() -> !homing),
+                            groundIntakeExtend.extend())),
                     Commands.waitSeconds(3),
                     shooter.preSpin())),
         groundIntakeRoller.stopIntake(),
@@ -126,7 +128,8 @@ public class NeutralAutos extends SequentialCommandGroup {
                         Commands.parallel(
                             indexer.index(),
                             shooter.cruiseControl(),
-                            EagleUtil.shootInSim(drivetrain)))));
+                            EagleUtil.shootInSim(drivetrain),
+                            groundIntakeExtend.retract()))));
   }
 
   private Command climbPath(PathPlannerPath path) {
