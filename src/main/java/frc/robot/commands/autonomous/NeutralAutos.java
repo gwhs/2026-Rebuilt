@@ -69,7 +69,7 @@ public class NeutralAutos extends SequentialCommandGroup {
       } else {
         cycle = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle");
         cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2");
-        
+
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb");
       }
 
