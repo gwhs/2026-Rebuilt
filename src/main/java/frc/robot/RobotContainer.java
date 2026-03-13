@@ -394,6 +394,13 @@ public class RobotContainer {
 
     controller.povDown().whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
+    // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
+    controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
+    controller
+        .povDown()
+        .negate()
+        .and(controller.rightTrigger().negate())
+        .onTrue(shooter.stopShooter());
 
     controller.x().whileTrue(defenseMode());
     // controller.start().onTrue(autoClimb());
@@ -616,6 +623,15 @@ public class RobotContainer {
             drivetrain.setSlowMode(false),
             shooter.stopShooter())
         .withName("Stop Shooting");
+  }
+
+  public Command topoff() {
+    return Commands.parallel(
+            indexer.index(),
+            groundIntakeExtension.extend(),
+            groundIntakeRoller.startIntake(),
+            shooter.runVelocity(10))
+        .withName("Topoff");
   }
 
   public Command autoClimb() {
