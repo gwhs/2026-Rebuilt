@@ -1,7 +1,5 @@
 package frc.robot.subsystems.groundIntakeLinearExtension;
 
-import edu.wpi.first.math.util.Units;
-
 public class GroundIntakeLinearExtensionConstants {
   public static final int MOTOR_ID = 32;
   public static final int PIVOT_ENCODER_ID = 33;
