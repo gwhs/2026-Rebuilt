@@ -4,8 +4,8 @@ public class GroundIntakeLinearExtensionConstants {
   public static final int MOTOR_ID = 32;
   public static final int PIVOT_ENCODER_ID = 33;
 
-  public static final double MAX_VELOCITY = 1;
-  public static final double MAX_ACCELERATION = 4.0;
+  public static final double MAX_VELOCITY = 1.5;
+  public static final double MAX_ACCELERATION = 5.0;
 
   public static final double MAX_ROTATION = 0.5;
   public static final double MIN_ROTATION = 0;
