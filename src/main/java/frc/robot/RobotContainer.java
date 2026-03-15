@@ -634,7 +634,7 @@ public class RobotContainer {
             indexer.index(),
             groundIntakeExtension.extend(),
             groundIntakeRoller.startIntake(),
-            shooter.runVelocity(10))
+            shooter.runVelocity(15))
         .withName("Topoff");
   }
 
