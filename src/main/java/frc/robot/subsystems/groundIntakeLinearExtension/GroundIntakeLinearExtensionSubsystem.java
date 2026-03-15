@@ -3,7 +3,6 @@ package frc.robot.subsystems.groundIntakeLinearExtension;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,14 +21,12 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   public static GroundIntakeLinearExtensionSubsystem createReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
     return new GroundIntakeLinearExtensionSubsystem(
-        new GroundIntakeLinearExtensionIOReal(rioCanbus, canivoreCanbus, signal));
+        new GroundIntakePivotIOReal(rioCanbus, canivoreCanbus, signal));
   }
 
   public GroundIntakeLinearExtensionSubsystem(
       GroundIntakeLinearExtensionIO groundIntakeLinearExtensionIO) {
     this.groundIntakeLinearExtensionIO = groundIntakeLinearExtensionIO;
-
-    SmartDashboard.putData("Ground Intake Extension Homing Command", homingCommand());
   }
 
   @Override
@@ -41,11 +38,14 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   }
 
   public Command extend() {
-    return this.runOnce(
-        () -> {
-          groundIntakeLinearExtensionIO.runPosition(
-              GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
-        });
+    return Commands.sequence(
+            this.runOnce(
+                () -> {
+                  groundIntakeLinearExtensionIO.runPosition(
+                      GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
+                }),
+            Commands.waitSeconds(0.6))
+        .finallyDo(() -> groundIntakeLinearExtensionIO.runVoltage(0));
   }
 
   public Command retract() {

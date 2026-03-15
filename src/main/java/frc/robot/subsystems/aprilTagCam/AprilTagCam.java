@@ -39,7 +39,6 @@ public class AprilTagCam {
   private final Transform3d robotToCam;
   private final Supplier<Pose2d> currRobotPose;
   private final Supplier<ChassisSpeeds> currRobotSpeed;
-  private int counter;
   private final String ntKey;
   private boolean isConnected;
 
@@ -76,8 +75,6 @@ public class AprilTagCam {
     photonEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, robotToCam);
 
     ntKey = "/Vision/" + name + "/";
-
-    counter = 0;
   }
 
   /**
@@ -85,7 +82,6 @@ public class AprilTagCam {
    * NOTE: also updates the connection check for the camera
    */
   public void updatePoseEstim() {
-    counter++;
     isConnected = cam.isConnected();
     Pose2d robotPose = currRobotPose.get();
     Pose3d robotPose3d = new Pose3d(robotPose);
@@ -100,10 +96,23 @@ public class AprilTagCam {
     // we need to give the info of where the robot is to the drive train so it knows where to move
 
     List<PhotonPipelineResult> results = cam.getAllUnreadResults();
-    DogLog.log(ntKey + "Number of Results/", results.size());
     if (results.isEmpty()) {
       return;
     }
+
+    int n = results.size();
+    if (n > 5) {
+      List<PhotonPipelineResult> newResults = new ArrayList<PhotonPipelineResult>(5);
+      newResults.add(results.get(n - 5));
+      newResults.add(results.get(n - 4));
+      newResults.add(results.get(n - 3));
+      newResults.add(results.get(n - 2));
+      newResults.add(results.get(n - 1));
+
+      results = newResults;
+    }
+
+    DogLog.log(ntKey + "Number of Results/", results.size());
 
     for (PhotonPipelineResult targetPose : results) {
       optionalEstimPose = photonEstimator.estimateCoprocMultiTagPose(targetPose);

@@ -187,8 +187,10 @@ public class RobotContainer {
 
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
-        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
+        groundIntakeRoller =
+            GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        groundIntakeExtension =
+            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
 
         backRightCam =
             new AprilTagCam(
@@ -291,7 +293,8 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
+        groundIntakeExtension =
+            GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         backRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_RIGHT_CAM,
@@ -376,15 +379,16 @@ public class RobotContainer {
     controller.rightTrigger().onFalse(stopShoot());
 
     controller.b().whileTrue(unStuck());
+    controller.b().onFalse(groundIntakeRoller.stopIntake());
 
     controller.a().whileTrue(agitateGroundIntake());
+    controller.a().onFalse(groundIntakeRoller.stopIntake());
 
     controller
         .y()
         .whileTrue(drivetrain.setShootingRange(true))
         .onFalse(drivetrain.setShootingRange(false));
 
-    drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
     controller
@@ -462,6 +466,9 @@ public class RobotContainer {
   }
 
   public void periodic() {
+
+    DogLog.log("Auto Winner", HubTracker.getAutoWinner().toString());
+
     double startTime = HALUtil.getFPGATime();
 
     startTime = HALUtil.getFPGATime();
@@ -605,11 +612,11 @@ public class RobotContainer {
 
   public Command agitateGroundIntake() {
     return Commands.sequence(
+            groundIntakeRoller.startIntake(),
             groundIntakeExtension.extend(),
-            Commands.waitSeconds(.5),
+            Commands.waitSeconds(.8),
             groundIntakeExtension.retract(),
-            Commands.waitSeconds(.5),
-            groundIntakeRoller.stopIntake())
+            Commands.waitSeconds(.8))
         .repeatedly()
         .withName("Start? Ground Intake");
   }
@@ -669,7 +676,7 @@ public class RobotContainer {
 
   public Command backupShootHub() {
     return Commands.parallel(
-            shooter.runVelocity(55),
+            shooter.runVelocity(65, 60),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),

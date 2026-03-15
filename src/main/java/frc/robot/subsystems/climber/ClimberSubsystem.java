@@ -8,7 +8,6 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,7 +32,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public ClimberSubsystem(ClimberIO climberIO) {
     this.climberIO = climberIO;
-    SmartDashboard.putData("Climber Homing Command", homingCommand());
+    // SmartDashboard.putData("Climber Homing Command", homingCommand());
   }
 
   public Command runVoltage(double voltage) {
