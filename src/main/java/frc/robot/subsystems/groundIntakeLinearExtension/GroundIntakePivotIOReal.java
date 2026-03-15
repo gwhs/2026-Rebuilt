@@ -119,6 +119,8 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     if (!status.isOK()) {
       System.out.println("Could not Configure this device: " + status.toString());
     }
+
+    setPosition(0);
   }
 
   @Override
