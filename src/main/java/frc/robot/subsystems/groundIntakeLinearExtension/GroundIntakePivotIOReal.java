@@ -39,6 +39,8 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
   private final Alert motorNotConnectedAlert =
       new Alert("Ground Intake Linear Extension Motor 1 Not Connected", AlertType.kError);
+  private final Alert groundIntakePivotEncoderAlert =
+      new Alert("Ground Intake Linear Extension Encoder Not Connected", AlertType.kError);
 
   @SuppressWarnings("resource")
   public GroundIntakePivotIOReal(
@@ -133,6 +135,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     DogLog.log("GroundIntakeLinearExtension/Motor 1 Position", motorPosition.getValueAsDouble());
 
     motorNotConnectedAlert.set(!motor.isConnected());
+    groundIntakePivotEncoderAlert.set(!groundIntakePivotEncoder.isConnected());
 
     BaseStatusSignal.refreshAll(
         motorVoltage, motorStatorCurrent, motorClosedLoopGoal, motorPosition);
