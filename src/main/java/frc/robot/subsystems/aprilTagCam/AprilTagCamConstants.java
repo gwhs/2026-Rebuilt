@@ -12,8 +12,8 @@ public class AprilTagCamConstants {
   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1.0, 1.0, 8);
   public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
-  public static final String BACK_RIGHT_CAM = "back_right_cam";
-  public static final String BACK_LEFT_CAM = "cam_back_left";
+  public static final String BACK_RIGHT_CAM = "cam_back_left";
+  public static final String BACK_LEFT_CAM = "back_right_cam";
   public static final String FRONT_LEFT_CAM = "cam_front_left";
   public static final String FRONT_RIGHT_CAM = "cam_front_right";
 
@@ -23,9 +23,9 @@ public class AprilTagCamConstants {
           -0.212,
           0.743,
           new Rotation3d(
-              Units.degreesToRadians(-5.053),
-              Units.degreesToRadians(-20.647),
-              Units.degreesToRadians(-13.025)));
+              Units.degreesToRadians(0),
+              Units.degreesToRadians(-20.0),
+              Units.degreesToRadians(-15.0)));
 
   public static final Transform3d BACK_LEFT_CAM_LOCATION =
       new Transform3d(
@@ -33,9 +33,9 @@ public class AprilTagCamConstants {
           0.212,
           0.743,
           new Rotation3d(
-              Units.degreesToRadians(5.053),
-              Units.degreesToRadians(-20.647),
-              Units.degreesToRadians(13.025)));
+              Units.degreesToRadians(0),
+              Units.degreesToRadians(-20.0),
+              Units.degreesToRadians(15.0)));
 
   public static final Transform3d FRONT_RIGHT_CAM_LOCATION =
       new Transform3d(

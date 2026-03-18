@@ -398,6 +398,13 @@ public class RobotContainer {
 
     controller.povDown().whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
+    // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
+    controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
+    controller
+        .povDown()
+        .negate()
+        .and(controller.rightTrigger().negate())
+        .onTrue(shooter.stopShooter());
 
     controller.x().whileTrue(defenseMode());
     // controller.start().onTrue(autoClimb());
@@ -622,6 +629,15 @@ public class RobotContainer {
         .withName("Stop Shooting");
   }
 
+  public Command topoff() {
+    return Commands.parallel(
+            indexer.index(),
+            groundIntakeExtension.extend(),
+            groundIntakeRoller.startIntake(),
+            shooter.runVelocity(17, 22))
+        .withName("Topoff");
+  }
+
   public Command autoClimb() {
     return Commands.sequence(
             Commands.parallel(
@@ -660,7 +676,7 @@ public class RobotContainer {
 
   public Command backupShootHub() {
     return Commands.parallel(
-            shooter.runVelocity(65, 60),
+            shooter.runVelocity(65, 65),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),

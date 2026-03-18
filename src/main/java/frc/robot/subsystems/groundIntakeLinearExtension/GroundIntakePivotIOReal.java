@@ -62,10 +62,10 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 15;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 20;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     talonFXConfig.Feedback.FeedbackRotorOffset = 0;
     talonFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
@@ -121,6 +121,8 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     if (!status.isOK()) {
       System.out.println("Could not Configure this device: " + status.toString());
     }
+
+    setPosition(0);
   }
 
   @Override
