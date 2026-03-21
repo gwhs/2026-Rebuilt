@@ -11,6 +11,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.AdvancedHallSupportValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -64,6 +65,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     talonFXConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+    talonFXConfig.Commutation.AdvancedHallSupport = AdvancedHallSupportValue.Enabled;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
 
