@@ -7,15 +7,15 @@
    "bump_vel":{
     "dimension":"LinVel",
     "var":{
-     "exp":"1.5 m / s",
-     "val":1.5
+     "exp":"2 m / s",
+     "val":2.0
     }
    },
    "max_accel":{
     "dimension":"LinAcc",
     "var":{
-     "exp":"2.5 m / s / s",
-     "val":2.5
+     "exp":"3 m / s / s",
+     "val":3.0
     }
    },
    "max_vel":{
