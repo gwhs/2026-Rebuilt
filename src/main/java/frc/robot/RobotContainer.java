@@ -433,7 +433,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Depot 1 Cycle",
         new DepotPathAuto_1c(
-            drivetrain, shooter, groundIntakeExtension, groundIntakeRoller, climber));
+            drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, climber));
     autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
     SmartDashboard.putData("autonomous", autoChooser);
   }
@@ -613,9 +613,9 @@ public class RobotContainer {
   public Command agitateGroundIntake() {
     return Commands.sequence(
             groundIntakeRoller.stopIntake(),
-            groundIntakeExtension.extend().withTimeout(0.02),
+            groundIntakeExtension.extend2().withTimeout(0.04),
             Commands.waitSeconds(.8),
-            groundIntakeExtension.retract().withTimeout(0.02),
+            groundIntakeExtension.retract().withTimeout(0.04),
             Commands.waitSeconds(.8))
         .repeatedly()
         .withName("Start? Ground Intake");
@@ -634,7 +634,7 @@ public class RobotContainer {
             indexer.index(),
             groundIntakeExtension.extend(),
             groundIntakeRoller.startIntake(),
-            shooter.runVelocity(17, 22))
+            shooter.runVelocity(0, 0))
         .withName("Topoff");
   }
 
