@@ -613,9 +613,9 @@ public class RobotContainer {
   public Command agitateGroundIntake() {
     return Commands.sequence(
             groundIntakeRoller.startIntake(),
-            groundIntakeExtension.extend(),
+            groundIntakeExtension.extend().withTimeout(1),
             Commands.waitSeconds(.8),
-            groundIntakeExtension.retract(),
+            groundIntakeExtension.retract().withTimeout(1),
             Commands.waitSeconds(.8))
         .repeatedly()
         .withName("Start? Ground Intake");
