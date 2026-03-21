@@ -115,10 +115,7 @@ public class NeutralAutos extends SequentialCommandGroup {
                         climber.homingCommand().onlyIf(() -> homing),
                         shooter.stopShooter(),
                         groundIntakeRoller.startIntake(),
-                        Commands.sequence(
-                            Commands.waitSeconds(1.2).onlyIf(() -> homing),
-                            Commands.waitSeconds(2.3).onlyIf(() -> !homing),
-                            groundIntakeExtend.extend())),
+                        groundIntakeExtend.extend()),
                     Commands.waitSeconds(3),
                     shooter.preSpin())),
         groundIntakeRoller.stopIntake(),
@@ -130,8 +127,7 @@ public class NeutralAutos extends SequentialCommandGroup {
                         Commands.parallel(
                             indexer.index(),
                             shooter.cruiseControl(),
-                            EagleUtil.shootInSim(drivetrain),
-                            groundIntakeExtend.retract()))));
+                            EagleUtil.shootInSim(drivetrain)))));
   }
 
   private Command climbPath(PathPlannerPath path) {
