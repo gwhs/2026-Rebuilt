@@ -11,5 +11,5 @@ public class GroundIntakeLinearExtensionConstants {
   public static final double MIN_ROTATION = 0;
 
   public static final double EXTENSION_ROTATION = 0.5;
-  public static final double RETRACT_ROTATION = 0;
+  public static final double RETRACT_ROTATION = 0.2;
 }
