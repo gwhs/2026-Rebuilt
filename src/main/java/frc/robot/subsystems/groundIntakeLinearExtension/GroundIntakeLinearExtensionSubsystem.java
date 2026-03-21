@@ -50,10 +50,10 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
 
   public Command extend2() {
     return this.runOnce(
-                () -> {
-                  groundIntakeLinearExtensionIO.runPosition(
-                      GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
-                });
+        () -> {
+          groundIntakeLinearExtensionIO.runPosition(
+              GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
+        });
   }
 
   public Command retract() {
