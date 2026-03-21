@@ -12,6 +12,7 @@ import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
+import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
@@ -19,6 +20,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
   public DepotPathAuto_1c(
       SwerveSubsystem drivetrain,
       ShooterSubsystem shooter,
+      IndexerSubsystem indexer,
       GroundIntakeLinearExtensionSubsystem groundIntakeExtend,
       GroundIntakeRollerSubsystem groundIntakeRoller,
       ClimberSubsystem climber) {
@@ -48,6 +50,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
           Commands.waitSeconds(10)
               .deadlineFor(
                   shooter.cruiseControl(),
+                  indexer.index(),
                   groundIntakeExtend.retract(),
                   EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
           // TODO: Climb

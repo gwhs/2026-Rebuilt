@@ -433,7 +433,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Depot 1 Cycle",
         new DepotPathAuto_1c(
-            drivetrain, shooter, groundIntakeExtension, groundIntakeRoller, climber));
+            drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, climber));
     autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
     SmartDashboard.putData("autonomous", autoChooser);
   }
