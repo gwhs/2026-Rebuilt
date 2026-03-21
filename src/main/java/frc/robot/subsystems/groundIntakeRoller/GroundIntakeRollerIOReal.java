@@ -67,7 +67,6 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
     talonFXConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     talonFXConfig.Commutation.AdvancedHallSupport = AdvancedHallSupportValue.Enabled;
 
-
     StatusCode status = StatusCode.StatusCodeNotInitialized;
 
     for (int i = 0; i <= 5; i++) {
