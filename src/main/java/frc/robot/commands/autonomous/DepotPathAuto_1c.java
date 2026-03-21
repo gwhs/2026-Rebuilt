@@ -48,6 +48,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
           Commands.waitSeconds(6)
               .deadlineFor(
                   shooter.cruiseControl(),
+                  groundIntakeExtend.retract(),
                   EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
           // TODO: Climb
           climber.runPosition(ClimberConstants.CLIMB).alongWith(shooter.stopShooter()));
