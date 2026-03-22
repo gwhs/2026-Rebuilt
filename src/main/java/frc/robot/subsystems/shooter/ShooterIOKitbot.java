@@ -44,19 +44,10 @@ public class ShooterIOKitbot implements ShooterIO {
     motor1ClosedLoopGoal = motor1.getClosedLoopReference();
 
     statusSignalCollection.addSignals(
-        motor1Voltage,
-        motor1StatorCurrent,
-        motor1Velocity,
-        motor1Temp,
-        motor1ClosedLoopGoal);
+        motor1Voltage, motor1StatorCurrent, motor1Velocity, motor1Temp, motor1ClosedLoopGoal);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50,
-        motor1Voltage,
-        motor1StatorCurrent,
-        motor1Velocity,
-        motor1Temp,
-        motor1ClosedLoopGoal);
+        50, motor1Voltage, motor1StatorCurrent, motor1Velocity, motor1Temp, motor1ClosedLoopGoal);
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
@@ -78,21 +69,19 @@ public class ShooterIOKitbot implements ShooterIO {
   }
 
   public void runVoltage(double voltage) {
-      motor1.setVoltage(voltage);
+    motor1.setVoltage(voltage);
   }
 
-  public void enableLeftShooter(boolean enable) {
-    }
+  public void enableLeftShooter(boolean enable) {}
 
-  public void enableRightShooter(boolean enable) {
-  }
+  public void enableRightShooter(boolean enable) {}
 
   public void runVelocity(double rotationsPerSecond) {
-      motor1.setControl(velocityRequest1.withVelocity(rotationsPerSecond));
+    motor1.setControl(velocityRequest1.withVelocity(rotationsPerSecond));
   }
 
   public void runVelocity(double frontRPS, double backRPS) {
-      motor1.setControl(velocityRequest1.withVelocity(frontRPS));
+    motor1.setControl(velocityRequest1.withVelocity(frontRPS));
   }
 
   public double getVelocity() {

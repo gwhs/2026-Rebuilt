@@ -45,6 +45,7 @@ public class ShooterSubsystem extends SubsystemBase {
     return new ShooterSubsystem(
         new ShooterIOKitbot(rioCanbus, canivoreCanbus, signal), robotPose, robotTarget);
   }
+
   private ShooterIO shooterIO;
 
   private double velocityGoal;
