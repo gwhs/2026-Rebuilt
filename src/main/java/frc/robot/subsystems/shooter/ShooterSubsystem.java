@@ -36,6 +36,15 @@ public class ShooterSubsystem extends SubsystemBase {
         new ShooterIOReal(rioCanbus, canivoreCanbus, signal), robotPose, robotTarget);
   }
 
+  public static ShooterSubsystem createKitbot(
+      CANBus rioCanbus,
+      CANBus canivoreCanbus,
+      StatusSignalCollection signal,
+      Supplier<Pose2d> robotPose,
+      Supplier<Pose2d> robotTarget) {
+    return new ShooterSubsystem(
+        new ShooterIOKitbot(rioCanbus, canivoreCanbus, signal), robotPose, robotTarget);
+  }
   private ShooterIO shooterIO;
 
   private double velocityGoal;
