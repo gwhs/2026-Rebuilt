@@ -73,7 +73,7 @@ public class RobotContainer {
       return Robot.DEV;
     } else if (serialNumber.equals("03223849")) {
       return Robot.COMP;
-    } else if (serialNumber.equals("03282BB2")) {
+    } else if (serialNumber.equals("0323CA18")) {
       return Robot.KITBOT;
     } else {
       new Alert(
@@ -220,9 +220,9 @@ public class RobotContainer {
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
-            ShooterSubsystem.createReal(
-                canivoreCanbus,
+            ShooterSubsystem.createKitbot(
                 rioCanbus,
+                canivoreCanbus,
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
