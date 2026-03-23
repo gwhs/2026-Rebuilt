@@ -4,18 +4,25 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
+   "bump_vel":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"1.75 m / s",
+     "val":1.75
+    }
+   },
    "max_accel":{
     "dimension":"LinAcc",
     "var":{
-     "exp":"4.5 m / s / s",
-     "val":4.5
+     "exp":"3 m / s / s",
+     "val":3.0
     }
    },
    "max_vel":{
     "dimension":"LinVel",
     "var":{
-     "exp":"4.5 m / s",
-     "val":4.5
+     "exp":"3 m / s",
+     "val":3.0
     }
    }
   },
