@@ -631,7 +631,7 @@ public class RobotContainer {
 
   public Command topoff() {
     return Commands.parallel(
-            indexer.index(),
+            indexer.stop(),
             groundIntakeExtension.extend(),
             groundIntakeRoller.startIntake(),
             shooter.runVelocity(0, 0))
