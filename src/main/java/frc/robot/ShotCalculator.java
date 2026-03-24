@@ -17,16 +17,14 @@ public class ShotCalculator {
 
   static {
     backBeltMap.put(1.1, 38.0);
-    backBeltMap.put(1.35, 40.0);//
-    backBeltMap.put(2.82, 52.0);//
-    backBeltMap.put(3.94, 63.0);//
-
+    backBeltMap.put(1.35, 40.0);
+    backBeltMap.put(2.82, 52.0);
+    backBeltMap.put(3.94, 63.0);
 
     frontBeltMap.put(1.1, 43.0);
     frontBeltMap.put(1.35, 45.0);
     frontBeltMap.put(2.82, 57.0);
     frontBeltMap.put(3.94, 68.0);
-
 
     timeOfFlight.put(1.97, 1.26);
     timeOfFlight.put(2.560, 1.31);
