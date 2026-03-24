@@ -25,35 +25,23 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
   private final TalonFXS motor1;
-  private final TalonFXS motor2;
 
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
   private final StatusSignal<Temperature> motor1Temp;
 
-  private final StatusSignal<Voltage> motor2Voltage;
-  private final StatusSignal<Current> motor2StatorCurrent;
-  private final StatusSignal<Temperature> motor2Temp;
-
   private final Alert motor1NotConnectedAlert =
       new Alert("Ground Intake Roller Motor 1 Not Connected ", AlertType.kError);
-  private final Alert motor2NotConnectedAlert =
-      new Alert("Ground Intake Roller Motor 2 Not Connected ", AlertType.kError);
 
   @SuppressWarnings("resource")
   public GroundIntakeRollerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
 
     motor1 = new TalonFXS(GroundIntakeRollerConstants.MOTOR_1_ID, rioCanbus);
-    motor2 = new TalonFXS(GroundIntakeRollerConstants.MOTOR_2_ID, rioCanbus);
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
     motor1Temp = motor1.getDeviceTemp();
-
-    motor2Voltage = motor2.getMotorVoltage();
-    motor2StatorCurrent = motor2.getStatorCurrent();
-    motor2Temp = motor2.getDeviceTemp();
 
     TalonFXSConfiguration talonFXConfig = new TalonFXSConfiguration();
 
@@ -82,54 +70,27 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
     status = StatusCode.StatusCodeNotInitialized;
 
-    for (int i = 0; i <= 5; i++) {
-      status = motor2.getConfigurator().apply(talonFXConfig);
-      if (status.isOK()) break;
-    }
-    if (!status.isOK()) {
-      new Alert(
-              "Ground Roller: Could not configure Motor 2. Error" + status.toString(),
-              AlertType.kError)
-          .set(true);
-    }
-
     signal.addSignals(
         motor1Voltage,
         motor1StatorCurrent,
-        motor1Temp,
-        motor2Voltage,
-        motor2StatorCurrent,
-        motor2Temp);
+        motor1Temp);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
         motor1Voltage,
         motor1StatorCurrent,
-        motor1Temp,
-        motor2Voltage,
-        motor2StatorCurrent,
-        motor2Temp);
+        motor1Temp);
   }
 
   public void runVoltage(double voltage) {
     motor1.setVoltage(voltage);
-    motor2.setVoltage(voltage);
-  }
-
-  public void runVoltage(double top, double bottom) {
-    motor1.setVoltage(top);
-    motor2.setVoltage(bottom);
   }
 
   public void periodic() {
     DogLog.log("Ground Roller/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 1 Temperature", motor1Temp.getValueAsDouble());
-    DogLog.log("Ground Roller/Motor 2 Voltage", motor2Voltage.getValueAsDouble());
-    DogLog.log("Ground Roller/Motor 2 Stator Current", motor2StatorCurrent.getValueAsDouble());
-    DogLog.log("Ground Roller/Motor 2 Temperature", motor2Temp.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
-    motor2NotConnectedAlert.set(!motor2.isConnected());
   }
 }
