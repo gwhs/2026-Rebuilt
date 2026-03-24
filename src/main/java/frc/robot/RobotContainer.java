@@ -618,7 +618,7 @@ public class RobotContainer {
             groundIntakeExtension.retract().withTimeout(0.04),
             Commands.waitSeconds(.8))
         .repeatedly()
-        .withName("Start? Ground Intake");
+        .withName("Agitate Ground Intake");
   }
 
   public Command stopShoot() {
