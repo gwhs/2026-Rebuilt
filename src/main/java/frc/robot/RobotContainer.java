@@ -361,7 +361,11 @@ public class RobotContainer {
     controller
         .rightTrigger()
         .and(drivetrain.isInAllianceZone)
-        .whileTrue(shootHub().alongWith(agitateGroundIntake()));
+        .whileTrue(shootHub());
+
+    controller
+        .rightTrigger()
+        .whileTrue(agitateGroundIntake());
 
     controller
         .rightTrigger()
@@ -370,7 +374,7 @@ public class RobotContainer {
                 .isInNeutralZone
                 .or(drivetrain.isInOpponentAllianceZone)
                 .and(drivetrain.isOnDepotSide))
-        .whileTrue(shootDepot().alongWith(agitateGroundIntake()));
+        .whileTrue(shootDepot());
     controller
         .rightTrigger()
         .and(
@@ -379,7 +383,7 @@ public class RobotContainer {
                 .or(drivetrain.isInOpponentAllianceZone)
                 .and(drivetrain.isOnOutpostSide))
         .whileTrue(shootOutpost());
-    controller.rightTrigger().onFalse(stopShoot().alongWith(groundIntakeRoller.stopIntake()));
+    controller.rightTrigger().onFalse(stopShoot());
 
     controller.a().onTrue(retractGroundIntake());
 
