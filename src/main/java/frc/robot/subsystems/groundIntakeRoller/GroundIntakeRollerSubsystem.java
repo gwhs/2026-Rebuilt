@@ -46,8 +46,7 @@ public class GroundIntakeRollerSubsystem extends SubsystemBase {
   }
 
   public Command startIntake() {
-    return runVoltage(
-        GroundIntakeRollerConstants.TOP_INTAKE_VOLTAGE);
+    return runVoltage(GroundIntakeRollerConstants.INTAKE_VOLTAGE);
   }
 
   public Command reverseIntake() {

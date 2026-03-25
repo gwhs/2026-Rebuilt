@@ -70,16 +70,9 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
     status = StatusCode.StatusCodeNotInitialized;
 
-    signal.addSignals(
-        motor1Voltage,
-        motor1StatorCurrent,
-        motor1Temp);
+    signal.addSignals(motor1Voltage, motor1StatorCurrent, motor1Temp);
 
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50,
-        motor1Voltage,
-        motor1StatorCurrent,
-        motor1Temp);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, motor1Voltage, motor1StatorCurrent, motor1Temp);
   }
 
   public void runVoltage(double voltage) {
