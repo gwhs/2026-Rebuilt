@@ -470,12 +470,11 @@ public class RobotContainer {
   public void periodic() {
 
     boolean autoWin = false;
-    if(HubTracker.getAutoWinner().isPresent()){
+    if (HubTracker.getAutoWinner().isPresent()) {
       Alliance actualAutoWinner = HubTracker.getAutoWinner().get();
-      if(EagleUtil.isRedAlliance()){
+      if (EagleUtil.isRedAlliance()) {
         autoWin = actualAutoWinner == Alliance.Red;
-      }
-      else{
+      } else {
         autoWin = actualAutoWinner == Alliance.Blue;
       }
     }
