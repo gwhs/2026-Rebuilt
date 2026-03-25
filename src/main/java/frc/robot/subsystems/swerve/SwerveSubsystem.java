@@ -197,7 +197,6 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       startSimThread();
     }
     configureAutoBuilder();
-    registerTelemetry(logger::telemeterize);
 
     SmartDashboard.putData("Current limit: 60", setCurrentLimit(60));
     SmartDashboard.putData("Current limit: 80", setCurrentLimit(80));
@@ -270,6 +269,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public void periodic() {
     cachedState = getStateCopy();
     cachedVirtualTarget = getVirtualTarget();
+
+    logger.telemeterize(cachedState);
+
     /*
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
