@@ -64,6 +64,14 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
         });
   }
 
+  public Command retractFull() {
+    return this.runOnce(
+        () -> {
+          groundIntakeLinearExtensionIO.runPosition(
+              GroundIntakeLinearExtensionConstants.RETRACT_FULL_ROTATION);
+        });
+  }
+
   public Command homingCommand() {
     return Commands.none();
     // return Commands.sequence(
