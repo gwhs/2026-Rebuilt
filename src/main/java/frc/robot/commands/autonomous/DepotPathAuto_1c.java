@@ -49,7 +49,9 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
                               climber.homingCommand().onlyIf(() -> RobotBase.isReal()),
                               groundIntakeExtend.homingCommand().onlyIf(() -> RobotBase.isReal())),
                           Commands.parallel(
-                              groundIntakeExtend.extend(), groundIntakeRoller.startIntake()),
+                              groundIntakeExtend.extend(),
+                              groundIntakeRoller.startIntake(),
+                              shooter.stopShooter()),
                           Commands.waitSeconds(2),
                           shooter.preSpin()))),
           AutoBuilder.followPath(climbPath),
