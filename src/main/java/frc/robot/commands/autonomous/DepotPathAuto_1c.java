@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
-import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
@@ -29,6 +28,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
 
       PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("D_Start_Depot");
       PathPlannerPath climbPath = PathPlannerPath.fromChoreoTrajectory("D_Depot_Climb");
+      PathPlannerPath neutralPath = PathPlannerPath.fromChoreoTrajectory("D_Start_Bump");
 
       Pose2d startingPose =
           new Pose2d(
@@ -53,14 +53,18 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
                           Commands.waitSeconds(2),
                           shooter.preSpin()))),
           AutoBuilder.followPath(climbPath),
-          Commands.waitSeconds(10)
+          Commands.waitSeconds(5)
               .deadlineFor(
                   shooter.cruiseControl(),
                   indexer.index(),
                   groundIntakeExtend.retract(),
                   EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
-          // TODO: Climb
-          climber.runPosition(ClimberConstants.CLIMB).alongWith(shooter.stopShooter()));
+          AutoBuilder.followPath(neutralPath)
+              .deadlineFor(
+                  shooter.stopShooter(),
+                  indexer.runVoltage(0),
+                  groundIntakeExtend.extend(),
+                  groundIntakeRoller.startIntake()));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());

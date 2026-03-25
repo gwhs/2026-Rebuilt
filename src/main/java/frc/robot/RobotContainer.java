@@ -469,7 +469,18 @@ public class RobotContainer {
 
   public void periodic() {
 
-    DogLog.log("Auto Winner", HubTracker.getAutoWinner().toString());
+    boolean autoWin = false;
+    if(HubTracker.getAutoWinner().isPresent()){
+      Alliance actualAutoWinner = HubTracker.getAutoWinner().get();
+      if(EagleUtil.isRedAlliance()){
+        autoWin = actualAutoWinner == Alliance.Red;
+      }
+      else{
+        autoWin = actualAutoWinner == Alliance.Blue;
+      }
+    }
+
+    DogLog.log("Auto Winner", autoWin);
 
     double startTime = HALUtil.getFPGATime();
 
