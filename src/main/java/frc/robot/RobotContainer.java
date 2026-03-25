@@ -696,7 +696,7 @@ public class RobotContainer {
 
   public Command backupShootTrench() {
     return Commands.parallel(
-            shooter.runVelocity(75),
+            shooter.runVelocity(65, 60),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),
