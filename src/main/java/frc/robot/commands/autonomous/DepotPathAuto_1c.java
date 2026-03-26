@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.EagleUtil;
-import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
@@ -22,7 +21,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
       IndexerSubsystem indexer,
       GroundIntakeLinearExtensionSubsystem groundIntakeExtend,
       GroundIntakeRollerSubsystem groundIntakeRoller,
-      ClimberSubsystem climber) {
+      Boolean neutral) {
 
     try {
 
@@ -46,7 +45,6 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
                   .deadlineFor(
                       Commands.sequence(
                           Commands.parallel(
-                              climber.homingCommand().onlyIf(() -> RobotBase.isReal()),
                               groundIntakeExtend.homingCommand().onlyIf(() -> RobotBase.isReal())),
                           Commands.parallel(
                               groundIntakeExtend.extend(),
@@ -62,6 +60,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
                   groundIntakeExtend.retract(),
                   EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
           AutoBuilder.followPath(neutralPath)
+              .onlyIf(() -> neutral)
               .deadlineFor(
                   shooter.stopShooter(),
                   indexer.runVoltage(0),
