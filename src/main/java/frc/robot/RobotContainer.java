@@ -360,6 +360,8 @@ public class RobotContainer {
 
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
 
+    controller.rightTrigger().whileTrue(agitateGroundIntake());
+
     controller
         .rightTrigger()
         .and(
@@ -378,11 +380,12 @@ public class RobotContainer {
         .whileTrue(shootOutpost());
     controller.rightTrigger().onFalse(stopShoot());
 
+    controller.a().onTrue(retractGroundIntake());
+
     controller.b().whileTrue(unStuck());
     controller.b().onFalse(groundIntakeRoller.stopIntake());
 
-    controller.a().whileTrue(agitateGroundIntake());
-    controller.a().onFalse(groundIntakeRoller.stopIntake());
+    controller.x().whileTrue(defenseMode());
 
     controller
         .y()
@@ -406,7 +409,6 @@ public class RobotContainer {
         .and(controller.rightTrigger().negate())
         .onTrue(shooter.stopShooter());
 
-    controller.x().whileTrue(defenseMode());
     // controller.start().onTrue(autoClimb());
 
     controller.povRight().whileTrue(bumpJump());
@@ -467,7 +469,17 @@ public class RobotContainer {
 
   public void periodic() {
 
-    DogLog.log("Auto Winner", HubTracker.getAutoWinner().toString());
+    boolean autoWin = false;
+    if (HubTracker.getAutoWinner().isPresent()) {
+      Alliance actualAutoWinner = HubTracker.getAutoWinner().get();
+      if (EagleUtil.isRedAlliance()) {
+        autoWin = actualAutoWinner == Alliance.Red;
+      } else {
+        autoWin = actualAutoWinner == Alliance.Blue;
+      }
+    }
+
+    DogLog.log("Auto Winner", autoWin);
 
     double startTime = HALUtil.getFPGATime();
 
@@ -604,10 +616,16 @@ public class RobotContainer {
         .withName("Deploy Ground Intake");
   }
 
-  public Command defenseMode() {
+  public Command retractGroundIntake() {
     return Commands.parallel(
-            drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake())
-        .withName("Defense Mode");
+            groundIntakeRoller.stopIntake(),
+            groundIntakeExtension.retractFull(),
+            drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
+        .withName("Retract Ground Intake");
+  }
+
+  public Command defenseMode() {
+    return Commands.parallel(drivetrain.swerveX()).withName("Defense Mode");
   }
 
   public Command agitateGroundIntake() {
@@ -631,7 +649,7 @@ public class RobotContainer {
 
   public Command topoff() {
     return Commands.parallel(
-            indexer.index(),
+            indexer.runVoltage(0),
             groundIntakeExtension.extend(),
             groundIntakeRoller.startIntake(),
             shooter.runVelocity(0, 0))
@@ -676,7 +694,7 @@ public class RobotContainer {
 
   public Command backupShootHub() {
     return Commands.parallel(
-            shooter.runVelocity(65, 65),
+            shooter.runVelocity(45, 40),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),
@@ -687,7 +705,7 @@ public class RobotContainer {
 
   public Command backupShootTrench() {
     return Commands.parallel(
-            shooter.runVelocity(75),
+            shooter.runVelocity(65, 60),
             Commands.parallel(
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),

@@ -8,7 +8,5 @@ public interface GroundIntakeRollerIO {
 
   public void runVoltage(double voltage);
 
-  public void runVoltage(double top, double bottom);
-
   public void periodic();
 }
