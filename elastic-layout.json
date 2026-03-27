@@ -68,7 +68,7 @@
           {
             "title": "Alerts",
             "x": 0.0,
-            "y": 384.0,
+            "y": 512.0,
             "width": 256.0,
             "height": 256.0,
             "type": "Alerts",
@@ -79,9 +79,9 @@
           },
           {
             "title": "Is Active",
-            "x": 768.0,
+            "x": 512.0,
             "y": 0.0,
-            "width": 768.0,
+            "width": 1024.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -131,9 +131,9 @@
           {
             "title": "photonvision_Port_1184_Output_MJPEG_Server",
             "x": 0.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 384.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/photonvision_Port_1184_Output_MJPEG_Server",
@@ -148,10 +148,10 @@
           },
           {
             "title": "photonvision_Port_1182_Output_MJPEG_Server",
-            "x": 384.0,
+            "x": 0.0,
             "y": 0.0,
-            "width": 384.0,
-            "height": 384.0,
+            "width": 256.0,
+            "height": 256.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/photonvision_Port_1182_Output_MJPEG_Server",
@@ -162,19 +162,6 @@
                 256.0,
                 160.0
               ]
-            }
-          },
-          {
-            "title": "Auto Winner",
-            "x": 768.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 256.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/Robot/Auto Winner",
-              "period": 0.06,
-              "data_type": "string"
             }
           },
           {
@@ -193,8 +180,8 @@
           },
           {
             "title": "Current limit: 80",
-            "x": 256.0,
-            "y": 512.0,
+            "x": 512.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -207,7 +194,7 @@
           },
           {
             "title": "Current limit: 60",
-            "x": 256.0,
+            "x": 512.0,
             "y": 384.0,
             "width": 256.0,
             "height": 128.0,
@@ -222,7 +209,7 @@
           {
             "title": "Current limit: 100",
             "x": 512.0,
-            "y": 384.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -231,6 +218,41 @@
               "period": 0.06,
               "show_type": true,
               "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Auto Winner",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 256.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/Robot/Auto Winner",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "photonvision2_Port_1182_Output_MJPEG_Server",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/photonvision2_Port_1182_Output_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "fps": 5,
+              "resolution": [
+                300.0,
+                200.0
+              ]
             }
           }
         ]
