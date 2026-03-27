@@ -25,12 +25,10 @@ public class ShotCalculator {
     backBeltMap.put(2.425, 52.0);
     backBeltMap.put(2.835, 59.0);
 
-
-
     frontBeltMap.put(1.07, 45.0);
     frontBeltMap.put(1.32, 45.0);
     frontBeltMap.put(1.498, 46.0);
-    frontBeltMap.put(1.600,49.0);
+    frontBeltMap.put(1.600, 49.0);
     frontBeltMap.put(1.775, 52.0);
     frontBeltMap.put(2.075, 55.0);
     frontBeltMap.put(2.425, 59.0);
