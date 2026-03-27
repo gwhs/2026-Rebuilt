@@ -3,7 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.StatusSignalCollection;
-import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -326,7 +326,17 @@ public class RobotContainer {
 
     robotVisualizer = new RobotVisualizer(groundIntakeExtension);
 
-    CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
+    CommandScheduler.getInstance()
+        .schedule(
+            Commands.parallel(
+                    FollowPathCommand.warmupCommand(),
+                    drivetrain.setSlowMode(false),
+                    shooter.stopShooter(),
+                    indexer.runVoltage(0),
+                    groundIntakeExtension.retractFull(),
+                    groundIntakeRoller.stopIntake())
+                .withName("Warm Up Command")
+                .ignoringDisable(true));
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
@@ -435,7 +445,11 @@ public class RobotContainer {
     autoChooser.addOption(
         "Depot 1 Cycle",
         new DepotPathAuto_1c(
-            drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, climber));
+            drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, false));
+    autoChooser.addOption(
+        "Depot Neutral",
+        new DepotPathAuto_1c(
+            drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, true));
     autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
     SmartDashboard.putData("autonomous", autoChooser);
   }
