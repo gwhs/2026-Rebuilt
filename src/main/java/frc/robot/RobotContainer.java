@@ -206,6 +206,13 @@ public class RobotContainer {
                 drivetrain::addVisionMeasurent,
                 () -> drivetrain.getCachedState().Pose,
                 () -> drivetrain.getCachedState().Speeds);
+        frontLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_LEFT_CAM,
+                AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -306,6 +313,13 @@ public class RobotContainer {
             new AprilTagCam(
                 AprilTagCamConstants.BACK_LEFT_CAM,
                 AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        frontLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_LEFT_CAM,
+                AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
                 drivetrain::addVisionMeasurent,
                 () -> drivetrain.getCachedState().Pose,
                 () -> drivetrain.getCachedState().Speeds);

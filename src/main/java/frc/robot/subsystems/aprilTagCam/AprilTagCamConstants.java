@@ -42,14 +42,14 @@ public class AprilTagCamConstants {
           0.309,
           -0.328,
           0.734,
-          new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(-100)));
+          new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-90)));
 
   public static final Transform3d FRONT_LEFT_CAM_LOCATION =
       new Transform3d(
-          0.309,
-          0.328,
-          0.735,
-          new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(100)));
+          0.3325,
+          0.312293,
+          0.737,
+          new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(90)));
 
   public static final double Z_TOLERANCE = 2.00;
   public static final double XY_TOLERANCE = 2.00;
