@@ -393,6 +393,9 @@ public class RobotContainer {
 
     controller.rightTrigger().whileTrue(agitateGroundIntake());
 
+    controller.rightStick().whileTrue(agitateGroundIntake());
+    controller.leftStick().whileTrue(agitateGroundIntake());
+
     controller
         .rightTrigger()
         .and(
