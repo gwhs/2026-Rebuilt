@@ -7,8 +7,8 @@
    "bump_vel":{
     "dimension":"LinVel",
     "var":{
-     "exp":"2.2 m / s",
-     "val":2.2
+     "exp":"2.5 m / s",
+     "val":2.5
     }
    },
    "max_accel":{
