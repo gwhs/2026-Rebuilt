@@ -206,6 +206,20 @@ public class RobotContainer {
                 drivetrain::addVisionMeasurent,
                 () -> drivetrain.getCachedState().Pose,
                 () -> drivetrain.getCachedState().Speeds);
+        frontLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_LEFT_CAM,
+                AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        frontRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_RIGHT_CAM,
+                AprilTagCamConstants.FRONT_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -309,6 +323,13 @@ public class RobotContainer {
                 drivetrain::addVisionMeasurent,
                 () -> drivetrain.getCachedState().Pose,
                 () -> drivetrain.getCachedState().Speeds);
+        frontLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_LEFT_CAM,
+                AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
     }
 
@@ -372,6 +393,9 @@ public class RobotContainer {
 
     controller.rightTrigger().whileTrue(agitateGroundIntake());
 
+    controller.rightStick().whileTrue(agitateGroundIntake());
+    controller.leftStick().whileTrue(agitateGroundIntake());
+
     controller
         .rightTrigger()
         .and(
@@ -391,9 +415,6 @@ public class RobotContainer {
     controller.rightTrigger().onFalse(stopShoot());
 
     controller.a().onTrue(retractGroundIntake());
-
-    controller.b().whileTrue(unStuck());
-    controller.b().onFalse(groundIntakeRoller.stopIntake());
 
     controller.x().whileTrue(defenseMode());
 

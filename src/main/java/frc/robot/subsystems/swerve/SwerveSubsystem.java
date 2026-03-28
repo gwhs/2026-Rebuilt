@@ -214,7 +214,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
           (speeds, feedforwards) ->
               setControl(
                   m_pathApplyRobotSpeeds
-                      .withSpeeds(speeds)
+                      .withSpeeds(ChassisSpeeds.discretize(speeds, 0.020))
                       .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                       .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
           new PPHolonomicDriveController(

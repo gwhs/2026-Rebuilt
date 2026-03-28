@@ -149,7 +149,7 @@ public class EagleUtil {
   public static double getFuelTimeInAir(double distanceToTarget) {
     // eqation based on simulation data points and adjustments, may be adjusted later for better
     // performance
-    return 0.63117 * Math.sin(0.23124 * distanceToTarget - 1.6501) + 1.87679;
+    return 0.63117 * Math.sin(0.23124 * distanceToTarget - 1.6501) + 1.67679;
   }
 
   public static Command shootInSim(SwerveSubsystem drivetrain) {
