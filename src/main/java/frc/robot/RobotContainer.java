@@ -609,8 +609,11 @@ public class RobotContainer {
             drivetrain.setRotationCommand(RotationTarget.HUB),
             drivetrain.setSlowMode(0.5, 1),
             Commands.parallel(
-                    indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger()))
+                    Commands.waitUntil(
+                        drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger())),
+                    indexer.index(),
+                    shooter.cruiseControl(),
+                    EagleUtil.shootInSim(drivetrain))
                 .repeatedly())
         .withName("Shoot Hub");
   }
