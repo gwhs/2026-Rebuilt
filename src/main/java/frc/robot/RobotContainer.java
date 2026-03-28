@@ -608,12 +608,13 @@ public class RobotContainer {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.HUB),
             drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(
-                    Commands.waitUntil(
+            Commands.waitUntil(
                         drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger())),
+            Commands.parallel(
                     indexer.index(),
                     shooter.cruiseControl(),
                     EagleUtil.shootInSim(drivetrain))
+                    .onlyWhile(drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger()))
                 .repeatedly())
         .withName("Shoot Hub");
   }
@@ -622,6 +623,7 @@ public class RobotContainer {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
             drivetrain.setSlowMode(0.5, 1),
+            Commands.waitUntil(drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger())),
             Commands.parallel(
                     indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(drivetrain.isFacingGoalPassing.or(controller.leftTrigger()))
@@ -633,6 +635,7 @@ public class RobotContainer {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
             drivetrain.setSlowMode(0.5, 1),
+            Commands.waitUntil(drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger())),
             Commands.parallel(
                     indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(drivetrain.isFacingGoalPassing.or(controller.leftTrigger()))
@@ -732,23 +735,19 @@ public class RobotContainer {
 
   public Command backupShootHub() {
     return Commands.parallel(
-            shooter.runVelocity(45, 40),
-            Commands.parallel(
+            shooter.runVelocity(45, 42),
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),
                     EagleUtil.shootInSim(drivetrain))
-                .repeatedly())
         .withName("Shoot Hub Backup");
   }
 
   public Command backupShootTrench() {
     return Commands.parallel(
-            shooter.runVelocity(65, 60),
-            Commands.parallel(
+            shooter.runVelocity(68, 66),
                     indexer.index(),
                     drivetrain.setRotationCommand(RotationTarget.NORMAL),
                     EagleUtil.shootInSim(drivetrain))
-                .repeatedly())
         .withName("Shoot Trench Backup");
   }
 
