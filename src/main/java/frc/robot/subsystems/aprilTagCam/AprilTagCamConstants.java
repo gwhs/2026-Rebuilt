@@ -39,9 +39,9 @@ public class AprilTagCamConstants {
 
   public static final Transform3d FRONT_RIGHT_CAM_LOCATION =
       new Transform3d(
-          0.309,
-          -0.328,
-          0.734,
+          0.3325,
+          -0.312293,
+          0.737,
           new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-90)));
 
   public static final Transform3d FRONT_LEFT_CAM_LOCATION =
