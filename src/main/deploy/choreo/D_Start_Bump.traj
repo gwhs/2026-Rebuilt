@@ -42,7 +42,7 @@
     {"from":"first", "to":"last", "data":{"type":"KeepInRectangle", "props":{"x":{"exp":"0 m", "val":0.0}, "y":{"exp":"0 m", "val":0.0}, "w":{"exp":"16.541 m", "val":16.541}, "h":{"exp":"8.0692 m", "val":8.0692}}}, "enabled":false},
     {"from":"first", "to":"last", "data":{"type":"MaxAcceleration", "props":{"max":{"exp":"max_accel", "val":3.6}}}, "enabled":true},
     {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"max_vel", "val":3.6}}}, "enabled":true},
-    {"from":1, "to":2, "data":{"type":"MaxVelocity", "props":{"max":{"exp":"bump_vel", "val":1.95}}}, "enabled":true},
+    {"from":1, "to":2, "data":{"type":"MaxVelocity", "props":{"max":{"exp":"bump_vel", "val":2.2}}}, "enabled":true},
     {"from":1, "to":2, "data":{"type":"KeepInLane", "props":{"tolerance":{"exp":"0.01 m", "val":0.01}}}, "enabled":true},
     {"from":1, "to":2, "data":{"type":"MaxAngularVelocity", "props":{"max":{"exp":"0.2 rad / s", "val":0.2}}}, "enabled":true},
     {"from":8, "to":8, "data":{"type":"MaxVelocity", "props":{"max":{"exp":"0 m / s", "val":0.0}}}, "enabled":true},
