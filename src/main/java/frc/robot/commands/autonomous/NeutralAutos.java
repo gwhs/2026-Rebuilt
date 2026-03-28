@@ -127,7 +127,13 @@ public class NeutralAutos extends SequentialCommandGroup {
                             Commands.parallel(
                                 indexer.index(),
                                 shooter.cruiseControl(),
-                                groundIntakeExtend.retract(),
+                                Commands.sequence(
+                                        groundIntakeRoller.stopIntake(),
+                                        groundIntakeExtend.extend2().withTimeout(0.04),
+                                        Commands.waitSeconds(.6),
+                                        groundIntakeExtend.retract().withTimeout(0.04),
+                                        Commands.waitSeconds(.6))
+                                    .repeatedly(),
                                 EagleUtil.shootInSim(drivetrain))))));
   }
 
