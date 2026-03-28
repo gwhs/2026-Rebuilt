@@ -116,8 +116,8 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   }
 
   public void runVoltage(double voltage) {
-    motor1.setVoltage(voltage);
-    motor2.setVoltage(0);
+    motor1.setVoltage(0);
+    motor2.setVoltage(voltage);
   }
 
   public void periodic() {
