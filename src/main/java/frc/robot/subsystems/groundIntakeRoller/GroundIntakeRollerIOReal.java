@@ -129,6 +129,6 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
     DogLog.log("Ground Roller/Motor 2 Temperature", motor2Temp.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
-    motor1NotConnectedAlert.set(!motor2.isConnected());
+    motor2NotConnectedAlert.set(!motor2.isConnected());
   }
 }
