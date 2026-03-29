@@ -38,7 +38,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   private final StatusSignal<Temperature> motor2Temp;
 
   private final Follower controlRequest =
-      new Follower(GroundIntakeRollerConstants.MOTOR_1_ID, MotorAlignmentValue.Opposed);
+      new Follower(GroundIntakeRollerConstants.MOTOR_2_ID, MotorAlignmentValue.Opposed);
 
   private final Alert motor1NotConnectedAlert =
       new Alert("Ground Intake Roller Motor 1 Not Connected ", AlertType.kError);
@@ -116,7 +116,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   }
 
   public void runVoltage(double voltage) {
-    motor1.setVoltage(0);
+    motor1.setControl(controlRequest);
     motor2.setVoltage(voltage);
   }
 
