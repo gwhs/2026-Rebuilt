@@ -10,9 +10,11 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.AdvancedHallSupportValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
@@ -25,23 +27,39 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
   private final TalonFXS motor1;
+  private final TalonFXS motor2;
 
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
   private final StatusSignal<Temperature> motor1Temp;
 
+  private final StatusSignal<Voltage> motor2Voltage;
+  private final StatusSignal<Current> motor2StatorCurrent;
+  private final StatusSignal<Temperature> motor2Temp;
+
+  private final Follower controlRequest =
+      new Follower(GroundIntakeRollerConstants.MOTOR_2_ID, MotorAlignmentValue.Opposed);
+
   private final Alert motor1NotConnectedAlert =
       new Alert("Ground Intake Roller Motor 1 Not Connected ", AlertType.kError);
+
+  private final Alert motor2NotConnectedAlert =
+      new Alert("Ground Intake Roller Motor 2 Not Connected ", AlertType.kError);
 
   @SuppressWarnings("resource")
   public GroundIntakeRollerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
 
     motor1 = new TalonFXS(GroundIntakeRollerConstants.MOTOR_1_ID, rioCanbus);
+    motor2 = new TalonFXS(GroundIntakeRollerConstants.MOTOR_2_ID, rioCanbus);
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
     motor1Temp = motor1.getDeviceTemp();
+
+    motor2Voltage = motor2.getMotorVoltage();
+    motor2StatorCurrent = motor2.getStatorCurrent();
+    motor2Temp = motor2.getDeviceTemp();
 
     TalonFXSConfiguration talonFXConfig = new TalonFXSConfiguration();
 
@@ -50,7 +68,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     talonFXConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     talonFXConfig.Commutation.AdvancedHallSupport = AdvancedHallSupportValue.Enabled;
@@ -68,22 +86,49 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
           .set(true);
     }
 
-    status = StatusCode.StatusCodeNotInitialized;
+    for (int i = 0; i <= 5; i++) {
+      status = motor2.getConfigurator().apply(talonFXConfig);
+      if (status.isOK()) break;
+    }
+    if (!status.isOK()) {
+      new Alert(
+              "Ground Roller: Could not configure Motor 2. Error" + status.toString(),
+              AlertType.kError)
+          .set(true);
+    }
 
-    signal.addSignals(motor1Voltage, motor1StatorCurrent, motor1Temp);
+    signal.addSignals(
+        motor1Voltage,
+        motor1StatorCurrent,
+        motor1Temp,
+        motor2Voltage,
+        motor2StatorCurrent,
+        motor2Temp);
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50, motor1Voltage, motor1StatorCurrent, motor1Temp);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50,
+        motor1Voltage,
+        motor1StatorCurrent,
+        motor1Temp,
+        motor2Voltage,
+        motor2StatorCurrent,
+        motor2Temp);
   }
 
   public void runVoltage(double voltage) {
-    motor1.setVoltage(voltage);
+    motor1.setControl(controlRequest);
+    motor2.setVoltage(voltage);
   }
 
   public void periodic() {
     DogLog.log("Ground Roller/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
     DogLog.log("Ground Roller/Motor 1 Temperature", motor1Temp.getValueAsDouble());
+    DogLog.log("Ground Roller/Motor 2 Voltage", motor2Voltage.getValueAsDouble());
+    DogLog.log("Ground Roller/Motor 2 Stator Current", motor2StatorCurrent.getValueAsDouble());
+    DogLog.log("Ground Roller/Motor 2 Temperature", motor2Temp.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
+    motor2NotConnectedAlert.set(!motor2.isConnected());
   }
 }

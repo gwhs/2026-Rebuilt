@@ -16,29 +16,29 @@ public class ShotCalculator {
   private static final InterpolatingDoubleTreeMap timeOfFlight = new InterpolatingDoubleTreeMap();
 
   static {
-    backBeltMap.put(1.07, 42.0);
+    backBeltMap.put(1.07, 41.0);
     backBeltMap.put(1.322, 42.0);
     backBeltMap.put(1.498, 42.0);
-    backBeltMap.put(1.600, 45.0);
-    backBeltMap.put(1.775, 47.0);
-    backBeltMap.put(2.075, 49.0);
-    backBeltMap.put(2.425, 52.0);
-    backBeltMap.put(2.835, 59.0);
+    backBeltMap.put(1.600, 44.0);
+    backBeltMap.put(1.775, 46.0);
+    backBeltMap.put(2.075, 48.0);
+    backBeltMap.put(2.425, 51.0);
+    backBeltMap.put(2.835, 58.0);
     backBeltMap.put(3.0, 59.0);
-    backBeltMap.put(3.5, 66.0);
-    backBeltMap.put(4.0, 70.0);
+    backBeltMap.put(3.5, 65.0);
+    backBeltMap.put(4.0, 69.0);
 
-    frontBeltMap.put(1.07, 45.0);
+    frontBeltMap.put(1.07, 44.0);
     frontBeltMap.put(1.32, 45.0);
     frontBeltMap.put(1.498, 46.0);
-    frontBeltMap.put(1.600, 49.0);
-    frontBeltMap.put(1.775, 52.0);
-    frontBeltMap.put(2.075, 55.0);
-    frontBeltMap.put(2.425, 59.0);
-    frontBeltMap.put(2.835, 64.0);
+    frontBeltMap.put(1.600, 48.0);
+    frontBeltMap.put(1.775, 51.0);
+    frontBeltMap.put(2.075, 54.0);
+    frontBeltMap.put(2.425, 58.0);
+    frontBeltMap.put(2.835, 63.0);
     frontBeltMap.put(3.0, 64.0);
-    frontBeltMap.put(3.5, 68.0);
-    frontBeltMap.put(4.0, 74.0);
+    frontBeltMap.put(3.5, 67.0);
+    frontBeltMap.put(4.0, 73.0);
 
     timeOfFlight.put(1.97, 1.26);
     timeOfFlight.put(2.560, 1.31);
