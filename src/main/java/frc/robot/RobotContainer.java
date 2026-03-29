@@ -605,7 +605,7 @@ public class RobotContainer {
   }
 
   public Command shootHub() {
-    return Commands.parallel(
+    return Commands.sequence(
             drivetrain.setRotationCommand(RotationTarget.HUB),
             drivetrain.setSlowMode(0.5, 1),
             Commands.waitUntil(
