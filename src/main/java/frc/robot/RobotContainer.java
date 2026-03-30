@@ -609,7 +609,11 @@ public class RobotContainer {
             drivetrain.setRotationCommand(RotationTarget.HUB),
             drivetrain.setSlowMode(0.5, 1),
             Commands.waitUntil(
-                drivetrain.isFacingGoal.debounce(0.1).and(isHubActive).or(controller.leftTrigger())),
+                drivetrain
+                    .isFacingGoal
+                    .debounce(0.5)
+                    .and(isHubActive)
+                    .or(controller.leftTrigger())),
             Commands.parallel(
                     indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger()))
