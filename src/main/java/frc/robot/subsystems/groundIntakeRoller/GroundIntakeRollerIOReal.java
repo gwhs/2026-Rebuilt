@@ -63,7 +63,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
     TalonFXSConfiguration talonFXConfig = new TalonFXSConfiguration();
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 95;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 100;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
