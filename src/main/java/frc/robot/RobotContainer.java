@@ -389,7 +389,7 @@ public class RobotContainer {
     controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
     // drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
 
-    controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub()).debounce(0.1);
+    controller.rightTrigger().and(drivetrain.isInAllianceZone).debounce(0.1).whileTrue(shootHub());
 
     controller.rightTrigger().whileTrue(agitateGroundIntake());
 
