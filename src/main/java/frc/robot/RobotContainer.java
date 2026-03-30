@@ -389,7 +389,7 @@ public class RobotContainer {
     controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
     // drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
 
-    controller.rightTrigger().and(drivetrain.isInAllianceZone).debounce(0.1).whileTrue(shootHub());
+    controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
 
     controller.rightTrigger().whileTrue(agitateGroundIntake());
 
@@ -609,7 +609,7 @@ public class RobotContainer {
             drivetrain.setRotationCommand(RotationTarget.HUB),
             drivetrain.setSlowMode(0.5, 1),
             Commands.waitUntil(
-                drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger())),
+                drivetrain.isFacingGoal.debounce(0.1).and(isHubActive).or(controller.leftTrigger())),
             Commands.parallel(
                     indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger()))
