@@ -770,9 +770,9 @@ public class RobotContainer {
   public Command declogShimmy() {
     return Commands.sequence(
             drivetrain.setRotationCommand(RotationTarget.LEFT),
-            Commands.waitSeconds(0.05),
+            Commands.waitSeconds(0.2),
             drivetrain.setRotationCommand(RotationTarget.RIGHT),
-            Commands.waitSeconds(0.05))
+            Commands.waitSeconds(0.2))
         .repeatedly();
   }
 }
