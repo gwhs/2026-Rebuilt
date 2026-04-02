@@ -57,6 +57,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     PASSING_OUTPOST_SIDE,
     TOWER,
     HUB,
+    LEFT,
+    RIGHT,
   }
 
   private Alert frontLeftDriveConnectedAlert =
@@ -455,6 +457,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         } else {
           return -135;
         }
+      case LEFT:
+        return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getCachedVirtualTarget()) + 5;
+      case RIGHT:
+        return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getCachedVirtualTarget()) - 5;
       default:
         return 0;
     }

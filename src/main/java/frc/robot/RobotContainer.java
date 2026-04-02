@@ -445,6 +445,8 @@ public class RobotContainer {
     controller.povRight().whileTrue(bumpJump());
     controller.povRight().onFalse(stopBumpJump());
 
+    controller.povLeft().whileTrue(declogShimmy());
+
     // temp
     controller.rightStick().whileTrue(backupShootHub());
     controller.rightStick().onFalse(stopShoot());
@@ -763,5 +765,14 @@ public class RobotContainer {
   public Command stopBumpJump() {
     return Commands.parallel(
         drivetrain.setRotationCommand(RotationTarget.NORMAL), drivetrain.setBumpSpeed(false));
+  }
+
+  public Command declogShimmy() {
+    return Commands.sequence(
+            drivetrain.setRotationCommand(RotationTarget.LEFT),
+            Commands.waitSeconds(0.05),
+            drivetrain.setRotationCommand(RotationTarget.RIGHT),
+            Commands.waitSeconds(0.05))
+        .repeatedly();
   }
 }
