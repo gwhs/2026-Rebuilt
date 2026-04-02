@@ -446,6 +446,8 @@ public class RobotContainer {
     controller.povRight().onFalse(stopBumpJump());
 
     controller.povLeft().whileTrue(declogShimmy());
+    controller.povLeft().onFalse(drivetrain.setRotationCommand(RotationTarget.NORMAL));
+
 
     // temp
     controller.rightStick().whileTrue(backupShootHub());
