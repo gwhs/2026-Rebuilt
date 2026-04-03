@@ -24,9 +24,9 @@ public class ShotCalculator {
     backBeltMap.put(2.075, 48.0);
     backBeltMap.put(2.425, 51.0);
     backBeltMap.put(2.835, 58.0);
-    backBeltMap.put(3.0, 59.0);
-    backBeltMap.put(3.5, 65.0);
-    backBeltMap.put(4.0, 69.0);
+    backBeltMap.put(3.0, 58.0);
+    backBeltMap.put(3.5, 64.0);
+    backBeltMap.put(4.0, 68.0);
 
     frontBeltMap.put(1.07, 44.0);
     frontBeltMap.put(1.32, 45.0);
@@ -36,9 +36,9 @@ public class ShotCalculator {
     frontBeltMap.put(2.075, 54.0);
     frontBeltMap.put(2.425, 58.0);
     frontBeltMap.put(2.835, 63.0);
-    frontBeltMap.put(3.0, 64.0);
-    frontBeltMap.put(3.5, 67.0);
-    frontBeltMap.put(4.0, 73.0);
+    frontBeltMap.put(3.0, 63.0);
+    frontBeltMap.put(3.5, 66.0);
+    frontBeltMap.put(4.0, 72.0);
 
     timeOfFlight.put(1.97, 1.26);
     timeOfFlight.put(2.560, 1.31);

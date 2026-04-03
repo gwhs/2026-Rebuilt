@@ -47,7 +47,7 @@ public class DriveCommand extends Command {
 
   // TO-DO determine correct max accleration
   public final ProfiledPIDController robotHeadingController =
-      new ProfiledPIDController(0.01, 0, 0, new TrapezoidProfile.Constraints(360, 720));
+      new ProfiledPIDController(0.02, 0, 0, new TrapezoidProfile.Constraints(360, 720));
   public final PIDController shootingRangeDistance = new PIDController(0.3, 0, 0);
 
   private boolean resetLimiter = true;

@@ -391,7 +391,7 @@ public class RobotContainer {
 
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
 
-    controller.rightTrigger().whileTrue(agitateGroundIntake());
+    controller.rightTrigger().and(controller.povDown().negate()).whileTrue(agitateGroundIntake());
 
     controller.rightStick().whileTrue(agitateGroundIntake());
     controller.leftStick().whileTrue(agitateGroundIntake());
@@ -430,7 +430,7 @@ public class RobotContainer {
         .onTrue(drivetrain.setSlowMode(true))
         .onFalse(drivetrain.setSlowMode(false));
 
-    controller.povDown().whileTrue(deployGroundIntake());
+    controller.povDown().and(RobotModeTriggers.disabled().negate()).whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
     // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
     controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());

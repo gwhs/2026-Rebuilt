@@ -51,10 +51,10 @@ public class AprilTagCamConstants {
           0.737,
           new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(90)));
 
-  public static final double Z_TOLERANCE = 2.00;
-  public static final double XY_TOLERANCE = 2.00;
-  public static final double MAX_X_VALUE = 690.87;
-  public static final double MAX_Y_VALUE = 317.00;
+  public static final double Z_TOLERANCE = 0.3;
+  public static final double XY_TOLERANCE = 0.3;
+  public static final double MAX_X_VALUE = 17.6;
+  public static final double MAX_Y_VALUE = 8.05;
   public static final double SINGLE_APRILTAG_MAX_DISTANCE = 3.0;
   public static final double MULTI_APRILTAG_MAX_DISTANCE = 7.0;
   public static final double MAX_VELOCITY = 4;

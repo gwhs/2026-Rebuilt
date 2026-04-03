@@ -65,6 +65,8 @@ public class AlignToPose extends Command {
     this.driverController = driverController;
     this.elevatorHeight = elevatorHeight;
 
+    PID_Rotation.enableContinuousInput(-180, 180);
+
     addRequirements(drivetrain);
   }
 
