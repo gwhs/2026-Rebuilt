@@ -391,7 +391,7 @@ public class RobotContainer {
 
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
 
-    controller.rightTrigger().whileTrue(agitateGroundIntake());
+    controller.rightTrigger().and(controller.povDown().negate()).whileTrue(agitateGroundIntake());
 
     controller.rightStick().whileTrue(agitateGroundIntake());
     controller.leftStick().whileTrue(agitateGroundIntake());
@@ -430,7 +430,7 @@ public class RobotContainer {
         .onTrue(drivetrain.setSlowMode(true))
         .onFalse(drivetrain.setSlowMode(false));
 
-    controller.povDown().whileTrue(deployGroundIntake());
+    controller.povDown().and(RobotModeTriggers.disabled().negate()).whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
     // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
     controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
@@ -446,6 +446,7 @@ public class RobotContainer {
     controller.povRight().onFalse(stopBumpJump());
 
     controller.povLeft().whileTrue(declogShimmy());
+    controller.povLeft().onFalse(drivetrain.setRotationCommand(RotationTarget.NORMAL));
 
     // temp
     controller.rightStick().whileTrue(backupShootHub());
@@ -611,7 +612,11 @@ public class RobotContainer {
             drivetrain.setRotationCommand(RotationTarget.HUB),
             drivetrain.setSlowMode(0.5, 1),
             Commands.waitUntil(
-                drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger())),
+                drivetrain
+                    .isFacingGoal
+                    .debounce(0.5)
+                    .and(isHubActive)
+                    .or(controller.leftTrigger())),
             Commands.parallel(
                     indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
                 .onlyWhile(drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger()))
@@ -766,9 +771,9 @@ public class RobotContainer {
   public Command declogShimmy() {
     return Commands.sequence(
             drivetrain.setRotationCommand(RotationTarget.LEFT),
-            Commands.waitSeconds(0.05),
+            Commands.waitSeconds(0.2),
             drivetrain.setRotationCommand(RotationTarget.RIGHT),
-            Commands.waitSeconds(0.05))
+            Commands.waitSeconds(0.2))
         .repeatedly();
   }
 }
