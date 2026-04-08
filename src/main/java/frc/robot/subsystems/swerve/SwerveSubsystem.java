@@ -130,7 +130,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
               MathUtil.isNear(
                   getGoalHeading(),
                   getCachedState().Pose.getRotation().getDegrees(),
-                  5,
+                  10,
                   -180,
                   180));
   public Trigger isFacingGoalPassing =

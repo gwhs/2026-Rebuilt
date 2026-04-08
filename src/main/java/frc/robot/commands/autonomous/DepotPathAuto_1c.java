@@ -47,7 +47,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
                           Commands.parallel(
                               groundIntakeExtend.homingCommand().onlyIf(() -> RobotBase.isReal())),
                           Commands.parallel(
-                              groundIntakeExtend.extend(),
+                              groundIntakeExtend.extend2(),
                               groundIntakeRoller.startIntake(),
                               shooter.stopShooter()),
                           Commands.waitSeconds(2),
@@ -64,7 +64,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
               .deadlineFor(
                   shooter.stopShooter(),
                   indexer.runVoltage(0),
-                  groundIntakeExtend.extend(),
+                  groundIntakeExtend.extend2(),
                   groundIntakeRoller.startIntake()));
 
     } catch (Exception e) {
