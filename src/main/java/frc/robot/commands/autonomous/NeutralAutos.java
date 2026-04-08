@@ -113,7 +113,7 @@ public class NeutralAutos extends SequentialCommandGroup {
                         climber.homingCommand().onlyIf(() -> homing),
                         shooter.stopShooter(),
                         groundIntakeRoller.startIntake(),
-                        groundIntakeExtend.extend()),
+                        groundIntakeExtend.extend2()),
                     Commands.waitSeconds(3),
                     shooter.preSpin())),
         groundIntakeRoller.stopIntake(),
