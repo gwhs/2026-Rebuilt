@@ -476,8 +476,10 @@ public class RobotContainer {
         new DepotPathAuto_1c(
             drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, true));
     autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
-    autoChooser.addOption("Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true));
-    autoChooser.addOption("Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true));
+    autoChooser.addOption(
+        "Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true));
+    autoChooser.addOption(
+        "Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true));
 
     SmartDashboard.putData("autonomous", autoChooser);
   }
