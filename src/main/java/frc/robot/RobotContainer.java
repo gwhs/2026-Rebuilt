@@ -614,7 +614,7 @@ public class RobotContainer {
             Commands.waitUntil(
                 drivetrain
                     .isFacingGoal
-                    .debounce(0.5)
+                    .debounce(0.25)
                     .and(isHubActive)
                     .or(controller.leftTrigger())),
             Commands.parallel(
