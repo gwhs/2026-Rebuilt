@@ -464,8 +464,9 @@ public class RobotContainer {
         drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, climber);
     // autoChooser.addOption("Bump 1 Cycle Depot", new NeutralAutos(false, Routine.BUMP, false));
     // autoChooser.addOption("Bump 1 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, false));
-    autoChooser.addOption("Bump 2 Cycle Depot", new NeutralAutos(false, Routine.BUMP, true));
-    autoChooser.addOption("Bump 2 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, true));
+    autoChooser.addOption("Bump 2 Cycle Depot", new NeutralAutos(false, Routine.BUMP, true, false));
+    autoChooser.addOption(
+        "Bump 2 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, true, false));
     autoChooser.addOption(
         "Depot 1 Cycle",
         new DepotPathAuto_1c(
@@ -475,6 +476,11 @@ public class RobotContainer {
         new DepotPathAuto_1c(
             drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, true));
     autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
+    autoChooser.addOption(
+        "Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true));
+    autoChooser.addOption(
+        "Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true));
+
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
@@ -614,7 +620,7 @@ public class RobotContainer {
             Commands.waitUntil(
                 drivetrain
                     .isFacingGoal
-                    .debounce(0.5)
+                    .debounce(0.25)
                     .and(isHubActive)
                     .or(controller.leftTrigger())),
             Commands.parallel(

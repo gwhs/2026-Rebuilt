@@ -46,10 +46,11 @@ public class NeutralAutos extends SequentialCommandGroup {
     NeutralAutos.climber = climber;
   }
 
-  public NeutralAutos(boolean mirror, Routine routine, boolean twoCycle) {
+  public NeutralAutos(boolean mirror, Routine routine, boolean twoCycle, boolean alt) {
     try {
       // Load Paths
       PathPlannerPath cycle;
+      PathPlannerPath cycleAlt;
       PathPlannerPath cycletwo;
       PathPlannerPath climb;
       String pathprefix = "";
@@ -64,10 +65,12 @@ public class NeutralAutos extends SequentialCommandGroup {
       // If on outpost side, flip the paths
       if (mirror) {
         cycle = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle").mirrorPath();
+        cycleAlt = PathPlannerPath.fromChoreoTrajectory("B_Cycle_alt").mirrorPath();
         cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2").mirrorPath();
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb_Mirrored");
       } else {
         cycle = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle");
+        cycleAlt = PathPlannerPath.fromChoreoTrajectory("B_Cycle_alt");
         cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2");
 
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb");
@@ -79,7 +82,9 @@ public class NeutralAutos extends SequentialCommandGroup {
       addCommands(
           Commands.sequence(
                   AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-                  cyclePath(cycle, cycletwo, true),
+                  Commands.waitSeconds(3).onlyIf(() -> alt),
+                  cyclePath(cycleAlt, cycletwo, true).onlyIf(() -> alt),
+                  cyclePath(cycle, cycletwo, true).onlyIf(() -> !alt),
                   cyclePath(cycletwo, cycletwo, false).onlyIf(() -> twoCycle),
                   climbPath(climb).onlyIf(() -> !twoCycle))
               .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
@@ -113,7 +118,7 @@ public class NeutralAutos extends SequentialCommandGroup {
                         climber.homingCommand().onlyIf(() -> homing),
                         shooter.stopShooter(),
                         groundIntakeRoller.startIntake(),
-                        groundIntakeExtend.extend()),
+                        groundIntakeExtend.extend2()),
                     Commands.waitSeconds(3),
                     shooter.preSpin())),
         groundIntakeRoller.stopIntake(),

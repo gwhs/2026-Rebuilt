@@ -15,7 +15,7 @@ public class AprilTagCamConstants {
   public static final String BACK_RIGHT_CAM = "back_right_cam";
   public static final String BACK_LEFT_CAM = "cam_back_left";
   public static final String FRONT_LEFT_CAM = "cam2026_02";
-  public static final String FRONT_RIGHT_CAM = "cam_front_right";
+  public static final String FRONT_RIGHT_CAM = "cam_back_right";
 
   public static final Transform3d BACK_RIGHT_CAM_LOCATION =
       new Transform3d(
