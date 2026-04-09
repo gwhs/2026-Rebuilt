@@ -240,12 +240,30 @@
           {
             "title": "photonvision2_Port_1182_Output_MJPEG_Server",
             "x": 256.0,
-            "y": 256.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 256.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/photonvision2_Port_1182_Output_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "fps": 5,
+              "resolution": [
+                300.0,
+                200.0
+              ]
+            }
+          },
+          {
+            "title": "photonvision2_Port_1184_Output_MJPEG_Server",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/photonvision2_Port_1184_Output_MJPEG_Server",
               "period": 0.06,
               "rotation_turns": 0,
               "fps": 5,
