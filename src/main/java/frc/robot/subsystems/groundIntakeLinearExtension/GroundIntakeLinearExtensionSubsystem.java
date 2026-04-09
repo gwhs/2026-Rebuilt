@@ -45,7 +45,7 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
                       GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
                 }),
             Commands.waitSeconds(2))
-        .finallyDo(() -> groundIntakeLinearExtensionIO.runVoltage(0));
+        .finallyDo(() -> groundIntakeLinearExtensionIO.runVoltage(1));
   }
 
   public Command extend2() {
