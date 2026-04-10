@@ -416,6 +416,8 @@ public class RobotContainer {
 
     controller.a().onTrue(retractGroundIntake());
 
+    controller.b().whileTrue(unStuck());
+
     controller.x().whileTrue(defenseMode());
 
     controller
