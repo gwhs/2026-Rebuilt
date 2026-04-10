@@ -46,7 +46,8 @@ public class NeutralAutos extends SequentialCommandGroup {
     NeutralAutos.climber = climber;
   }
 
-  public NeutralAutos(boolean mirror, Routine routine, boolean twoCycle, boolean alt, double delay) {
+  public NeutralAutos(
+      boolean mirror, Routine routine, boolean twoCycle, boolean alt, double delay) {
     try {
       // Load Paths
       PathPlannerPath cycle;
