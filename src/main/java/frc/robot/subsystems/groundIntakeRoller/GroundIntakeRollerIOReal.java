@@ -65,7 +65,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
     talonFXConfig.CurrentLimits.StatorCurrentLimit = 95;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        
+
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
