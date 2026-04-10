@@ -464,9 +464,9 @@ public class RobotContainer {
         drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, climber);
     // autoChooser.addOption("Bump 1 Cycle Depot", new NeutralAutos(false, Routine.BUMP, false));
     // autoChooser.addOption("Bump 1 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, false));
-    autoChooser.addOption("Bump 2 Cycle Depot", new NeutralAutos(false, Routine.BUMP, true, false));
+    autoChooser.addOption("Bump 2 Cycle Depot", new NeutralAutos(false, Routine.BUMP, true, false, 0.0));
     autoChooser.addOption(
-        "Bump 2 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, true, false));
+        "Bump 2 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, true, false, 0.0));
     autoChooser.addOption(
         "Depot 1 Cycle",
         new DepotPathAuto_1c(
@@ -477,9 +477,13 @@ public class RobotContainer {
             drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, true));
     autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
     autoChooser.addOption(
-        "Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true));
+        "Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true, 3.0));
     autoChooser.addOption(
-        "Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true));
+        "Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true, 3.0));
+    autoChooser.addOption(
+        "4 Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true, 4.0));
+    autoChooser.addOption(
+        "4 Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true, 4.0));
 
     SmartDashboard.putData("autonomous", autoChooser);
   }

@@ -46,7 +46,7 @@ public class NeutralAutos extends SequentialCommandGroup {
     NeutralAutos.climber = climber;
   }
 
-  public NeutralAutos(boolean mirror, Routine routine, boolean twoCycle, boolean alt) {
+  public NeutralAutos(boolean mirror, Routine routine, boolean twoCycle, boolean alt, double delay) {
     try {
       // Load Paths
       PathPlannerPath cycle;
@@ -82,7 +82,7 @@ public class NeutralAutos extends SequentialCommandGroup {
       addCommands(
           Commands.sequence(
                   AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-                  Commands.waitSeconds(3).onlyIf(() -> alt),
+                  Commands.waitSeconds(delay).onlyIf(() -> alt),
                   cyclePath(cycleAlt, cycletwo, true).onlyIf(() -> alt),
                   cyclePath(cycle, cycletwo, true).onlyIf(() -> !alt),
                   cyclePath(cycletwo, cycletwo, false).onlyIf(() -> twoCycle),
