@@ -52,7 +52,6 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
                               shooter.stopShooter()),
                           Commands.waitSeconds(2),
                           shooter.preSpin()))),
-          AutoBuilder.followPath(climbPath),
           Commands.waitSeconds(5)
               .deadlineFor(
                   shooter.cruiseControl(),
