@@ -101,13 +101,9 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
         motor2Temp);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50,
-        motor1Voltage,
-        motor1StatorCurrent,
-        motor1Temp,
-        motor2Voltage,
-        motor2StatorCurrent,
-        motor2Temp);
+        50, motor1StatorCurrent, motor1Temp, motor2StatorCurrent, motor2Temp);
+
+    BaseStatusSignal.setUpdateFrequencyForAll(250, motor1Voltage, motor2Voltage);
   }
 
   public void runVoltage(double voltage) {
