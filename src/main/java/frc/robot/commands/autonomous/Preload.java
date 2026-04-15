@@ -24,7 +24,7 @@ public class Preload extends SequentialCommandGroup {
           Commands.waitSeconds(5)
               .deadlineFor(
                   indexer.index(),
-                  shooter.runVelocity(68),
+                  shooter.cruiseControl(),
                   EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
           Commands.parallel(shooter.runVoltage(0), indexer.runVoltage(0)));
 
