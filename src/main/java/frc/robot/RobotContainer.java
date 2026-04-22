@@ -98,7 +98,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooter;
   private final GroundIntakeRollerSubsystem groundIntakeRoller;
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
-  private ClimberSubsystem climber;
+  private ClimberSubsystem climber = new ClimberSubsystem(rioCanbus, signalList);
   private final IndexerSubsystem indexer;
 
   private final RobotVisualizer robotVisualizer;
@@ -185,7 +185,6 @@ public class RobotContainer {
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
 
-        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
@@ -226,7 +225,6 @@ public class RobotContainer {
         shooter =
             ShooterSubsystem.createDisabled(
                 drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
-        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
@@ -240,7 +238,6 @@ public class RobotContainer {
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
-        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(canivoreCanbus, rioCanbus, signalList);
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
@@ -250,7 +247,6 @@ public class RobotContainer {
         shooter =
             ShooterSubsystem.createDisabled(
                 drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
-        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
@@ -259,7 +255,6 @@ public class RobotContainer {
         drivetrain = TunerConstants_mk5n.createDrivetrain();
         shooter =
             ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
-        climber = ClimberSubsystem.createSim();
         indexer = IndexerSubsystem.createSim();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createSim();
@@ -303,7 +298,6 @@ public class RobotContainer {
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
-        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
