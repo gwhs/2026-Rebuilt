@@ -9,5 +9,5 @@ public class IndexerConstants {
   public static final int MOTOR_1_ID = 29;
 
   public static final double INDEXING_VOLTAGE = 10;
-  public static final double UNJAM_VOLTAGE = -5;
+  public static final double UNJAM_VOLTAGE = -8;
 }

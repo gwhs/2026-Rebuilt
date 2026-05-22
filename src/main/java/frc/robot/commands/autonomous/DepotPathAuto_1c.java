@@ -34,7 +34,7 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
               startingPath.getPoint(0).position, startingPath.getIdealStartingState().rotation());
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          Commands.waitSeconds(1)
+          Commands.waitSeconds(2)
               .deadlineFor(
                   shooter.cruiseControl(),
                   indexer.index(),
@@ -52,7 +52,6 @@ public class DepotPathAuto_1c extends SequentialCommandGroup {
                               shooter.stopShooter()),
                           Commands.waitSeconds(2),
                           shooter.preSpin()))),
-          AutoBuilder.followPath(climbPath),
           Commands.waitSeconds(5)
               .deadlineFor(
                   shooter.cruiseControl(),

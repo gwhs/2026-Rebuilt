@@ -11,5 +11,5 @@ public class GroundIntakeRollerConstants {
   public static final double DEFAULT_INTAKE_VOLTAGE = 4;
   public static final double REVERSE_INTAKE_VOLTAGE = -5;
 
-  public static final double INTAKE_VOLTAGE = 9;
+  public static final double INTAKE_VOLTAGE = 12;
 }
