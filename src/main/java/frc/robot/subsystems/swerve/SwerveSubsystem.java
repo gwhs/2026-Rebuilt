@@ -59,6 +59,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     HUB,
     LEFT,
     RIGHT,
+    DIRECTION,
   }
 
   private Alert frontLeftDriveConnectedAlert =
@@ -461,6 +462,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getCachedVirtualTarget()) + 5;
       case RIGHT:
         return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getCachedVirtualTarget()) - 5;
+      case DIRECTION:
+        return getVelocityHeading();
       default:
         return 0;
     }
@@ -485,6 +488,24 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     ChassisSpeeds currRobotSpeed = getCachedState().Speeds;
     return currRobotSpeed.vxMetersPerSecond > 0.1;
   }
+
+  public double getVelocityHeading() {
+    ChassisSpeeds fieldRelative =
+        ChassisSpeeds.fromRobotRelativeSpeeds(
+            getCachedState().Speeds,
+            getCachedState().Pose.getRotation());
+
+    double vx = fieldRelative.vxMetersPerSecond;
+    double vy = fieldRelative.vyMetersPerSecond;
+
+    double speedMagnitude = Math.hypot(vx, vy);
+
+    if (speedMagnitude < 0.15) {
+        return getCachedState().Pose.getRotation().getDegrees();
+    }
+
+    return Math.toDegrees(Math.atan2(vy, vx));
+}
 
   public Pose2d getPose(double timeSeconds) {
     Pose2d currPose = getCachedState().Pose;
