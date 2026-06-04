@@ -32,6 +32,7 @@ import frc.robot.commands.autonomous.NeutralAutos.Routine;
 import frc.robot.commands.autonomous.Preload;
 import frc.robot.subsystems.aprilTagCam.AprilTagCam;
 import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
+import frc.robot.subsystems.blocker.BlockerSubsystem;
 import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
@@ -98,8 +99,9 @@ public class RobotContainer {
   private final ShooterSubsystem shooter;
   private final GroundIntakeRollerSubsystem groundIntakeRoller;
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
-  private ClimberSubsystem climber;
+  private final ClimberSubsystem climber;
   private final IndexerSubsystem indexer;
+  private final BlockerSubsystem blocker;
 
   private final RobotVisualizer robotVisualizer;
 
@@ -191,6 +193,7 @@ public class RobotContainer {
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
             GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        blocker = BlockerSubsystem.createDisabled();
 
         backRightCam =
             new AprilTagCam(
@@ -230,6 +233,7 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
+        blocker = BlockerSubsystem.createDisabled();
         break;
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
@@ -244,6 +248,7 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createReal(canivoreCanbus, rioCanbus, signalList);
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
+        blocker = BlockerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
@@ -254,6 +259,7 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
+        blocker = BlockerSubsystem.createDisabled();
         break;
       case SIM:
         drivetrain = TunerConstants_mk5n.createDrivetrain();
@@ -263,6 +269,8 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createSim();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createSim();
+        blocker = BlockerSubsystem.createSim();
+
         backRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_RIGHT_CAM,
@@ -309,6 +317,8 @@ public class RobotContainer {
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
             GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        blocker = BlockerSubsystem.createDisabled();
+
         backRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_RIGHT_CAM,
@@ -416,14 +426,11 @@ public class RobotContainer {
 
     controller.a().onTrue(retractGroundIntake());
 
-    controller.b().whileTrue(unStuck());
+    controller.b().onTrue(blocker.retract());
 
     controller.x().whileTrue(defenseMode());
 
-    controller
-        .y()
-        .whileTrue(drivetrain.setShootingRange(true))
-        .onFalse(drivetrain.setShootingRange(false));
+    controller.y().onTrue(blocker.deploy());
 
     drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
