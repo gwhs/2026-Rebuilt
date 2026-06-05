@@ -11,7 +11,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
-import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -38,44 +37,41 @@ public class ShooterIOReal implements ShooterIO {
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
   private final StatusSignal<AngularVelocity> motor1Velocity;
-  private final StatusSignal<AngularAcceleration> motor1Acceleration;
   private final StatusSignal<Temperature> motor1Temp;
   private final StatusSignal<Double> motor1ClosedLoopGoal;
 
   private final StatusSignal<Voltage> motor2Voltage;
   private final StatusSignal<Current> motor2StatorCurrent;
   private final StatusSignal<AngularVelocity> motor2Velocity;
-  private final StatusSignal<AngularAcceleration> motor2Acceleration;
   private final StatusSignal<Temperature> motor2Temp;
   private final StatusSignal<Double> motor2ClosedLoopGoal;
 
   private final StatusSignal<Voltage> motor3Voltage;
   private final StatusSignal<Current> motor3StatorCurrent;
   private final StatusSignal<AngularVelocity> motor3Velocity;
-  private final StatusSignal<AngularAcceleration> motor3Acceleration;
   private final StatusSignal<Temperature> motor3Temp;
   private final StatusSignal<Double> motor3ClosedLoopGoal;
 
   private final StatusSignal<Voltage> motor4Voltage;
   private final StatusSignal<Current> motor4StatorCurrent;
   private final StatusSignal<AngularVelocity> motor4Velocity;
-  private final StatusSignal<AngularAcceleration> motor4Acceleration;
   private final StatusSignal<Temperature> motor4Temp;
   private final StatusSignal<Double> motor4ClosedLoopGoal;
 
   private final StatusSignal<Voltage> motor5Voltage;
   private final StatusSignal<Current> motor5StatorCurrent;
   private final StatusSignal<AngularVelocity> motor5Velocity;
-  private final StatusSignal<AngularAcceleration> motor5Acceleration;
   private final StatusSignal<Temperature> motor5Temp;
   private final StatusSignal<Double> motor5ClosedLoopGoal;
 
   private final StatusSignal<Voltage> motor6Voltage;
   private final StatusSignal<Current> motor6StatorCurrent;
   private final StatusSignal<AngularVelocity> motor6Velocity;
-  private final StatusSignal<AngularAcceleration> motor6Acceleration;
   private final StatusSignal<Temperature> motor6Temp;
   private final StatusSignal<Double> motor6ClosedLoopGoal;
+
+  private boolean isLeftEnabled = true;
+  private boolean isRightEnabled = true;
 
   private final Alert motor1NotConnectedAlert =
       new Alert("Shooter Motor 1 Not Connected", AlertType.kError);
@@ -103,42 +99,36 @@ public class ShooterIOReal implements ShooterIO {
     motor1StatorCurrent = motor1.getStatorCurrent();
     motor1Velocity = motor1.getVelocity();
     motor1Temp = motor1.getDeviceTemp();
-    motor1Acceleration = motor1.getAcceleration();
     motor1ClosedLoopGoal = motor1.getClosedLoopReference();
 
     motor2Voltage = motor2.getMotorVoltage();
     motor2StatorCurrent = motor2.getStatorCurrent();
     motor2Velocity = motor2.getVelocity();
     motor2Temp = motor2.getDeviceTemp();
-    motor2Acceleration = motor2.getAcceleration();
     motor2ClosedLoopGoal = motor2.getClosedLoopReference();
 
     motor3Voltage = motor3.getMotorVoltage();
     motor3StatorCurrent = motor3.getStatorCurrent();
     motor3Velocity = motor3.getVelocity();
     motor3Temp = motor3.getDeviceTemp();
-    motor3Acceleration = motor3.getAcceleration();
     motor3ClosedLoopGoal = motor3.getClosedLoopReference();
 
     motor4Voltage = motor4.getMotorVoltage();
     motor4StatorCurrent = motor4.getStatorCurrent();
     motor4Velocity = motor4.getVelocity();
     motor4Temp = motor4.getDeviceTemp();
-    motor4Acceleration = motor4.getAcceleration();
     motor4ClosedLoopGoal = motor4.getClosedLoopReference();
 
     motor5Voltage = motor5.getMotorVoltage();
     motor5StatorCurrent = motor5.getStatorCurrent();
     motor5Velocity = motor5.getVelocity();
     motor5Temp = motor5.getDeviceTemp();
-    motor5Acceleration = motor5.getAcceleration();
     motor5ClosedLoopGoal = motor5.getClosedLoopReference();
 
     motor6Voltage = motor6.getMotorVoltage();
     motor6StatorCurrent = motor6.getStatorCurrent();
     motor6Velocity = motor6.getVelocity();
     motor6Temp = motor6.getDeviceTemp();
-    motor6Acceleration = motor6.getAcceleration();
     motor6ClosedLoopGoal = motor6.getClosedLoopReference();
 
     statusSignalCollection.addSignals(
@@ -146,37 +136,31 @@ public class ShooterIOReal implements ShooterIO {
         motor1StatorCurrent,
         motor1Velocity,
         motor1Temp,
-        motor1Acceleration,
         motor1ClosedLoopGoal,
         motor2Voltage,
         motor2StatorCurrent,
         motor2Velocity,
         motor2Temp,
-        motor2Acceleration,
         motor2ClosedLoopGoal,
         motor3Voltage,
         motor3StatorCurrent,
         motor3Velocity,
         motor3Temp,
-        motor3Acceleration,
         motor3ClosedLoopGoal,
         motor4Voltage,
         motor4StatorCurrent,
         motor4Velocity,
         motor4Temp,
-        motor4Acceleration,
         motor4ClosedLoopGoal,
         motor5Voltage,
         motor5StatorCurrent,
         motor5Velocity,
         motor5Temp,
-        motor5Acceleration,
         motor5ClosedLoopGoal,
         motor6Voltage,
         motor6StatorCurrent,
         motor6Velocity,
         motor6Temp,
-        motor6Acceleration,
         motor6ClosedLoopGoal);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -185,51 +169,45 @@ public class ShooterIOReal implements ShooterIO {
         motor1StatorCurrent,
         motor1Velocity,
         motor1Temp,
-        motor1Acceleration,
         motor1ClosedLoopGoal,
         motor2Voltage,
         motor2StatorCurrent,
         motor2Velocity,
         motor2Temp,
-        motor2Acceleration,
         motor2ClosedLoopGoal,
         motor3Voltage,
         motor3StatorCurrent,
         motor3Velocity,
         motor3Temp,
-        motor3Acceleration,
         motor3ClosedLoopGoal,
         motor4Voltage,
         motor4StatorCurrent,
         motor4Velocity,
         motor4Temp,
-        motor4Acceleration,
         motor4ClosedLoopGoal,
         motor5Voltage,
         motor5StatorCurrent,
         motor5Velocity,
         motor5Temp,
-        motor5Acceleration,
         motor5ClosedLoopGoal,
         motor6Voltage,
         motor6StatorCurrent,
         motor6Velocity,
         motor6Temp,
-        motor6Acceleration,
         motor6ClosedLoopGoal);
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 80;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 40;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    talonFXConfig.Slot0.kS = 0.125;
+    talonFXConfig.Slot0.kS = 0.2;
     talonFXConfig.Slot0.kG = 0;
     talonFXConfig.Slot0.kA = 0;
-    talonFXConfig.Slot0.kV = 0.1125;
-    talonFXConfig.Slot0.kP = 0.5;
+    talonFXConfig.Slot0.kV = 0.122;
+    talonFXConfig.Slot0.kP = 0.1;
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
@@ -253,30 +231,50 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   public void runVoltage(double voltage) {
-    motor1.setVoltage(voltage);
-    motor2.setVoltage(voltage);
+    if (isRightEnabled) {
+      motor1.setVoltage(voltage);
+      motor2.setVoltage(voltage);
+    }
     motor3.setVoltage(voltage);
     motor4.setVoltage(voltage);
-    motor5.setVoltage(voltage);
-    motor6.setVoltage(voltage);
+    if (isLeftEnabled) {
+      motor5.setVoltage(voltage);
+      motor6.setVoltage(voltage);
+    }
+  }
+
+  public void enableLeftShooter(boolean enable) {
+    isLeftEnabled = enable;
+  }
+
+  public void enableRightShooter(boolean enable) {
+    isRightEnabled = enable;
   }
 
   public void runVelocity(double rotationsPerSecond) {
-    motor1.setControl(velocityRequest1.withVelocity(rotationsPerSecond));
-    motor2.setControl(velocityRequest2.withVelocity(rotationsPerSecond));
+    if (isRightEnabled) {
+      motor1.setControl(velocityRequest1.withVelocity(rotationsPerSecond));
+      motor2.setControl(velocityRequest2.withVelocity(rotationsPerSecond));
+    }
     motor3.setControl(velocityRequest3.withVelocity(rotationsPerSecond));
     motor4.setControl(velocityRequest4.withVelocity(rotationsPerSecond));
-    motor5.setControl(velocityRequest5.withVelocity(rotationsPerSecond));
-    motor6.setControl(velocityRequest6.withVelocity(rotationsPerSecond));
+    if (isLeftEnabled) {
+      motor5.setControl(velocityRequest5.withVelocity(rotationsPerSecond));
+      motor6.setControl(velocityRequest6.withVelocity(rotationsPerSecond));
+    }
   }
 
   public void runVelocity(double frontRPS, double backRPS) {
-    motor1.setControl(velocityRequest1.withVelocity(frontRPS));
-    motor2.setControl(velocityRequest2.withVelocity(backRPS));
+    if (isRightEnabled) {
+      motor1.setControl(velocityRequest1.withVelocity(frontRPS));
+      motor2.setControl(velocityRequest2.withVelocity(backRPS));
+    }
     motor3.setControl(velocityRequest3.withVelocity(frontRPS));
     motor4.setControl(velocityRequest4.withVelocity(backRPS));
-    motor5.setControl(velocityRequest5.withVelocity(frontRPS));
-    motor6.setControl(velocityRequest6.withVelocity(backRPS));
+    if (isLeftEnabled) {
+      motor5.setControl(velocityRequest5.withVelocity(frontRPS));
+      motor6.setControl(velocityRequest6.withVelocity(backRPS));
+    }
   }
 
   public double getVelocity() {
@@ -289,6 +287,7 @@ public class ShooterIOReal implements ShooterIO {
         / 6; // rotations per second
   }
 
+  @SuppressWarnings("resource")
   private boolean setUpMotors(TalonFXConfiguration talonFXConfig, TalonFX motor) {
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
@@ -308,47 +307,45 @@ public class ShooterIOReal implements ShooterIO {
   }
 
   public void periodic() {
+
     DogLog.log("Shooter/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Shooter/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
     DogLog.log("Shooter/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
     DogLog.log("Shooter/Motor 1 Temperature", motor1Temp.getValueAsDouble());
-    DogLog.log("Shooter/Motor 1 Acceleration", motor1Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 1 Closed Loop Goal", motor1ClosedLoopGoal.getValueAsDouble());
 
     DogLog.log("Shooter/Motor 2 Voltage", motor2Voltage.getValueAsDouble());
     DogLog.log("Shooter/Motor 2 Stator Current", motor2StatorCurrent.getValueAsDouble());
     DogLog.log("Shooter/Motor 2 Velocity", motor2Velocity.getValueAsDouble());
     DogLog.log("Shooter/Motor 2 Temperature", motor2Temp.getValueAsDouble());
-    DogLog.log("Shooter/Motor 2 Acceleration", motor2Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 2 Closed Loop Goal", motor2ClosedLoopGoal.getValueAsDouble());
 
     DogLog.log("Shooter/Motor 3 Voltage", motor3Voltage.getValueAsDouble());
     DogLog.log("Shooter/Motor 3 Stator Current", motor3StatorCurrent.getValueAsDouble());
     DogLog.log("Shooter/Motor 3 Velocity", motor3Velocity.getValueAsDouble());
     DogLog.log("Shooter/Motor 3 Temperature", motor3Temp.getValueAsDouble());
-    DogLog.log("Shooter/Motor 3 Acceleration", motor3Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 3 Closed Loop Goal", motor3ClosedLoopGoal.getValueAsDouble());
 
     DogLog.log("Shooter/Motor 4 Voltage", motor4Voltage.getValueAsDouble());
     DogLog.log("Shooter/Motor 4 Stator Current", motor4StatorCurrent.getValueAsDouble());
     DogLog.log("Shooter/Motor 4 Velocity", motor4Velocity.getValueAsDouble());
     DogLog.log("Shooter/Motor 4 Temperature", motor4Temp.getValueAsDouble());
-    DogLog.log("Shooter/Motor 4 Acceleration", motor4Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 4 Closed Loop Goal", motor4ClosedLoopGoal.getValueAsDouble());
 
     DogLog.log("Shooter/Motor 5 Voltage", motor5Voltage.getValueAsDouble());
     DogLog.log("Shooter/Motor 5 Stator Current", motor5StatorCurrent.getValueAsDouble());
     DogLog.log("Shooter/Motor 5 Velocity", motor5Velocity.getValueAsDouble());
     DogLog.log("Shooter/Motor 5 Temperature", motor5Temp.getValueAsDouble());
-    DogLog.log("Shooter/Motor 5 Acceleration", motor5Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 5 Closed Loop Goal", motor5ClosedLoopGoal.getValueAsDouble());
 
     DogLog.log("Shooter/Motor 6 Voltage", motor6Voltage.getValueAsDouble());
     DogLog.log("Shooter/Motor 6 Stator Current", motor6StatorCurrent.getValueAsDouble());
     DogLog.log("Shooter/Motor 6 Velocity", motor6Velocity.getValueAsDouble());
     DogLog.log("Shooter/Motor 6 Temperature", motor6Temp.getValueAsDouble());
-    DogLog.log("Shooter/Motor 6 Acceleration", motor6Acceleration.getValueAsDouble());
     DogLog.log("Shooter/Motor 6 Closed Loop Goal", motor6ClosedLoopGoal.getValueAsDouble());
+
+    DogLog.log("Shooter/Left Shooter Enabled", isLeftEnabled);
+    DogLog.log("Shooter/Right Shooter Enabled", isRightEnabled);
 
     DogLog.log(
         "Shooter/Motor 1 and 2 Velocity Difference",
@@ -366,5 +363,14 @@ public class ShooterIOReal implements ShooterIO {
     motor4NotConnectedAlert.set(!motor4.isConnected());
     motor5NotConnectedAlert.set(!motor5.isConnected());
     motor6NotConnectedAlert.set(!motor6.isConnected());
+
+    if (!isLeftEnabled) {
+      motor5.setVoltage(0);
+      motor6.setVoltage(0);
+    }
+    if (!isRightEnabled) {
+      motor1.setVoltage(0);
+      motor2.setVoltage(0);
+    }
   }
 }

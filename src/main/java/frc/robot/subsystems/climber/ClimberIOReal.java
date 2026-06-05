@@ -151,7 +151,7 @@ public class ClimberIOReal implements ClimberIO {
   }
 
   public void periodic() {
-    DogLog.log("Climber Motor 1 Voltage", motor1Voltage.getValueAsDouble());
+    DogLog.log("Climber/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Climber/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
     DogLog.log("Climber/Motor 1 Temperature", motor1Temp.getValueAsDouble());
     DogLog.log("Climber/Motor 1 Acceleration", motor1Acceleration.getValueAsDouble());

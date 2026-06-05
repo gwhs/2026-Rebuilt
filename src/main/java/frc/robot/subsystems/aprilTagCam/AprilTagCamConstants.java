@@ -12,45 +12,51 @@ public class AprilTagCamConstants {
   public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1.0, 1.0, 8);
   public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
-  public static final String BACK_RIGHT_CAM = "cam_back_right";
+  public static final String BACK_RIGHT_CAM = "back_right_cam";
   public static final String BACK_LEFT_CAM = "cam_back_left";
-  public static final String FRONT_LEFT_CAM = "cam_front_left";
-  public static final String FRONT_RIGHT_CAM = "cam_front_right";
+  public static final String FRONT_LEFT_CAM = "cam2026_02";
+  public static final String FRONT_RIGHT_CAM = "cam_back_right";
 
   public static final Transform3d BACK_RIGHT_CAM_LOCATION =
       new Transform3d(
-          -Units.inchesToMeters(11.531),
-          -Units.inchesToMeters(8.891),
-          Units.inchesToMeters(29.052),
-          new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(-15)));
+          -Units.inchesToMeters(12.321),
+          -Units.inchesToMeters(8.7),
+          Units.inchesToMeters(29.231),
+          new Rotation3d(
+              Units.degreesToRadians(0),
+              Units.degreesToRadians(-20.0),
+              Units.degreesToRadians(-15.0)));
 
   public static final Transform3d BACK_LEFT_CAM_LOCATION =
       new Transform3d(
-          -Units.inchesToMeters(11.531),
-          Units.inchesToMeters(8.891),
-          Units.inchesToMeters(29.052),
-          new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(15)));
+          -Units.inchesToMeters(12.321),
+          Units.inchesToMeters(8.7),
+          Units.inchesToMeters(29.231),
+          new Rotation3d(
+              Units.degreesToRadians(0),
+              Units.degreesToRadians(-20.0),
+              Units.degreesToRadians(15.0)));
 
   public static final Transform3d FRONT_RIGHT_CAM_LOCATION =
       new Transform3d(
-          0.309,
-          -0.328,
-          0.734,
-          new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(-100)));
+          0.3325,
+          -0.312293,
+          0.737,
+          new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-90)));
 
   public static final Transform3d FRONT_LEFT_CAM_LOCATION =
       new Transform3d(
-          0.309,
-          0.328,
-          0.735,
-          new Rotation3d(0, Units.degreesToRadians(-20), Units.degreesToRadians(100)));
+          0.3325,
+          0.312293,
+          0.737,
+          new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(90)));
 
-  public static final double Z_TOLERANCE = 2.00;
-  public static final double XY_TOLERANCE = 2.00;
-  public static final double MAX_X_VALUE = 690.87;
-  public static final double MAX_Y_VALUE = 317.00;
+  public static final double Z_TOLERANCE = 0.3;
+  public static final double XY_TOLERANCE = 0.3;
+  public static final double MAX_X_VALUE = 17.6;
+  public static final double MAX_Y_VALUE = 8.05;
   public static final double SINGLE_APRILTAG_MAX_DISTANCE = 3.0;
-  public static final double MULTI_APRILTAG_MAX_DISTANCE = 4.5;
+  public static final double MULTI_APRILTAG_MAX_DISTANCE = 7.0;
   public static final double MAX_VELOCITY = 4;
   public static final double MAX_ROTATION = Math.PI;
 }

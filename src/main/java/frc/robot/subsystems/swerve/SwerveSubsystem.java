@@ -1,6 +1,8 @@
 package frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -29,6 +31,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -54,6 +57,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     PASSING_OUTPOST_SIDE,
     TOWER,
     HUB,
+    LEFT,
+    RIGHT,
   }
 
   private Alert frontLeftDriveConnectedAlert =
@@ -123,12 +128,20 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       new Trigger(
           () ->
               MathUtil.isNear(
-                  getGoalHeading(), getCachedState().Pose.getRotation().getDegrees(), 5));
+                  getGoalHeading(),
+                  getCachedState().Pose.getRotation().getDegrees(),
+                  10,
+                  -180,
+                  180));
   public Trigger isFacingGoalPassing =
       new Trigger(
           () ->
               MathUtil.isNear(
-                  getGoalHeading(), getCachedState().Pose.getRotation().getDegrees(), 7.5));
+                  getGoalHeading(),
+                  getCachedState().Pose.getRotation().getDegrees(),
+                  10,
+                  -180,
+                  180));
   public Trigger isInShootingRange =
       new Trigger(
           () -> {
@@ -159,6 +172,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   private double rotationalSlowFactor = 1;
   private boolean slowMode = false;
   private boolean shootingRange = false;
+  private boolean bumpSpeed = false;
   private boolean slewRateLimitAcceleration = false;
   private boolean driveAssist = false;
 
@@ -185,7 +199,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       startSimThread();
     }
     configureAutoBuilder();
-    registerTelemetry(logger::telemeterize);
+
+    SmartDashboard.putData("Current limit: 60", setCurrentLimit(60));
+    SmartDashboard.putData("Current limit: 80", setCurrentLimit(80));
+    SmartDashboard.putData("Current limit: 100", setCurrentLimit(100));
   }
 
   private void configureAutoBuilder() {
@@ -199,7 +216,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
           (speeds, feedforwards) ->
               setControl(
                   m_pathApplyRobotSpeeds
-                      .withSpeeds(speeds)
+                      .withSpeeds(ChassisSpeeds.discretize(speeds, 0.020))
                       .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                       .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
           new PPHolonomicDriveController(
@@ -254,6 +271,9 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
   public void periodic() {
     cachedState = getStateCopy();
     cachedVirtualTarget = getVirtualTarget();
+
+    logger.telemeterize(cachedState);
+
     /*
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -281,7 +301,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Intake Drive Assist/Is Driving Toward Fuel", isDrivingToFuel());
     DogLog.log("Current Zone/On Bump", isOnBump.getAsBoolean());
     DogLog.log("In shooting range", isInShootingRange.getAsBoolean());
-
+    DogLog.log("Bump Speed", bumpSpeed);
     DogLog.log(
         "Distance to hub",
         getCachedState()
@@ -305,7 +325,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     DogLog.log("Drivetrain/Facing Goal", isFacingGoal.getAsBoolean());
     DogLog.log("Drivetrain/Facing Passing Goal", isFacingGoalPassing.getAsBoolean());
 
-    DogLog.log("Drivetrain/predictedTarget", getCachedVirtualTarget());
+    DogLog.log("Drivetrain/Virtual Target", getCachedVirtualTarget());
+    DogLog.log(
+        "Drivetrain/Distance to Virtual Target",
+        EagleUtil.getRobotTargetDistance(getCachedState().Pose, getCachedVirtualTarget()));
   }
 
   private double defualtSlowFactor = 0.25;
@@ -376,6 +399,14 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return shootingRange;
   }
 
+  public Command setBumpSpeed(boolean newValue) {
+    return Commands.runOnce(() -> this.bumpSpeed = newValue);
+  }
+
+  public boolean isBumpSpeed() {
+    return bumpSpeed;
+  }
+
   public boolean getdisableAutoRotate() {
     return disableAutoRotate;
   }
@@ -415,6 +446,21 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         return 0;
       case HUB:
         return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getCachedVirtualTarget());
+      case FORTY_FIVE:
+        double currentRobotHeading = this.getCachedState().Pose.getRotation().getDegrees();
+        if (currentRobotHeading >= 0 && currentRobotHeading <= 90) {
+          return 45;
+        } else if (currentRobotHeading >= 90 && currentRobotHeading <= 180) {
+          return 135;
+        } else if (currentRobotHeading <= 0 && currentRobotHeading >= -90) {
+          return -45;
+        } else {
+          return -135;
+        }
+      case LEFT:
+        return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getCachedVirtualTarget()) + 5;
+      case RIGHT:
+        return EagleUtil.getRobotTargetAngle(getCachedState().Pose, getCachedVirtualTarget()) - 5;
       default:
         return 0;
     }
@@ -428,6 +474,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     double t;
     for (int i = 0; i < 6; i++) {
       t = EagleUtil.getFuelTimeInAir(dist);
+      // t = ShotCalculator.getTimeOfFlight(dist);
       target = EagleUtil.calcAimpoint(getCachedState().Pose, getPose(t), tar);
       dist = EagleUtil.getRobotTargetDistance(shotPos, target);
     }
@@ -493,5 +540,23 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       cachedVirtualTarget = getVirtualTarget();
     }
     return cachedVirtualTarget;
+  }
+
+  public Command setCurrentLimit(double newLimit) {
+    return Commands.runOnce(
+        () -> {
+          CurrentLimitsConfigs config = new CurrentLimitsConfigs();
+          config.StatorCurrentLimit = newLimit;
+          config.StatorCurrentLimitEnable = true;
+
+          StatusCode status = StatusCode.StatusCodeNotInitialized;
+          for (int i = 0; i <= 5; i++) {
+            status = frontLeftDrive.getConfigurator().apply(config);
+            status = frontRightDrive.getConfigurator().apply(config);
+            status = backLeftDrive.getConfigurator().apply(config);
+            status = backRightDrive.getConfigurator().apply(config);
+            if (status.isOK()) break;
+          }
+        });
   }
 }

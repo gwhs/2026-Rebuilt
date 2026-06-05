@@ -46,10 +46,12 @@ public class NeutralAutos extends SequentialCommandGroup {
     NeutralAutos.climber = climber;
   }
 
-  public NeutralAutos(boolean mirror, Routine routine, boolean twoCycle) {
+  public NeutralAutos(
+      boolean mirror, Routine routine, boolean twoCycle, boolean alt, double delay) {
     try {
       // Load Paths
       PathPlannerPath cycle;
+      PathPlannerPath cycleAlt;
       PathPlannerPath cycletwo;
       PathPlannerPath climb;
       String pathprefix = "";
@@ -64,11 +66,14 @@ public class NeutralAutos extends SequentialCommandGroup {
       // If on outpost side, flip the paths
       if (mirror) {
         cycle = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle").mirrorPath();
+        cycleAlt = PathPlannerPath.fromChoreoTrajectory("B_Cycle_alt").mirrorPath();
         cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2").mirrorPath();
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb_Mirrored");
       } else {
         cycle = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle");
+        cycleAlt = PathPlannerPath.fromChoreoTrajectory("B_Cycle_alt");
         cycletwo = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Cycle2");
+
         climb = PathPlannerPath.fromChoreoTrajectory(pathprefix + "Climb");
       }
 
@@ -78,8 +83,10 @@ public class NeutralAutos extends SequentialCommandGroup {
       addCommands(
           Commands.sequence(
                   AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-                  cyclePath(cycle, true),
-                  cyclePath(cycletwo, false).onlyIf(() -> twoCycle),
+                  Commands.waitSeconds(delay).onlyIf(() -> alt),
+                  cyclePath(cycleAlt, cycletwo, true).onlyIf(() -> alt),
+                  cyclePath(cycle, cycletwo, true).onlyIf(() -> !alt),
+                  cyclePath(cycletwo, cycletwo, false).onlyIf(() -> twoCycle),
                   climbPath(climb).onlyIf(() -> !twoCycle))
               .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
@@ -103,30 +110,37 @@ public class NeutralAutos extends SequentialCommandGroup {
     return score;
   }
 
-  private Command cyclePath(PathPlannerPath path, boolean homing) {
+  private Command cyclePath(PathPlannerPath path, PathPlannerPath align, boolean homing) {
     return Commands.sequence(
         AutoBuilder.followPath(path)
             .deadlineFor(
                 Commands.sequence(
                     Commands.parallel(
-                        groundIntakeExtend.homingCommand().onlyIf(() -> homing),
-                        climber.homingCommand().onlyIf(() -> homing)),
-                    Commands.parallel(
+                        climber.homingCommand().onlyIf(() -> homing),
                         shooter.stopShooter(),
-                        groundIntakeExtend.extend(),
-                        groundIntakeRoller.startIntake()),
+                        groundIntakeRoller.startIntake(),
+                        groundIntakeExtend.extend2()),
                     Commands.waitSeconds(3),
                     shooter.preSpin())),
         groundIntakeRoller.stopIntake(),
         Commands.waitSeconds(6)
             .deadlineFor(
                 drivetrain
-                    .driveToPose(() -> getScorePose(() -> path))
+                    .driveToPose(() -> getScorePose(() -> align))
                     .alongWith(
-                        Commands.parallel(
-                            indexer.index(),
-                            shooter.cruiseControl(),
-                            EagleUtil.shootInSim(drivetrain)))));
+                        Commands.sequence(
+                            Commands.waitSeconds(.5),
+                            Commands.parallel(
+                                indexer.index(),
+                                shooter.cruiseControl(),
+                                Commands.sequence(
+                                        groundIntakeRoller.stopIntake(),
+                                        groundIntakeExtend.extend2().withTimeout(0.04),
+                                        Commands.waitSeconds(.6),
+                                        groundIntakeExtend.retract().withTimeout(0.04),
+                                        Commands.waitSeconds(.6))
+                                    .repeatedly(),
+                                EagleUtil.shootInSim(drivetrain))))));
   }
 
   private Command climbPath(PathPlannerPath path) {

@@ -3,7 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.StatusSignalCollection;
-import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -29,6 +29,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
+import frc.robot.commands.autonomous.Preload;
 import frc.robot.subsystems.aprilTagCam.AprilTagCam;
 import frc.robot.subsystems.aprilTagCam.AprilTagCamConstants;
 import frc.robot.subsystems.climber.ClimberConstants;
@@ -72,7 +73,7 @@ public class RobotContainer {
       return Robot.DEV;
     } else if (serialNumber.equals("03223849")) {
       return Robot.COMP;
-    } else if (serialNumber.equals("03282BB2")) {
+    } else if (serialNumber.equals("0323CA18")) {
       return Robot.KITBOT;
     } else {
       new Alert(
@@ -184,12 +185,41 @@ public class RobotContainer {
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
 
-        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
             GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+
+        backRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_RIGHT_CAM,
+                AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        backLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_LEFT_CAM,
+                AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        frontLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_LEFT_CAM,
+                AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        frontRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_RIGHT_CAM,
+                AprilTagCamConstants.FRONT_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
       case ANEMONE:
         drivetrain = TunerConstants_Anemone.createDrivetrain();
@@ -204,9 +234,9 @@ public class RobotContainer {
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
-            ShooterSubsystem.createReal(
-                canivoreCanbus,
+            ShooterSubsystem.createKitbot(
                 rioCanbus,
+                canivoreCanbus,
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
@@ -273,12 +303,33 @@ public class RobotContainer {
                 signalList,
                 drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
-        climber = ClimberSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
             GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        backRightCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_RIGHT_CAM,
+                AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        backLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.BACK_LEFT_CAM,
+                AprilTagCamConstants.BACK_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
+        frontLeftCam =
+            new AprilTagCam(
+                AprilTagCamConstants.FRONT_LEFT_CAM,
+                AprilTagCamConstants.FRONT_LEFT_CAM_LOCATION,
+                drivetrain::addVisionMeasurent,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         break;
     }
 
@@ -296,7 +347,17 @@ public class RobotContainer {
 
     robotVisualizer = new RobotVisualizer(groundIntakeExtension);
 
-    CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
+    CommandScheduler.getInstance()
+        .schedule(
+            Commands.parallel(
+                    FollowPathCommand.warmupCommand(),
+                    drivetrain.setSlowMode(false),
+                    shooter.stopShooter(),
+                    indexer.runVoltage(0),
+                    groundIntakeExtension.retractFull(),
+                    groundIntakeRoller.stopIntake())
+                .withName("Warm Up Command")
+                .ignoringDisable(true));
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
@@ -330,6 +391,11 @@ public class RobotContainer {
 
     controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
 
+    controller.rightTrigger().and(controller.povDown().negate()).whileTrue(agitateGroundIntake());
+
+    controller.rightStick().whileTrue(agitateGroundIntake());
+    controller.leftStick().whileTrue(agitateGroundIntake());
+
     controller
         .rightTrigger()
         .and(
@@ -348,16 +414,17 @@ public class RobotContainer {
         .whileTrue(shootOutpost());
     controller.rightTrigger().onFalse(stopShoot());
 
-    controller.a().whileTrue(unStuck());
+    controller.a().onTrue(retractGroundIntake());
 
-    controller.b().whileTrue(agitateGroundIntake());
+    controller.b().whileTrue(unStuck());
+
+    controller.x().whileTrue(defenseMode());
 
     controller
         .y()
         .whileTrue(drivetrain.setShootingRange(true))
         .onFalse(drivetrain.setShootingRange(false));
 
-    drivetrain.isInAllianceZone.onTrue(drivetrain.setRotationCommand(RotationTarget.HUB));
     drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
     controller
@@ -365,11 +432,29 @@ public class RobotContainer {
         .onTrue(drivetrain.setSlowMode(true))
         .onFalse(drivetrain.setSlowMode(false));
 
-    controller.povDown().whileTrue(deployGroundIntake());
+    controller.povDown().and(RobotModeTriggers.disabled().negate()).whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
+    // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
+    controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
+    controller
+        .povDown()
+        .negate()
+        .and(controller.rightTrigger().negate())
+        .onTrue(shooter.stopShooter());
 
-    controller.x().whileTrue(defenseMode());
-    controller.start().onTrue(autoClimb());
+    // controller.start().onTrue(autoClimb());
+
+    controller.povRight().whileTrue(bumpJump());
+    controller.povRight().onFalse(stopBumpJump());
+
+    controller.povLeft().whileTrue(declogShimmy());
+    controller.povLeft().onFalse(drivetrain.setRotationCommand(RotationTarget.NORMAL));
+
+    // temp
+    controller.rightStick().whileTrue(backupShootHub());
+    controller.rightStick().onFalse(stopShoot());
+    controller.leftStick().whileTrue(backupShootTrench());
+    controller.leftStick().onFalse(stopShoot());
   }
 
   public Command getAutonomousCommand() {
@@ -379,18 +464,30 @@ public class RobotContainer {
   private void configureAutonomous() {
     NeutralAutos.configNeutralAutos(
         drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, climber);
-    autoChooser.addOption("Bump 1 Cycle Depot", new NeutralAutos(false, Routine.BUMP, false));
-    autoChooser.addOption("Bump 1 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, false));
-    autoChooser.addOption("Bump 2 Cycle Depot", new NeutralAutos(false, Routine.BUMP, true));
-    autoChooser.addOption("Bump 2 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, true));
-    autoChooser.addOption("Trench 1 Cycle Depot", new NeutralAutos(false, Routine.TRENCH, false));
-    autoChooser.addOption("Trench 1 Cycle Outpost", new NeutralAutos(true, Routine.TRENCH, false));
-    autoChooser.addOption("Trench 2 Cycle Depot", new NeutralAutos(false, Routine.TRENCH, true));
-    autoChooser.addOption("Trench 2 Cycle Outpost", new NeutralAutos(true, Routine.TRENCH, true));
+    // autoChooser.addOption("Bump 1 Cycle Depot", new NeutralAutos(false, Routine.BUMP, false));
+    // autoChooser.addOption("Bump 1 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, false));
+    autoChooser.addOption(
+        "Bump 2 Cycle Depot", new NeutralAutos(false, Routine.BUMP, true, false, 0.0));
+    autoChooser.addOption(
+        "Bump 2 Cycle Outpost", new NeutralAutos(true, Routine.BUMP, true, false, 0.0));
     autoChooser.addOption(
         "Depot 1 Cycle",
         new DepotPathAuto_1c(
-            drivetrain, shooter, groundIntakeExtension, groundIntakeRoller, climber));
+            drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, false));
+    autoChooser.addOption(
+        "Depot Neutral",
+        new DepotPathAuto_1c(
+            drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, true));
+    autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
+    autoChooser.addOption(
+        "Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true, 3.0));
+    autoChooser.addOption(
+        "Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true, 3.0));
+    autoChooser.addOption(
+        "4 Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true, 4.0));
+    autoChooser.addOption(
+        "4 Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true, 4.0));
+
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
@@ -410,12 +507,31 @@ public class RobotContainer {
 
     // Register an intake to remove fuel from the field as a rectangular bounding box
     instance.registerIntake(
-        0.350, 0.700, -0.330, 0.330); // robot-centric coordinates for bounding box
+        0.350,
+        0.700,
+        -0.330,
+        0.330,
+        () ->
+            (groundIntakeRoller.getGoalRollerVoltage()
+                > 0)); // robot-centric coordinates for bounding box
 
     instance.start();
   }
 
   public void periodic() {
+
+    boolean autoWin = false;
+    if (HubTracker.getAutoWinner().isPresent()) {
+      Alliance actualAutoWinner = HubTracker.getAutoWinner().get();
+      if (EagleUtil.isRedAlliance()) {
+        autoWin = actualAutoWinner == Alliance.Red;
+      } else {
+        autoWin = actualAutoWinner == Alliance.Blue;
+      }
+    }
+
+    DogLog.log("Auto Winner", autoWin);
+
     double startTime = HALUtil.getFPGATime();
 
     startTime = HALUtil.getFPGATime();
@@ -505,17 +621,18 @@ public class RobotContainer {
   }
 
   public Command shootHub() {
-    return Commands.parallel(
+    return Commands.sequence(
             drivetrain.setRotationCommand(RotationTarget.HUB),
-            shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Hub
-                        .and(drivetrain.isFacingGoal)
-                        .and(isHubActive)
-                        .or(controller.leftTrigger()))
+            Commands.waitUntil(
+                drivetrain
+                    .isFacingGoal
+                    .debounce(0.25)
+                    .and(isHubActive)
+                    .or(controller.leftTrigger())),
+            Commands.parallel(
+                    indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger()))
                 .repeatedly())
         .withName("Shoot Hub");
   }
@@ -523,14 +640,12 @@ public class RobotContainer {
   public Command shootDepot() {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_DEPOT_SIDE),
-            shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Passing
-                        .and(drivetrain.isFacingGoalPassing)
-                        .or(controller.leftTrigger()))
+            Commands.waitUntil(
+                drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger())),
+            Commands.parallel(
+                    indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(drivetrain.isFacingGoalPassing.or(controller.leftTrigger()))
                 .repeatedly())
         .withName("Shoot Depot Side");
   }
@@ -538,14 +653,12 @@ public class RobotContainer {
   public Command shootOutpost() {
     return Commands.parallel(
             drivetrain.setRotationCommand(RotationTarget.PASSING_OUTPOST_SIDE),
-            shooter.cruiseControl(),
             drivetrain.setSlowMode(0.5, 1),
-            Commands.parallel(indexer.index(), EagleUtil.shootInSim(drivetrain))
-                .onlyWhile(
-                    shooter
-                        .isAtGoalVelocity_Passing
-                        .and(drivetrain.isFacingGoalPassing)
-                        .or(controller.leftTrigger()))
+            Commands.waitUntil(
+                drivetrain.isFacingGoal.and(isHubActive).or(controller.leftTrigger())),
+            Commands.parallel(
+                    indexer.index(), shooter.cruiseControl(), EagleUtil.shootInSim(drivetrain))
+                .onlyWhile(drivetrain.isFacingGoalPassing.or(controller.leftTrigger()))
                 .repeatedly())
         .withName("Shoot Outpost Side");
   }
@@ -564,21 +677,27 @@ public class RobotContainer {
         .withName("Deploy Ground Intake");
   }
 
-  public Command defenseMode() {
+  public Command retractGroundIntake() {
     return Commands.parallel(
-            drivetrain.swerveX(), groundIntakeExtension.retract(), groundIntakeRoller.stopIntake())
-        .withName("Defense Mode");
+            groundIntakeRoller.stopIntake(),
+            groundIntakeExtension.retractFull(),
+            drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
+        .withName("Retract Ground Intake");
+  }
+
+  public Command defenseMode() {
+    return Commands.parallel(drivetrain.swerveX()).withName("Defense Mode");
   }
 
   public Command agitateGroundIntake() {
     return Commands.sequence(
-            groundIntakeExtension.extend(),
-            Commands.waitSeconds(.5),
-            groundIntakeExtension.retract(),
-            Commands.waitSeconds(.5),
-            groundIntakeRoller.stopIntake())
+            groundIntakeRoller.stopIntake(),
+            groundIntakeExtension.extend2().withTimeout(0.04),
+            Commands.waitSeconds(.6),
+            groundIntakeExtension.retract().withTimeout(0.04),
+            Commands.waitSeconds(.6))
         .repeatedly()
-        .withName("Start? Ground Intake");
+        .withName("Agitate Ground Intake");
   }
 
   public Command stopShoot() {
@@ -587,6 +706,15 @@ public class RobotContainer {
             drivetrain.setSlowMode(false),
             shooter.stopShooter())
         .withName("Stop Shooting");
+  }
+
+  public Command topoff() {
+    return Commands.parallel(
+            indexer.runVoltage(0),
+            groundIntakeExtension.extend(),
+            groundIntakeRoller.startIntake(),
+            shooter.runVelocity(0, 0))
+        .withName("Topoff");
   }
 
   public Command autoClimb() {
@@ -623,5 +751,42 @@ public class RobotContainer {
             Commands.waitUntil(controller.start().debounce(0.1)),
             Commands.parallel(indexer.index(), shooter.cruiseControl()))
         .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+  }
+
+  public Command backupShootHub() {
+    return Commands.parallel(
+            shooter.runVelocity(45, 42),
+            indexer.index(),
+            drivetrain.setRotationCommand(RotationTarget.NORMAL),
+            EagleUtil.shootInSim(drivetrain))
+        .withName("Shoot Hub Backup");
+  }
+
+  public Command backupShootTrench() {
+    return Commands.parallel(
+            shooter.runVelocity(68, 66),
+            indexer.index(),
+            drivetrain.setRotationCommand(RotationTarget.NORMAL),
+            EagleUtil.shootInSim(drivetrain))
+        .withName("Shoot Trench Backup");
+  }
+
+  public Command bumpJump() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.FORTY_FIVE), drivetrain.setBumpSpeed(true));
+  }
+
+  public Command stopBumpJump() {
+    return Commands.parallel(
+        drivetrain.setRotationCommand(RotationTarget.NORMAL), drivetrain.setBumpSpeed(false));
+  }
+
+  public Command declogShimmy() {
+    return Commands.sequence(
+            drivetrain.setRotationCommand(RotationTarget.LEFT),
+            Commands.waitSeconds(0.2),
+            drivetrain.setRotationCommand(RotationTarget.RIGHT),
+            Commands.waitSeconds(0.2))
+        .repeatedly();
   }
 }

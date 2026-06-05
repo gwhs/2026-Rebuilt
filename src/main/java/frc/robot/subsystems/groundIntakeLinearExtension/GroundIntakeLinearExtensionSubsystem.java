@@ -3,7 +3,6 @@ package frc.robot.subsystems.groundIntakeLinearExtension;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,24 +21,34 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
   public static GroundIntakeLinearExtensionSubsystem createReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
     return new GroundIntakeLinearExtensionSubsystem(
-        new GroundIntakeLinearExtensionIOReal(rioCanbus, canivoreCanbus, signal));
+        new GroundIntakePivotIOReal(rioCanbus, canivoreCanbus, signal));
   }
 
   public GroundIntakeLinearExtensionSubsystem(
       GroundIntakeLinearExtensionIO groundIntakeLinearExtensionIO) {
     this.groundIntakeLinearExtensionIO = groundIntakeLinearExtensionIO;
-
-    SmartDashboard.putData("Ground Intake Extension Homing Command", homingCommand());
   }
 
   @Override
   public void periodic() {
     groundIntakeLinearExtensionIO.periodic();
     DogLog.log(
-        "Ground Intake Extension/Current Rotation", groundIntakeLinearExtensionIO.getRotation());
+        "GroundIntakeLinearExtension/Current Rotation",
+        groundIntakeLinearExtensionIO.getRotation());
   }
 
   public Command extend() {
+    return Commands.sequence(
+            this.runOnce(
+                () -> {
+                  groundIntakeLinearExtensionIO.runPosition(
+                      GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
+                }),
+            Commands.waitSeconds(2))
+        .finallyDo(() -> groundIntakeLinearExtensionIO.runVoltage(1));
+  }
+
+  public Command extend2() {
     return this.runOnce(
         () -> {
           groundIntakeLinearExtensionIO.runPosition(
@@ -55,12 +64,22 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
         });
   }
 
+  public Command retractFull() {
+    return this.runOnce(
+        () -> {
+          groundIntakeLinearExtensionIO.runPosition(
+              GroundIntakeLinearExtensionConstants.RETRACT_FULL_ROTATION);
+        });
+  }
+
   public Command homingCommand() {
-    return Commands.sequence(
-        this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(-2, true)),
-        Commands.waitUntil(() -> groundIntakeLinearExtensionIO.getReverseLimit()),
-        this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(0)),
-        this.runOnce(() -> groundIntakeLinearExtensionIO.setPosition(0)));
+    return Commands.none();
+    // return Commands.sequence(
+    //         this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(-2, true)),
+    //         Commands.waitUntil(() -> groundIntakeLinearExtensionIO.getReverseLimit()),
+    //         this.runOnce(() -> groundIntakeLinearExtensionIO.runVoltage(0)),
+    //         this.runOnce(() -> groundIntakeLinearExtensionIO.setPosition(0)))
+    //     .onlyIf(() -> RobotBase.isReal());
   }
 
   public double getRotation() {

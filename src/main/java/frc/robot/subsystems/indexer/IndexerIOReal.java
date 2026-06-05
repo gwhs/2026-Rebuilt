@@ -14,8 +14,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
@@ -28,14 +26,12 @@ public class IndexerIOReal implements IndexerIO {
 
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
-  private final StatusSignal<AngularVelocity> motor1Velocity;
-  private final StatusSignal<AngularAcceleration> motor1Acceleration;
   private final StatusSignal<Temperature> motor1Temp;
-  private final StatusSignal<Double> motor1ClosedLoopGoal;
 
   private final Alert motor1NotConnectedAlert =
       new Alert("Indexer Motor 1 Not Connected ", AlertType.kError);
 
+  @SuppressWarnings("resource")
   public IndexerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {
 
@@ -43,25 +39,14 @@ public class IndexerIOReal implements IndexerIO {
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
-    motor1Velocity = motor1.getVelocity();
     motor1Temp = motor1.getDeviceTemp();
-    motor1Acceleration = motor1.getAcceleration();
-    motor1ClosedLoopGoal = motor1.getClosedLoopReference();
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 25;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 45;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
-    talonFXConfig.Slot0.kS = 0.125;
-    talonFXConfig.Slot0.kG = 0;
-    talonFXConfig.Slot0.kA = 0;
-    talonFXConfig.Slot0.kV = 0.065;
-    talonFXConfig.Slot0.kP = 0.5;
-    talonFXConfig.Slot0.kI = 0;
-    talonFXConfig.Slot0.kD = 0;
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -75,31 +60,15 @@ public class IndexerIOReal implements IndexerIO {
           .set(true);
     }
 
-    statusSignalCollection.addSignals(
-        motor1Voltage,
-        motor1StatorCurrent,
-        motor1Velocity,
-        motor1Temp,
-        motor1Acceleration,
-        motor1ClosedLoopGoal);
+    statusSignalCollection.addSignals(motor1Voltage, motor1StatorCurrent, motor1Temp);
 
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50,
-        motor1Voltage,
-        motor1StatorCurrent,
-        motor1Velocity,
-        motor1Temp,
-        motor1Acceleration,
-        motor1ClosedLoopGoal);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, motor1Voltage, motor1StatorCurrent, motor1Temp);
   }
 
   public void periodic() {
     DogLog.log("Indexer/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Indexer/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Velocity", motor1Velocity.getValueAsDouble());
     DogLog.log("Indexer/Motor 1 Temperature", motor1Temp.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Acceleration", motor1Acceleration.getValueAsDouble());
-    DogLog.log("Indexer/Motor 1 Closed Loop Goal", motor1ClosedLoopGoal.getValueAsDouble());
 
     motor1NotConnectedAlert.set(!motor1.isConnected());
   }

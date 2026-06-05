@@ -10,4 +10,8 @@ public interface ShooterIO {
   public double getVelocity();
 
   public void periodic();
+
+  public void enableLeftShooter(boolean b);
+
+  public void enableRightShooter(boolean b);
 }
