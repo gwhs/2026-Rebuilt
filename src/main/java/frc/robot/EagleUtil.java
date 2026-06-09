@@ -148,10 +148,7 @@ public class EagleUtil {
   }
 
   public static double getFuelTimeInAir(double distanceToTarget) {
-    double v = getShooterVelocity(distanceToTarget);
-    double theta = FieldConstants.shooterAngleRadian;
-    return ((v * Math.sin(theta)) + Math.sqrt((v * Math.sin(theta) * v * Math.sin(theta)) - (2 * FieldConstants.gravitationalAcc 
-    * (FieldConstants.hubHeight - FieldConstants.shooterHeight))) / FieldConstants.gravitationalAcc); //projectile motion
+    return distanceToTarget / (getShooterVelocity(distanceToTarget) * Math.cos(FieldConstants.shooterAngleRadian)); //projectile motion
   }
 
   public static Command shootInSim(SwerveSubsystem drivetrain) {
