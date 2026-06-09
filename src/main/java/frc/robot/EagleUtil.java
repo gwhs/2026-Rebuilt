@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.lang.reflect.Field;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -107,9 +105,11 @@ public class EagleUtil {
     double v =
         Math.sqrt(
             (FieldConstants.gravitationalAcc * distanceToTarget * distanceToTarget)
-                / ((distanceToTarget * Math.sin(2 * theta)) 
-                - (2 * (FieldConstants.hubHeight - FieldConstants.shooterHeight) 
-                * Math.cos(theta) * Math.cos(theta)))); //projectile motion
+                / ((distanceToTarget * Math.sin(2 * theta))
+                    - (2
+                        * (FieldConstants.hubHeight - FieldConstants.shooterHeight)
+                        * Math.cos(theta)
+                        * Math.cos(theta)))); // projectile motion
     double k = 1.075 + (distanceToTarget * 0.005); // constant to fix inefficiency
     return k * v;
   }
@@ -148,7 +148,9 @@ public class EagleUtil {
   }
 
   public static double getFuelTimeInAir(double distanceToTarget) {
-    return distanceToTarget / (getShooterVelocity(distanceToTarget) * Math.cos(FieldConstants.shooterAngleRadian)); //projectile motion
+    return distanceToTarget
+        / (getShooterVelocity(distanceToTarget)
+            * Math.cos(FieldConstants.shooterAngleRadian)); // projectile motion
   }
 
   public static Command shootInSim(SwerveSubsystem drivetrain) {
