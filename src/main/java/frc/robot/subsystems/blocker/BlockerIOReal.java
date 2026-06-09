@@ -93,8 +93,8 @@ public class BlockerIOReal implements BlockerIO {
     talonFXConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     talonFXConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = BlockerConstants.MIN_ROTATION;
 
-    talonFXConfig.MotionMagic.MotionMagicAcceleration = 5;
-    talonFXConfig.MotionMagic.MotionMagicCruiseVelocity = 1;
+    talonFXConfig.MotionMagic.MotionMagicAcceleration = 100;
+    talonFXConfig.MotionMagic.MotionMagicCruiseVelocity = 100;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
