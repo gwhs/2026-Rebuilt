@@ -101,16 +101,17 @@ public class EagleUtil {
   }
 
   public static double getShooterVelocity(double distanceToTarget) {
+    double theta = FieldConstants.shooterAngleRadian;
     double v =
         Math.sqrt(
             (FieldConstants.gravitationalAcc * distanceToTarget * distanceToTarget)
-                / (2
-                    * Math.cos(FieldConstants.shooterAngleRadian)
-                    * Math.cos(FieldConstants.shooterAngleRadian)
-                    * (distanceToTarget * Math.tan(FieldConstants.shooterAngleRadian)
-                        - (FieldConstants.hubHeight - FieldConstants.shooterHeight))));
-    double c = 1.075 + (distanceToTarget * 0.005); // constant to fix inefficiency
-    return v * c;
+                / ((distanceToTarget * Math.sin(2 * theta))
+                    - (2
+                        * (FieldConstants.hubHeight - FieldConstants.shooterHeight)
+                        * Math.cos(theta)
+                        * Math.cos(theta)))); // projectile motion
+    double k = 1.075 + (distanceToTarget * 0.005); // constant to fix inefficiency
+    return k * v;
   }
 
   public static Translation2d getRobotTarget(Pose2d robotPose) {
@@ -147,9 +148,9 @@ public class EagleUtil {
   }
 
   public static double getFuelTimeInAir(double distanceToTarget) {
-    // eqation based on simulation data points and adjustments, may be adjusted later for better
-    // performance
-    return 0.63117 * Math.sin(0.23124 * distanceToTarget - 1.6501) + 1.67679;
+    return distanceToTarget
+        / (getShooterVelocity(distanceToTarget)
+            * Math.cos(FieldConstants.shooterAngleRadian)); // projectile motion
   }
 
   public static Command shootInSim(SwerveSubsystem drivetrain) {
