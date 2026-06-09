@@ -28,6 +28,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -496,6 +497,8 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
 
     double vx = fieldRelative.vxMetersPerSecond;
     double vy = fieldRelative.vyMetersPerSecond;
+    double jx = controller.getLeftX();
+    double jy = controller.getLeftY();
 
     double speedMagnitude = Math.hypot(vx, vy);
 
@@ -503,7 +506,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
       return getCachedState().Pose.getRotation().getDegrees();
     }
 
-    return Math.toDegrees(Math.atan2(vy, vx));
+    return Math.toDegrees(Math.atan2(jy, jx));
   }
 
   public Pose2d getPose(double timeSeconds) {
