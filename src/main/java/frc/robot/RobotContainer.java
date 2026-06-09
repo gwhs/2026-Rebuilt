@@ -442,6 +442,21 @@ public class RobotContainer {
         .and(controller.rightTrigger().negate())
         .onTrue(shooter.stopShooter());
 
+    controller
+        .povUp()
+        .and(RobotModeTriggers.disabled().negate())
+        .whileTrue(deployDirectionalGroundIntake());
+    controller.povUp().onFalse(groundIntakeRoller.stopIntake());
+    controller
+        .povUp()
+        .onFalse(drivetrain.setRotationCommand(SwerveSubsystem.RotationTarget.NORMAL));
+
+    controller
+        .povUp()
+        .negate()
+        .and(controller.rightTrigger().negate())
+        .onTrue(shooter.stopShooter());
+
     // controller.start().onTrue(autoClimb());
 
     controller.povRight().whileTrue(bumpJump());
@@ -674,6 +689,14 @@ public class RobotContainer {
             groundIntakeRoller.startIntake(),
             groundIntakeExtension.extend(),
             drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
+        .withName("Deploy Ground Intake");
+  }
+
+  public Command deployDirectionalGroundIntake() {
+    return Commands.parallel(
+            groundIntakeRoller.startIntake(),
+            groundIntakeExtension.extend(),
+            drivetrain.setRotationCommand(RotationTarget.DIRECTION))
         .withName("Deploy Ground Intake");
   }
 
