@@ -64,7 +64,7 @@ public class ShooterIOKitbot implements ShooterIO {
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
-    talonFXConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     setUpMotors(talonFXConfig, motor1);
   }
 
