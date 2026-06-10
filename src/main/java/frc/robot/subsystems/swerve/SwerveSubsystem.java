@@ -28,7 +28,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -496,7 +495,12 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
             getCachedState().Speeds, getCachedState().Pose.getRotation());
 
     double jx = -controller.getLeftY();
-    double jy = controller.getLeftX();
+    double jy = -controller.getLeftX();
+
+    if(EagleUtil.isRedAlliance()) {
+      jy *= -1;
+      jx *= -1;
+    }
 
     double speedMagnitude = Math.hypot(jx, jy);
 
