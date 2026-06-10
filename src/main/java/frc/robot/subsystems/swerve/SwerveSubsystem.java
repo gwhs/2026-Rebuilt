@@ -495,12 +495,10 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         ChassisSpeeds.fromRobotRelativeSpeeds(
             getCachedState().Speeds, getCachedState().Pose.getRotation());
 
-    double vx = fieldRelative.vxMetersPerSecond;
-    double vy = fieldRelative.vyMetersPerSecond;
-    double jx = controller.getLeftX();
-    double jy = controller.getLeftY();
+    double jx = -controller.getLeftY();
+    double jy = controller.getLeftX();
 
-    double speedMagnitude = Math.hypot(vx, vy);
+    double speedMagnitude = Math.hypot(jx, jy);
 
     if (speedMagnitude < 0.15) {
       return getCachedState().Pose.getRotation().getDegrees();
