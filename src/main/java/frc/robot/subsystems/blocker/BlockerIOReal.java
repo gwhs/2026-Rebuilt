@@ -108,13 +108,14 @@ public class BlockerIOReal implements BlockerIO {
   }
 
   public void periodic() {
-    BaseStatusSignal.refreshAll(motor1Voltage,
+    BaseStatusSignal.refreshAll(
+        motor1Voltage,
         motor1StatorCurrent,
         motor1Temp,
         motor1Acceleration,
         motor1ClosedLoopGoal,
         motor1Position);
-        
+
     DogLog.log("Blocker/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Blocker/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
     DogLog.log("Blocker/Motor 1 Temperature", motor1Temp.getValueAsDouble());
