@@ -497,7 +497,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     double jx = -controller.getLeftY();
     double jy = -controller.getLeftX();
 
-    if(EagleUtil.isRedAlliance()) {
+    if (EagleUtil.isRedAlliance()) {
       jy *= -1;
       jx *= -1;
     }
