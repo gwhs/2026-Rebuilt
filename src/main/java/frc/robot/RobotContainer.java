@@ -500,7 +500,7 @@ public class RobotContainer {
         "Depot Neutral",
         new DepotPathAuto_1c(
             drivetrain, shooter, indexer, groundIntakeExtension, groundIntakeRoller, true));
-    autoChooser.addOption("Preload", new Preload(drivetrain, shooter, indexer));
+    autoChooser.setDefaultOption("Preload", new Preload(drivetrain, shooter, indexer));
     autoChooser.addOption(
         "Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true, 3.0));
     autoChooser.addOption(
