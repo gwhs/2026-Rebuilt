@@ -28,7 +28,9 @@ public class BlockerSubsystem extends SubsystemBase {
   }
 
   /** Creates a new blocker. */
-  public BlockerSubsystem(BlockerIO blockerIO) {}
+  public BlockerSubsystem(BlockerIO blockerIO) {
+    this.blockerIO = blockerIO;
+  }
 
   @Override
   public void periodic() {
