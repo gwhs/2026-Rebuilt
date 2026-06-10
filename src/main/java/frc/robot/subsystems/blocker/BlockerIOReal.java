@@ -22,7 +22,6 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import frc.robot.subsystems.climber.ClimberConstants;
 
 public class BlockerIOReal implements BlockerIO {
 
@@ -31,7 +30,7 @@ public class BlockerIOReal implements BlockerIO {
   private final MotionMagicVoltage request = new MotionMagicVoltage(0).withEnableFOC(true);
 
   private final Alert motor1NotConnectedAlert =
-      new Alert("Climber Motor 1 Not Connected", AlertType.kError);
+      new Alert("Blocker Motor 1 Not Connected", AlertType.kError);
 
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
