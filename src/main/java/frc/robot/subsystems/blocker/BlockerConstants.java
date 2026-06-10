@@ -9,5 +9,5 @@ public class BlockerConstants {
   public static final int MOTOR_1_ID = 61;
 
   public static final double MAX_ROTATION = 4;
-  public static final double MIN_ROTATION = 0.5;
+  public static final double MIN_ROTATION = 0.6;
 }
