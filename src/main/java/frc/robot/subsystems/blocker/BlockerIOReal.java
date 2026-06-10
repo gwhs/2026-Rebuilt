@@ -43,7 +43,7 @@ public class BlockerIOReal implements BlockerIO {
   public BlockerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {
 
-    motor1 = new TalonFX(ClimberConstants.MOTOR_1_ID, rioCanbus);
+    motor1 = new TalonFX(ClimberConstants.MOTOR_1_ID, canivoreCanbus);
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
