@@ -24,9 +24,9 @@ public class Preload extends SequentialCommandGroup {
           Commands.waitSeconds(5)
               .deadlineFor(
                   indexer.index(),
-                  shooter.cruiseControl(),
+                  shooter.runVelocity(45),
                   EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
-          Commands.parallel(shooter.runVoltage(0), indexer.runVoltage(0)));
+          Commands.parallel(shooter.runVelocity(45), indexer.runVoltage(0)));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
