@@ -22,7 +22,6 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import frc.robot.subsystems.climber.ClimberConstants;
 
 public class BlockerIOReal implements BlockerIO {
 
@@ -31,7 +30,7 @@ public class BlockerIOReal implements BlockerIO {
   private final MotionMagicVoltage request = new MotionMagicVoltage(0).withEnableFOC(true);
 
   private final Alert motor1NotConnectedAlert =
-      new Alert("Climber Motor 1 Not Connected", AlertType.kError);
+      new Alert("Blocker Motor 1 Not Connected", AlertType.kError);
 
   private final StatusSignal<Voltage> motor1Voltage;
   private final StatusSignal<Current> motor1StatorCurrent;
@@ -43,7 +42,7 @@ public class BlockerIOReal implements BlockerIO {
   public BlockerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection statusSignalCollection) {
 
-    motor1 = new TalonFX(ClimberConstants.MOTOR_1_ID, rioCanbus);
+    motor1 = new TalonFX(BlockerConstants.MOTOR_1_ID, canivoreCanbus);
 
     motor1Voltage = motor1.getMotorVoltage();
     motor1StatorCurrent = motor1.getStatorCurrent();
@@ -51,14 +50,6 @@ public class BlockerIOReal implements BlockerIO {
     motor1Acceleration = motor1.getAcceleration();
     motor1ClosedLoopGoal = motor1.getClosedLoopReference();
     motor1Position = motor1.getPosition();
-
-    statusSignalCollection.addSignals(
-        motor1Voltage,
-        motor1StatorCurrent,
-        motor1Temp,
-        motor1Acceleration,
-        motor1ClosedLoopGoal,
-        motor1Position);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50,
@@ -81,8 +72,8 @@ public class BlockerIOReal implements BlockerIO {
     talonFXConfig.Slot0.kS = 0; // TODO
     talonFXConfig.Slot0.kG = 0;
     talonFXConfig.Slot0.kA = 0;
-    talonFXConfig.Slot0.kV = 0.1125; // TODO
-    talonFXConfig.Slot0.kP = 1.5; // TODO
+    talonFXConfig.Slot0.kV = 0.11; // TODO
+    talonFXConfig.Slot0.kP = 2; // TODO
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
@@ -93,8 +84,8 @@ public class BlockerIOReal implements BlockerIO {
     talonFXConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     talonFXConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = BlockerConstants.MIN_ROTATION;
 
-    talonFXConfig.MotionMagic.MotionMagicAcceleration = 100;
-    talonFXConfig.MotionMagic.MotionMagicCruiseVelocity = 100;
+    talonFXConfig.MotionMagic.MotionMagicAcceleration = 50;
+    talonFXConfig.MotionMagic.MotionMagicCruiseVelocity = 65;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i <= 5; i++) {
@@ -116,6 +107,14 @@ public class BlockerIOReal implements BlockerIO {
   }
 
   public void periodic() {
+    BaseStatusSignal.refreshAll(
+        motor1Voltage,
+        motor1StatorCurrent,
+        motor1Temp,
+        motor1Acceleration,
+        motor1ClosedLoopGoal,
+        motor1Position);
+
     DogLog.log("Blocker/Motor 1 Voltage", motor1Voltage.getValueAsDouble());
     DogLog.log("Blocker/Motor 1 Stator Current", motor1StatorCurrent.getValueAsDouble());
     DogLog.log("Blocker/Motor 1 Temperature", motor1Temp.getValueAsDouble());
