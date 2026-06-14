@@ -426,11 +426,11 @@ public class RobotContainer {
 
     controller.a().onTrue(retractGroundIntake());
 
-    controller.b().onTrue(blocker.retract());
+    controller.b().whileTrue(blocker.deploy()).onFalse(blocker.retract());
 
     controller.x().whileTrue(defenseMode());
 
-    controller.y().onTrue(blocker.deploy());
+    // controller.y()
 
     drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
