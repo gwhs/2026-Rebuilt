@@ -489,22 +489,21 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
     return currRobotSpeed.vxMetersPerSecond > 0.1;
   }
 
-  public double getVelocityHeading() {
-    double jx = -controller.getLeftY();
-    double jy = -controller.getLeftX();
+public double getVelocityHeading() {
+    ChassisSpeeds fieldRelative =
+        ChassisSpeeds.fromRobotRelativeSpeeds(
+            getCachedState().Speeds, getCachedState().Pose.getRotation());
 
-    if (EagleUtil.isRedAlliance()) {
-      jy *= -1;
-      jx *= -1;
-    }
+    double vx = fieldRelative.vxMetersPerSecond;
+    double vy = fieldRelative.vyMetersPerSecond;
 
-    double speedMagnitude = Math.hypot(jx, jy);
+    double speedMagnitude = Math.hypot(vx, vy);
 
     if (speedMagnitude < 0.15) {
       return getCachedState().Pose.getRotation().getDegrees();
     }
 
-    return Math.toDegrees(Math.atan2(jy, jx));
+    return Math.toDegrees(Math.atan2(vy, vx));
   }
 
   public Pose2d getPose(double timeSeconds) {
