@@ -238,14 +238,10 @@ public class RobotContainer {
       case KITBOT:
         drivetrain = TunerConstants_Mk4i.createDrivetrain();
         shooter =
-            ShooterSubsystem.createKitbot(
-                rioCanbus,
-                canivoreCanbus,
-                signalList,
-                drivetrain.poseSupplier(),
+            ShooterSubsystem.createDisabled(drivetrain.poseSupplier(),
                 drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
-        indexer = IndexerSubsystem.createReal(canivoreCanbus, rioCanbus, signalList);
+        indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
         blocker = BlockerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
