@@ -426,7 +426,7 @@ public class RobotContainer {
 
     controller.a().onTrue(retractGroundIntake());
 
-    controller.b().whileTrue(blocker.deploy()).onFalse(blocker.retract());
+    controller.leftTrigger().whileTrue(blocker.deploy()).onFalse(blocker.retract());
 
     controller.x().whileTrue(defenseMode());
 
