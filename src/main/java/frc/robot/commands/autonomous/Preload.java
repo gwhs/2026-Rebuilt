@@ -3,32 +3,31 @@ package frc.robot.commands.autonomous;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.EagleUtil;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class Preload extends SequentialCommandGroup {
-  public Preload(SwerveSubsystem drivetrain, ShooterSubsystem shooter, IndexerSubsystem indexer) {
+ public Preload(SwerveSubsystem drivetrain, ShooterSubsystem shooter, IndexerSubsystem indexer) {
 
     try {
 
-      PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("EPIC_PATH_TO_WIN");
-      // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("");
-
-      Pose2d startingPose =
-          new Pose2d(
-              startingPath.getPoint(0).position, startingPath.getIdealStartingState().rotation());
+      Pose2d startingPose = new Pose2d(3.51, 4.03, new Rotation2d(0));
 
       addCommands(
-          AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          AutoBuilder.followPath(startingPath)
-          /*
-           * TODO: The rest of the autonomous routine command
-           */
-          );
+          AutoBuilder.resetOdom(startingPose),
+          Commands.waitSeconds(5)
+              .deadlineFor(
+                  indexer.index(),
+                  shooter.runVelocity(45),
+                  EagleUtil.shootInSim(drivetrain).onlyIf(() -> RobotBase.isSimulation())),
+          Commands.parallel(shooter.runVelocity(0), indexer.runVoltage(0)));
 
     } catch (Exception e) {
       DriverStation.reportError("Path Not Found: " + e.getMessage(), e.getStackTrace());
