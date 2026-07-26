@@ -399,84 +399,84 @@ public class RobotContainer {
     controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
     // drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
 
-    controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
+    // controller.rightTrigger().and(drivetrain.isInAllianceZone).whileTrue(shootHub());
 
-    controller.rightTrigger().and(controller.povDown().negate()).whileTrue(agitateGroundIntake());
+    // controller.rightTrigger().and(controller.povDown().negate()).whileTrue(agitateGroundIntake());
 
-    controller.rightStick().whileTrue(agitateGroundIntake());
-    controller.leftStick().whileTrue(agitateGroundIntake());
+    // controller.rightStick().whileTrue(agitateGroundIntake());
+    // controller.leftStick().whileTrue(agitateGroundIntake());
 
-    controller
-        .rightTrigger()
-        .and(
-            drivetrain
-                .isInNeutralZone
-                .or(drivetrain.isInOpponentAllianceZone)
-                .and(drivetrain.isOnDepotSide))
-        .whileTrue(shootDepot());
-    controller
-        .rightTrigger()
-        .and(
-            drivetrain
-                .isInNeutralZone
-                .or(drivetrain.isInOpponentAllianceZone)
-                .and(drivetrain.isOnOutpostSide))
-        .whileTrue(shootOutpost());
-    controller.rightTrigger().onFalse(stopShoot());
+    // controller
+    //     .rightTrigger()
+    //     .and(
+    //         drivetrain
+    //             .isInNeutralZone
+    //             .or(drivetrain.isInOpponentAllianceZone)
+    //             .and(drivetrain.isOnDepotSide))
+    //     .whileTrue(shootDepot());
+    // controller
+    //     .rightTrigger()
+    //     .and(
+    //         drivetrain
+    //             .isInNeutralZone
+    //             .or(drivetrain.isInOpponentAllianceZone)
+    //             .and(drivetrain.isOnOutpostSide))
+    //     .whileTrue(shootOutpost());
+    // controller.rightTrigger().onFalse(stopShoot());
 
-    controller.a().onTrue(retractGroundIntake());
+    // controller.a().onTrue(retractGroundIntake());
 
     controller.leftTrigger().whileTrue(blocker.deploy()).onFalse(blocker.retract());
 
-    controller.x().whileTrue(defenseMode());
+    // controller.x().whileTrue(defenseMode());
 
     // controller.y()
 
-    drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
+    // drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
     controller
         .rightBumper()
         .onTrue(drivetrain.setSlowMode(true))
         .onFalse(drivetrain.setSlowMode(false));
 
-    controller.povDown().and(RobotModeTriggers.disabled().negate()).whileTrue(deployGroundIntake());
-    controller.povDown().onFalse(groundIntakeRoller.stopIntake());
-    // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
-    controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
-    controller
-        .povDown()
-        .negate()
-        .and(controller.rightTrigger().negate())
-        .onTrue(shooter.stopShooter());
+    // controller.povDown().and(RobotModeTriggers.disabled().negate()).whileTrue(deployGroundIntake());
+    // controller.povDown().onFalse(groundIntakeRoller.stopIntake());
+    // // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
+    // controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
+    // controller
+    //     .povDown()
+    //     .negate()
+    //     .and(controller.rightTrigger().negate())
+    //     .onTrue(shooter.stopShooter());
 
-    controller
-        .povUp()
-        .and(RobotModeTriggers.disabled().negate())
-        .whileTrue(deployDirectionalGroundIntake());
-    controller.povUp().onFalse(groundIntakeRoller.stopIntake());
-    controller
-        .povUp()
-        .onFalse(drivetrain.setRotationCommand(SwerveSubsystem.RotationTarget.NORMAL));
+    // controller
+    //     .povUp()
+    //     .and(RobotModeTriggers.disabled().negate())
+    //     .whileTrue(deployDirectionalGroundIntake());
+    // controller.povUp().onFalse(groundIntakeRoller.stopIntake());
+    // controller
+    //     .povUp()
+    //     .onFalse(drivetrain.setRotationCommand(SwerveSubsystem.RotationTarget.NORMAL));
 
-    controller
-        .povUp()
-        .negate()
-        .and(controller.rightTrigger().negate())
-        .onTrue(shooter.stopShooter());
+    // controller
+    //     .povUp()
+    //     .negate()
+    //     .and(controller.rightTrigger().negate())
+    //     .onTrue(shooter.stopShooter());
 
-    // controller.start().onTrue(autoClimb());
+    // // controller.start().onTrue(autoClimb());
 
-    controller.povRight().whileTrue(bumpJump());
-    controller.povRight().onFalse(stopBumpJump());
+    // controller.povRight().whileTrue(bumpJump());
+    // controller.povRight().onFalse(stopBumpJump());
 
-    controller.povLeft().whileTrue(declogShimmy());
-    controller.povLeft().onFalse(drivetrain.setRotationCommand(RotationTarget.NORMAL));
+    // controller.povLeft().whileTrue(declogShimmy());
+    // controller.povLeft().onFalse(drivetrain.setRotationCommand(RotationTarget.NORMAL));
 
-    // temp
-    controller.rightStick().whileTrue(backupShootHub());
-    controller.rightStick().onFalse(stopShoot());
-    controller.leftStick().whileTrue(backupShootTrench());
-    controller.leftStick().onFalse(stopShoot());
+    // // temp
+    // controller.rightStick().whileTrue(backupShootHub());
+    // controller.rightStick().onFalse(stopShoot());
+    // controller.leftStick().whileTrue(backupShootTrench());
+    // controller.leftStick().onFalse(stopShoot());
   }
 
   public Command getAutonomousCommand() {
