@@ -2,14 +2,10 @@ package frc.robot.commands.autonomous;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.EagleUtil;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -19,7 +15,7 @@ public class Preload extends SequentialCommandGroup {
 
     try {
 
-            PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("EPIC_PATH_TO_WIN");
+      PathPlannerPath startingPath = PathPlannerPath.fromChoreoTrajectory("EPIC_PATH_TO_WIN");
       // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("");
 
       Pose2d startingPose =
