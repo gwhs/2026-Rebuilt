@@ -21,8 +21,8 @@ public class Preload extends SequentialCommandGroup {
 
       addCommands(
           AutoBuilder.resetOdom(startingPose),
-          shooter.runVelocity(45),
-        Commands.waitSeconds(2),
+          shooter.runVelocity(45).withTimeout(0.1),
+          Commands.waitSeconds(2),
           Commands.waitSeconds(5)
               .deadlineFor(
                   indexer.index(),
