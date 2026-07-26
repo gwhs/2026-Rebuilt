@@ -441,7 +441,8 @@ public class RobotContainer {
 
     // controller.povDown().and(RobotModeTriggers.disabled().negate()).whileTrue(deployGroundIntake());
     // controller.povDown().onFalse(groundIntakeRoller.stopIntake());
-    // // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
+    // //
+    // controller.povDown().onFalse(shooter.stopShooter().onlyIf(controller.rightTrigger().and(controller.povDown()).negate()));
     // controller.povDown().and(controller.rightTrigger().negate()).onTrue(topoff());
     // controller
     //     .povDown()
