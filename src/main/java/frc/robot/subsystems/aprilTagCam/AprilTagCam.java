@@ -20,7 +20,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -28,29 +27,24 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-/** Add your docs here. */
 public class AprilTagCam {
 
   AprilTagFieldLayout aprilTagFieldLayout;
 
   private final PhotonCamera cam;
-  private final Consumer<AprilTagHelp> addVisionMeasurement;
+  private final VisionConsumer addVisionMeasurement;
   private final PhotonPoseEstimator photonEstimator;
   private final Transform3d robotToCam;
   private final Supplier<Pose2d> currRobotPose;
   private final Supplier<ChassisSpeeds> currRobotSpeed;
   private final String ntKey;
-  private boolean isConnected;
 
   private final Alert visionNotConnected;
-
-  Optional<EstimatedRobotPose> optionalEstimPose;
-  private AprilTagHelp helper = new AprilTagHelp(null, 0, null);
 
   public AprilTagCam(
       String name,
       Transform3d robotToCam,
-      Consumer<AprilTagHelp> addVisionMeasurement,
+      VisionConsumer addVisionMeasurement,
       Supplier<Pose2d> currRobotPose,
       Supplier<ChassisSpeeds> currRobotSpeed) {
 
@@ -74,7 +68,7 @@ public class AprilTagCam {
 
     photonEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, robotToCam);
 
-    ntKey = "/Vision/" + name + "/";
+    ntKey = "Vision/" + name + "/";
   }
 
   /**
@@ -82,7 +76,7 @@ public class AprilTagCam {
    * NOTE: also updates the connection check for the camera
    */
   public void updatePoseEstim() {
-    isConnected = cam.isConnected();
+    boolean isConnected = cam.isConnected();
     Pose2d robotPose = currRobotPose.get();
     Pose3d robotPose3d = new Pose3d(robotPose);
     Pose3d cameraPose3d = robotPose3d.plus(robotToCam);
@@ -115,7 +109,8 @@ public class AprilTagCam {
     DogLog.log(ntKey + "Number of Results/", results.size());
 
     for (PhotonPipelineResult targetPose : results) {
-      optionalEstimPose = photonEstimator.estimateCoprocMultiTagPose(targetPose);
+      Optional<EstimatedRobotPose> optionalEstimPose =
+          photonEstimator.estimateCoprocMultiTagPose(targetPose);
 
       if (optionalEstimPose.isEmpty()) {
         optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(targetPose);
@@ -133,13 +128,12 @@ public class AprilTagCam {
       Pose2d pos = estimPose3d.toPose2d(); // yay :0 im so happy
       double timestamp = Utils.fpgaToCurrentTime(targetPose.getTimestampSeconds());
       Matrix<N3, N1> sd = findSD(optionalEstimPose, optionalEstimPose.get().targetsUsed);
-      helper.update(pos, timestamp, sd);
 
       DogLog.log(ntKey + "Accepted Pose/", pos);
       DogLog.log(ntKey + "Accepted Time Stamp/", timestamp);
       DogLog.log(ntKey + "Accepted Stdev/", getSDArray(sd));
 
-      addVisionMeasurement.accept(helper);
+      addVisionMeasurement.accept(pos, timestamp, sd);
     }
 
     DogLog.log(ntKey + "April Tag Cam Connected/", isConnected);
@@ -291,5 +285,13 @@ public class AprilTagCam {
         return estStdDevs;
       }
     }
+  }
+
+  @FunctionalInterface
+  public static interface VisionConsumer {
+    public void accept(
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs);
   }
 }
