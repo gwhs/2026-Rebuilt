@@ -392,7 +392,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     RobotModeTriggers.disabled().onTrue(disableHandler());
-    controller.start().onTrue(Commands.runOnce(()->drivetrain.seedFieldCentric()));
+    controller.start().onTrue(Commands.runOnce(() -> drivetrain.seedFieldCentric()));
     controller.leftBumper().onTrue(drivetrain.setRotationCommand(RotationTarget.NORMAL));
     // drivetrain.isOnBump.whileTrue(drivetrain.temporarilyDisableRotation());
 
