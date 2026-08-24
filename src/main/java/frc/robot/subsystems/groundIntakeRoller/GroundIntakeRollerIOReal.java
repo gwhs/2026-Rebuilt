@@ -48,7 +48,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   public GroundIntakeRollerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
 
-    motor1 = new TalonFX(GroundIntakeRollerConstants.MOTOR_1_ID, rioCanbus);
+    motor1 = new TalonFX(GroundIntakeRollerConstants.MOTOR_1_ID, canivoreCanbus);
     motor2 = new TalonFX(GroundIntakeRollerConstants.MOTOR_2_ID, rioCanbus);
 
     motor1Voltage = motor1.getMotorVoltage();
@@ -108,7 +108,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
   public void runVoltage(double voltage) {
     motor1.setVoltage(voltage);
-    motor2.setControl(controlRequest);
+    motor2.setVoltage(-voltage);
   }
 
   public void periodic() {
