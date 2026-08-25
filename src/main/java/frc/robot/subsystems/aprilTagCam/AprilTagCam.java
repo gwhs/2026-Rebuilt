@@ -42,8 +42,6 @@ public class AprilTagCam {
   private final String ntKey;
   private final Alert visionNotConnected;
 
-  private AprilTagHelp helper = new AprilTagHelp(null, 0, null);
-
   public AprilTagCam(
       String name,
       Transform3d robotToCam,
@@ -130,8 +128,7 @@ public class AprilTagCam {
       Pose2d pos = estimPose3d.toPose2d(); // yay :0 im so happy
       double timestamp = Utils.fpgaToCurrentTime(targetPose.getTimestampSeconds());
       Matrix<N3, N1> sd = findSD(optionalEstimPose, optionalEstimPose.get().targetsUsed);
-      helper.update(pos, timestamp, sd);
-
+      
       DogLog.log(ntKey + "Accepted Pose/", pos);
       DogLog.log(ntKey + "Accepted Time Stamp/", timestamp);
       DogLog.log(ntKey + "Accepted Stdev/", getSDArray(sd));
