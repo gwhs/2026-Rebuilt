@@ -20,7 +20,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -110,7 +109,8 @@ public class AprilTagCam {
     DogLog.log(ntKey + "Number of Results/", results.size());
 
     for (PhotonPipelineResult targetPose : results) {
-      Optional<EstimatedRobotPose> optionalEstimPose = photonEstimator.estimateCoprocMultiTagPose(targetPose);
+      Optional<EstimatedRobotPose> optionalEstimPose =
+          photonEstimator.estimateCoprocMultiTagPose(targetPose);
 
       if (optionalEstimPose.isEmpty()) {
         optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(targetPose);
@@ -128,7 +128,7 @@ public class AprilTagCam {
       Pose2d pos = estimPose3d.toPose2d(); // yay :0 im so happy
       double timestamp = Utils.fpgaToCurrentTime(targetPose.getTimestampSeconds());
       Matrix<N3, N1> sd = findSD(optionalEstimPose, optionalEstimPose.get().targetsUsed);
-      
+
       DogLog.log(ntKey + "Accepted Pose/", pos);
       DogLog.log(ntKey + "Accepted Time Stamp/", timestamp);
       DogLog.log(ntKey + "Accepted Stdev/", getSDArray(sd));
