@@ -699,8 +699,18 @@ public class RobotContainer {
         .withName("Deploy Ground Intake");
   }
 
+   public Command deployBlocker() {
+    return Commands.parallel(
+            groundIntakeRoller.reverseIntake(),
+            groundIntakeExtension.retract(),
+            blocker.deploy(),
+            drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
+        .withName("Deploy Blocker");
+  }
+
   public Command deployDirectionalGroundIntake() {
     return Commands.parallel(
+            blocker.retract(),
             groundIntakeRoller.startIntake(),
             groundIntakeExtension.extend(),
             drivetrain.setRotationCommand(RotationTarget.DIRECTION))
