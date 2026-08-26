@@ -700,17 +700,19 @@ public class RobotContainer {
   }
 
    public Command deployBlocker() {
-    return Commands.parallel(
-            groundIntakeRoller.reverseIntake(),
+    return Commands.sequence(
+            groundIntakeRoller.stopIntake(),
             groundIntakeExtension.retract(),
+            Commands.waitSeconds(1),
             blocker.deploy(),
             drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
         .withName("Deploy Blocker");
   }
 
   public Command deployDirectionalGroundIntake() {
-    return Commands.parallel(
+    return Commands.sequence(
             blocker.retract(),
+            Commands.waitSeconds(1),
             groundIntakeRoller.startIntake(),
             groundIntakeExtension.extend(),
             drivetrain.setRotationCommand(RotationTarget.DIRECTION))
