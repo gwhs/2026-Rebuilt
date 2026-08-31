@@ -317,7 +317,7 @@ public class RobotContainer {
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
             GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        blocker = BlockerSubsystem.createDisabled();
+        blocker = BlockerSubsystem.createBigBird(rioCanbus, canivoreCanbus, signalList);
 
         backRightCam =
             new AprilTagCam(
