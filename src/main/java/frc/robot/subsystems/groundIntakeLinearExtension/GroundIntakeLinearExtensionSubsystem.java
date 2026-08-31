@@ -39,13 +39,12 @@ public class GroundIntakeLinearExtensionSubsystem extends SubsystemBase {
 
   public Command extend() {
     return Commands.sequence(
-            this.runOnce(
-                () -> {
-                  groundIntakeLinearExtensionIO.runPosition(
-                      GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
-                }),
-            Commands.waitSeconds(2))
-        .finallyDo(() -> groundIntakeLinearExtensionIO.runVoltage(1));
+        this.runOnce(
+            () -> {
+              groundIntakeLinearExtensionIO.runPosition(
+                  GroundIntakeLinearExtensionConstants.EXTENSION_ROTATION);
+            }),
+        Commands.waitSeconds(2));
   }
 
   public Command extend2() {

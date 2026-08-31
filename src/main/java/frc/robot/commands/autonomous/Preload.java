@@ -20,7 +20,7 @@ public class Preload extends SequentialCommandGroup {
       Pose2d startingPose = new Pose2d(3.51, 4.03, new Rotation2d(0));
 
       addCommands(
-          AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
+          AutoBuilder.resetOdom(startingPose),
           Commands.waitSeconds(5)
               .deadlineFor(
                   indexer.index(),
