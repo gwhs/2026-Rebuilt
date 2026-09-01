@@ -24,5 +24,6 @@ public class BlockerIORealBigBird implements BlockerIO {
 
   public void periodic() {
     DogLog.log("Blocker/Servo 1 Angle", servo1.getAngle());
+    DogLog.log("Blocker Running", servo1.getChannel());
   }
 }
