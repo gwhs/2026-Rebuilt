@@ -430,7 +430,7 @@ public class RobotContainer {
 
     controller.x().whileTrue(defenseMode());
 
-    controller.y().onTrue(blocker.deploy());
+    controller.y().onTrue(deployBlocker());
 
     drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
