@@ -248,7 +248,7 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createReal(canivoreCanbus, rioCanbus, signalList);
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
-        blocker = BlockerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        blocker = BlockerSubsystem.createBigBird(rioCanbus, canivoreCanbus, signalList);
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
