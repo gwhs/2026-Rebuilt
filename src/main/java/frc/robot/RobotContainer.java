@@ -699,7 +699,7 @@ public class RobotContainer {
         .withName("Deploy Ground Intake");
   }
 
-   public Command deployBlocker() {
+  public Command deployBlocker() {
     return Commands.sequence(
             groundIntakeRoller.stopIntake(),
             groundIntakeExtension.retract(),
