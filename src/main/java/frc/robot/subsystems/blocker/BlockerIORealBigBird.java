@@ -20,6 +20,7 @@ public class BlockerIORealBigBird implements BlockerIO {
 
   public void runPosition(double angle) {
     servo1.setAngle(angle);
+    DogLog.log("Blocker Angle", servo1.getAngle());
   }
 
   public void periodic() {
