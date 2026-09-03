@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.HubTracker.Shift;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.autonomous.DelayAuto;
 import frc.robot.commands.autonomous.DepotPathAuto_1c;
 import frc.robot.commands.autonomous.NeutralAutos;
 import frc.robot.commands.autonomous.NeutralAutos.Routine;
@@ -509,7 +510,8 @@ public class RobotContainer {
         "4 Poofs 2nd pick Depot", new NeutralAutos(false, Routine.BUMP, true, true, 4.0));
     autoChooser.addOption(
         "4 Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true, 4.0));
-
+    autoChooser.addOption(
+        "Super Intake Delay", new DelayAuto(groundIntakeExtension, groundIntakeRoller));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
