@@ -44,7 +44,6 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   private final Alert motor2NotConnectedAlert =
       new Alert("Ground Intake Roller Motor 2 Not Connected ", AlertType.kError);
 
-      
   @SuppressWarnings("resource")
   public GroundIntakeRollerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
