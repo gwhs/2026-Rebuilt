@@ -40,6 +40,10 @@ public class AprilTagCam {
   private final Supplier<ChassisSpeeds> currRobotSpeed;
   private final String ntKey;
   private final Alert visionNotConnected;
+  private Pose3d[] estimPoseArray = new Pose3d[1];
+  private Pose3d[] pose3dEmpty = new Pose3d[0];
+  private Pose2d[] acceptedPoseArray = new Pose2d[1];
+  private Pose2d[] acceptedPoseArrayEmpty = new Pose2d[0];
 
   public AprilTagCam(
       String name,
@@ -81,9 +85,12 @@ public class AprilTagCam {
     Pose3d robotPose3d = new Pose3d(robotPose);
     Pose3d cameraPose3d = robotPose3d.plus(robotToCam);
     DogLog.log(ntKey + "Camera Pose/", cameraPose3d);
+    DogLog.log(ntKey + "Rejected Pose", pose3dEmpty);
+    DogLog.log(ntKey + "Accepted Pose/", acceptedPoseArrayEmpty);
+    DogLog.log(ntKey + "April Tags Seen/", pose3dEmpty);
 
     // write an if statement that allows to find if the the list is empty or not
-    // getting the unread results target pose
+    // getting the unread results target pose\
     // we need to get the robot pose from the target pose
     // using the update method, in photonPoseEstimator, get an estimated robot pose
     // using this we can get pose3D and turn it into pose2d
@@ -128,8 +135,9 @@ public class AprilTagCam {
       Pose2d pos = estimPose3d.toPose2d(); // yay :0 im so happy
       double timestamp = Utils.fpgaToCurrentTime(targetPose.getTimestampSeconds());
       Matrix<N3, N1> sd = findSD(optionalEstimPose, optionalEstimPose.get().targetsUsed);
+      acceptedPoseArray[0] = pos;
 
-      DogLog.log(ntKey + "Accepted Pose/", pos);
+      DogLog.log(ntKey + "Accepted Pose/", acceptedPoseArray);
       DogLog.log(ntKey + "Accepted Time Stamp/", timestamp);
       DogLog.log(ntKey + "Accepted Stdev/", getSDArray(sd));
 
@@ -161,14 +169,14 @@ public class AprilTagCam {
    */
   public boolean filterResults(
       Pose3d estimPose3d, EstimatedRobotPose optionalEstimPose, ChassisSpeeds speed) {
-
+    estimPoseArray[0] = estimPose3d;
     // If vision's pose estimation is above/below the ground
     double upperZBound = AprilTagCamConstants.Z_TOLERANCE;
     double lowerZBound = -(AprilTagCamConstants.Z_TOLERANCE);
     if (estimPose3d.getZ() > upperZBound
         || estimPose3d.getZ()
             < lowerZBound) { // change if we find out that z starts from camera height
-      DogLog.log(ntKey + "Rejected Pose", estimPose3d);
+      DogLog.log(ntKey + "Rejected Pose", estimPoseArray);
       DogLog.log(ntKey + "Rejected Reason", "out of Z bounds", "Z: " + estimPose3d.getZ());
       return false;
     }
@@ -178,12 +186,12 @@ public class AprilTagCam {
     double upperYBound = AprilTagCamConstants.MAX_Y_VALUE + AprilTagCamConstants.XY_TOLERANCE;
     double lowerXYBound = -(AprilTagCamConstants.XY_TOLERANCE);
     if (estimPose3d.getX() < lowerXYBound || estimPose3d.getY() < lowerXYBound) {
-      DogLog.log(ntKey + "Rejected Pose", estimPose3d);
+      DogLog.log(ntKey + "Rejected Pose", estimPoseArray);
       DogLog.log(ntKey + "Rejected Reason", "Y or X is less than 0");
       return false;
     }
     if (estimPose3d.getX() > upperXBound || estimPose3d.getY() > upperYBound) {
-      DogLog.log(ntKey + "Rejected Pose", estimPose3d);
+      DogLog.log(ntKey + "Rejected Pose", estimPoseArray);
       DogLog.log(
           ntKey + "Rejected Reason",
           "Y or X is out of bounds",
@@ -208,7 +216,7 @@ public class AprilTagCam {
       tagList.add(tagPose);
     }
 
-    DogLog.log(ntKey + "April Tags Seen/", tagList.toArray(new Pose3d[0]));
+    DogLog.log(ntKey + "April Tags Seen/", tagList.toArray(pose3dEmpty));
     if (numOfTags > 0) {
       averageDistance /= numOfTags;
     }
