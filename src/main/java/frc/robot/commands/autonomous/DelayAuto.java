@@ -9,9 +9,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtensionSubsystem;
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
+import frc.robot.subsystems.indexer.IndexerSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class DelayAuto extends SequentialCommandGroup {
   public DelayAuto(
+      ShooterSubsystem shooter,
+      IndexerSubsystem indexer,
       GroundIntakeLinearExtensionSubsystem groundIntakeExtend,
       GroundIntakeRollerSubsystem groundIntakeRoller) {
 
@@ -24,7 +28,12 @@ public class DelayAuto extends SequentialCommandGroup {
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          Commands.waitSeconds(14)
+          Commands.waitSeconds(5)
+              .deadlineFor(
+                  indexer.index(),
+                  shooter.cruiseControl(),
+                  Commands.parallel(shooter.runVoltage(0), indexer.runVoltage(0))),
+          Commands.waitSeconds(9)
               .deadlineFor(groundIntakeExtend.homingCommand().onlyIf(() -> RobotBase.isReal())),
           Commands.parallel(
               AutoBuilder.followPath(path),
