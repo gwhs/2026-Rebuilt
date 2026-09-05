@@ -20,7 +20,7 @@ public class DelayAuto extends SequentialCommandGroup {
       GroundIntakeRollerSubsystem groundIntakeRoller) {
 
     try {
-      PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("D_Start_Bump");
+      PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("Delay_Start_Center");
       // PathPlannerPath another_path = PathPlannerPath.fromChoreoTrajectory("PATH NAME");
 
       Pose2d startingPose =
@@ -28,13 +28,9 @@ public class DelayAuto extends SequentialCommandGroup {
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          Commands.waitSeconds(5)
-              .deadlineFor(
-                  indexer.index(),
-                  shooter.cruiseControl(),
-                  Commands.parallel(shooter.runVoltage(0), indexer.runVoltage(0))),
+          Commands.waitSeconds(5).deadlineFor(indexer.index(), shooter.cruiseControl()),
           Commands.waitSeconds(9)
-              .deadlineFor(groundIntakeExtend.homingCommand().onlyIf(() -> RobotBase.isReal())),
+              .deadlineFor(Commands.parallel(shooter.runVoltage(0), indexer.runVoltage(0))),
           Commands.parallel(
               AutoBuilder.followPath(path),
               Commands.sequence(
