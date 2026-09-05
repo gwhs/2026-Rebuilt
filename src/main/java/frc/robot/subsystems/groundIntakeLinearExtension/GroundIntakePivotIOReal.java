@@ -62,7 +62,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
 
     talonFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 20;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 25;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -86,7 +86,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     talonFXConfig.MotionMagic.MotionMagicCruiseVelocity =
         GroundIntakeLinearExtensionConstants.MAX_VELOCITY;
 
-    talonFXConfig.Slot0.kP = 33;
+    talonFXConfig.Slot0.kP = 50;
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 

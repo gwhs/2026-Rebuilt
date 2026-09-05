@@ -48,7 +48,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   public GroundIntakeRollerIOReal(
       CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
 
-    motor1 = new TalonFX(GroundIntakeRollerConstants.MOTOR_1_ID, canivoreCanbus);
+    motor1 = new TalonFX(GroundIntakeRollerConstants.MOTOR_1_ID, rioCanbus);
     motor2 = new TalonFX(GroundIntakeRollerConstants.MOTOR_2_ID, rioCanbus);
 
     motor1Voltage = motor1.getMotorVoltage();
@@ -61,7 +61,7 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
 
     TalonFXConfiguration talonFXConfig = new TalonFXConfiguration();
 
-    talonFXConfig.CurrentLimits.StatorCurrentLimit = 95;
+    talonFXConfig.CurrentLimits.StatorCurrentLimit = 90;
     talonFXConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -107,8 +107,8 @@ public class GroundIntakeRollerIOReal implements GroundIntakeRollerIO {
   }
 
   public void runVoltage(double voltage) {
-    motor1.setVoltage(voltage);
-    motor2.setVoltage(-voltage);
+    motor1.setVoltage(-voltage);
+    motor2.setVoltage(voltage);
   }
 
   public void periodic() {
