@@ -86,7 +86,7 @@ public class GroundIntakePivotIOReal implements GroundIntakeLinearExtensionIO {
     talonFXConfig.MotionMagic.MotionMagicCruiseVelocity =
         GroundIntakeLinearExtensionConstants.MAX_VELOCITY;
 
-    talonFXConfig.Slot0.kP = 33;
+    talonFXConfig.Slot0.kP = 50;
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
