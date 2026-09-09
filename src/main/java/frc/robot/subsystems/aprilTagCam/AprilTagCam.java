@@ -138,13 +138,13 @@ public class AprilTagCam {
       acceptedPoseArray[0] = pos;
 
       DogLog.log(ntKey + "Accepted Pose", acceptedPoseArray);
-      DogLog.log(ntKey + "Accepted Time Stamp/", timestamp);
-      DogLog.log(ntKey + "Accepted Stdev/", getSDArray(sd));
+      DogLog.log(ntKey + "Accepted Time Stamp", timestamp);
+      DogLog.log(ntKey + "Accepted Stdev", getSDArray(sd));
 
       addVisionMeasurement.accept(pos, timestamp, sd);
     }
 
-    DogLog.log(ntKey + "April Tag Cam Connected/", isConnected);
+    DogLog.log(ntKey + "April Tag Cam Connected", isConnected);
     visionNotConnected.set(!isConnected);
   }
 
