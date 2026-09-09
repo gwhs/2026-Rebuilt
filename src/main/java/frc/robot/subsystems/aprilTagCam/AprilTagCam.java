@@ -84,10 +84,10 @@ public class AprilTagCam {
     Pose2d robotPose = currRobotPose.get();
     Pose3d robotPose3d = new Pose3d(robotPose);
     Pose3d cameraPose3d = robotPose3d.plus(robotToCam);
-    DogLog.log(ntKey + "Camera Pose/", cameraPose3d);
+    DogLog.log(ntKey + "Camera Pose", cameraPose3d);
     DogLog.log(ntKey + "Rejected Pose", pose3dEmpty);
-    DogLog.log(ntKey + "Accepted Pose/", acceptedPoseArrayEmpty);
-    DogLog.log(ntKey + "April Tags Seen/", pose3dEmpty);
+    DogLog.log(ntKey + "Accepted Pose", acceptedPoseArrayEmpty);
+    DogLog.log(ntKey + "April Tags Seen", pose3dEmpty);
 
     // write an if statement that allows to find if the the list is empty or not
     // getting the unread results target pose\
@@ -137,7 +137,7 @@ public class AprilTagCam {
       Matrix<N3, N1> sd = findSD(optionalEstimPose, optionalEstimPose.get().targetsUsed);
       acceptedPoseArray[0] = pos;
 
-      DogLog.log(ntKey + "Accepted Pose/", acceptedPoseArray);
+      DogLog.log(ntKey + "Accepted Pose", acceptedPoseArray);
       DogLog.log(ntKey + "Accepted Time Stamp/", timestamp);
       DogLog.log(ntKey + "Accepted Stdev/", getSDArray(sd));
 
@@ -216,7 +216,7 @@ public class AprilTagCam {
       tagList.add(tagPose);
     }
 
-    DogLog.log(ntKey + "April Tags Seen/", tagList.toArray(pose3dEmpty));
+    DogLog.log(ntKey + "April Tags Seen", tagList.toArray(pose3dEmpty));
     if (numOfTags > 0) {
       averageDistance /= numOfTags;
     }
