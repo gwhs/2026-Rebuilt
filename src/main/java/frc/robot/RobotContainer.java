@@ -430,14 +430,14 @@ public class RobotContainer {
 
     controller.x().whileTrue(defenseMode());
 
-    controller.y().onTrue(deployBlocker());
+    controller.rightBumper().onTrue(deployBlocker());
 
     drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
-    controller
-        .rightBumper()
-        .onTrue(drivetrain.setSlowMode(true))
-        .onFalse(drivetrain.setSlowMode(false));
+//    controller
+//        .rightBumper()
+//        .onTrue(drivetrain.setSlowMode(true))
+//        .onFalse(drivetrain.setSlowMode(false));
 
     controller.povDown().and(RobotModeTriggers.disabled().negate()).whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
