@@ -222,12 +222,12 @@ public class AprilTagCam {
       averageDistance /= numOfTags;
     }
     if (numOfTags == 1 && averageDistance > AprilTagCamConstants.SINGLE_APRILTAG_MAX_DISTANCE) {
-      DogLog.log(ntKey + "Rejected Pose", estimPose3d);
+      DogLog.log(ntKey + "Rejected Pose", estimPoseArray);
       DogLog.log(ntKey + "Rejected Reason", "Too far of distance to april tag");
       return false;
     } else if (numOfTags > 1
         && averageDistance > AprilTagCamConstants.MULTI_APRILTAG_MAX_DISTANCE) {
-      DogLog.log(ntKey + "Rejected Pose", estimPose3d);
+      DogLog.log(ntKey + "Rejected Pose", estimPoseArray);
       DogLog.log(ntKey + "Rejected Reason", "Too far of distance to april tag");
 
       return false;
@@ -240,7 +240,7 @@ public class AprilTagCam {
     double rotation = speed.omegaRadiansPerSecond;
 
     if (vel > AprilTagCamConstants.MAX_VELOCITY || rotation > AprilTagCamConstants.MAX_ROTATION) {
-      DogLog.log(ntKey + "Rejected Pose", estimPose3d);
+      DogLog.log(ntKey + "Rejected Pose", estimPoseArray);
       DogLog.log(ntKey + "Rejected Reason", "Velocity/Rotation is too fast");
       return false;
     }
