@@ -85,6 +85,7 @@ public class AprilTagCam {
     Pose3d robotPose3d = new Pose3d(robotPose);
     Pose3d cameraPose3d = robotPose3d.plus(robotToCam);
     DogLog.log(ntKey + "Camera Pose", cameraPose3d);
+
     DogLog.log(ntKey + "Rejected Pose", pose3dEmpty);
     DogLog.log(ntKey + "Accepted Pose", acceptedPoseArrayEmpty);
     DogLog.log(ntKey + "April Tags Seen", pose3dEmpty);
@@ -113,7 +114,7 @@ public class AprilTagCam {
       results = newResults;
     }
 
-    DogLog.log(ntKey + "Number of Results/", results.size());
+    DogLog.log(ntKey + "Number of Results", results.size());
 
     for (PhotonPipelineResult targetPose : results) {
       Optional<EstimatedRobotPose> optionalEstimPose =
@@ -216,7 +217,7 @@ public class AprilTagCam {
       tagList.add(tagPose);
     }
 
-    DogLog.log(ntKey + "April Tags Seen", tagList.toArray(pose3dEmpty));
+    DogLog.log(ntKey + "April Tags Seen", tagList.toArray(new Pose3d[tagList.size()]));
     if (numOfTags > 0) {
       averageDistance /= numOfTags;
     }
