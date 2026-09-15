@@ -435,10 +435,10 @@ public class RobotContainer {
 
     drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
-//    controller
-//        .rightBumper()
-//        .onTrue(drivetrain.setSlowMode(true))
-//        .onFalse(drivetrain.setSlowMode(false));
+    //    controller
+    //        .rightBumper()
+    //        .onTrue(drivetrain.setSlowMode(true))
+    //        .onFalse(drivetrain.setSlowMode(false));
 
     controller.povDown().and(RobotModeTriggers.disabled().negate()).whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
@@ -691,8 +691,10 @@ public class RobotContainer {
   }
 
   public Command deployGroundIntake() {
-    return Commands.parallel(
+    return Commands.sequence(
             groundIntakeRoller.startIntake(),
+            blocker.retract(),
+            Commands.waitSeconds(1),
             groundIntakeExtension.extend(),
             drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
         .withName("Deploy Ground Intake");
@@ -704,7 +706,7 @@ public class RobotContainer {
             groundIntakeExtension.retract(),
             Commands.waitSeconds(1),
             blocker.deploy(),
-            drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
+            drivetrain.setRotationCommand(RotationTarget.NORMAL))
         .withName("Deploy Blocker");
   }
 
