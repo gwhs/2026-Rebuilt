@@ -118,21 +118,14 @@ public class ObjectDetectionCam {
 
       // Calculate the target's position in the field
       Pose3d targetPose;
-      if (RobotBase.isSimulation()) {
-        double targetYaw = -targets.getYaw();
-        double targetPitch = targets.getPitch();
-        Translation2d targetLocationToCamera = this.getCameraToTarget(targetYaw, targetPitch);
-        Transform2d cameraToTargetTransform2d =
-            new Transform2d(targetLocationToCamera, new Rotation2d());
-        targetPose = new Pose3d(cameraPose3d.toPose2d().plus(cameraToTargetTransform2d.inverse()));
-      } else {
-        double targetYaw = -targets.getYaw();
-        double targetPitch = targets.getPitch();
-        Translation2d targetLocationToCamera = this.getCameraToTarget(targetYaw, targetPitch);
-        Transform2d cameraToTargetTransform2d =
-            new Transform2d(targetLocationToCamera, new Rotation2d());
-        targetPose = new Pose3d(cameraPose3d.toPose2d().plus(cameraToTargetTransform2d.inverse()));
-      }
+
+      double targetYaw = -targets.getYaw();
+      double targetPitch = targets.getPitch();
+      Translation2d targetLocationToCamera = this.getCameraToTarget(targetYaw, targetPitch);
+      Transform2d cameraToTargetTransform2d =
+          new Transform2d(targetLocationToCamera, new Rotation2d());
+      targetPose = new Pose3d(cameraPose3d.toPose2d().plus(cameraToTargetTransform2d.inverse()));
+
       if (filterResults(targetPose)) {
         GamePieceTracker.addTarget(result.getTimestampSeconds(), targetPose.toPose2d());
         targetPoses.add(targetPose);
