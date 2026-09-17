@@ -194,7 +194,7 @@ public class RobotContainer {
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
             GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        blocker = BlockerSubsystem.createDisabled();
+        blocker = BlockerSubsystem.createBigBird(rioCanbus, canivoreCanbus, signalList);
 
         backRightCam =
             new AprilTagCam(
@@ -249,7 +249,7 @@ public class RobotContainer {
         indexer = IndexerSubsystem.createReal(canivoreCanbus, rioCanbus, signalList);
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createDisabled();
-        blocker = BlockerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
+        blocker = BlockerSubsystem.createBigBird(rioCanbus, canivoreCanbus, signalList);
         break;
       case DEV:
         drivetrain = TunerConstants_mk4n.createDrivetrain();
@@ -318,7 +318,7 @@ public class RobotContainer {
             GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeExtension =
             GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-        blocker = BlockerSubsystem.createDisabled();
+        blocker = BlockerSubsystem.createBigBird(rioCanbus, canivoreCanbus, signalList);
 
         backRightCam =
             new AprilTagCam(
@@ -431,14 +431,14 @@ public class RobotContainer {
 
     controller.x().whileTrue(defenseMode());
 
-    controller.y().onTrue(blocker.deploy());
+    controller.rightBumper().onTrue(deployBlocker());
 
     drivetrain.isInAllianceZone.onTrue(shooter.preSpin());
 
-    controller
-        .rightBumper()
-        .onTrue(drivetrain.setSlowMode(true))
-        .onFalse(drivetrain.setSlowMode(false));
+    //    controller
+    //        .rightBumper()
+    //        .onTrue(drivetrain.setSlowMode(true))
+    //        .onFalse(drivetrain.setSlowMode(false));
 
     controller.povDown().and(RobotModeTriggers.disabled().negate()).whileTrue(deployGroundIntake());
     controller.povDown().onFalse(groundIntakeRoller.stopIntake());
@@ -691,15 +691,29 @@ public class RobotContainer {
   }
 
   public Command deployGroundIntake() {
-    return Commands.parallel(
+    return Commands.sequence(
             groundIntakeRoller.startIntake(),
+            blocker.retract(),
+            Commands.waitSeconds(1),
             groundIntakeExtension.extend(),
             drivetrain.temporarilyDisableRotation().onlyWhile(controller.rightTrigger().negate()))
         .withName("Deploy Ground Intake");
   }
 
+  public Command deployBlocker() {
+    return Commands.sequence(
+            groundIntakeRoller.stopIntake(),
+            groundIntakeExtension.retract(),
+            Commands.waitSeconds(1),
+            blocker.deploy(),
+            drivetrain.setRotationCommand(RotationTarget.NORMAL))
+        .withName("Deploy Blocker");
+  }
+
   public Command deployDirectionalGroundIntake() {
-    return Commands.parallel(
+    return Commands.sequence(
+            blocker.retract(),
+            Commands.waitSeconds(1),
             groundIntakeRoller.startIntake(),
             groundIntakeExtension.extend(),
             drivetrain.setRotationCommand(RotationTarget.DIRECTION))

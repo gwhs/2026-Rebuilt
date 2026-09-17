@@ -27,6 +27,11 @@ public class BlockerSubsystem extends SubsystemBase {
     return new BlockerSubsystem(new BlockerIOReal(rioCanbus, canivoreCanbus, signal));
   }
 
+  public static BlockerSubsystem createBigBird(
+      CANBus rioCanbus, CANBus canivoreCanbus, StatusSignalCollection signal) {
+    return new BlockerSubsystem(new BlockerIORealBigBird());
+  }
+
   /** Creates a new blocker. */
   public BlockerSubsystem(BlockerIO blockerIO) {
     this.blockerIO = blockerIO;
