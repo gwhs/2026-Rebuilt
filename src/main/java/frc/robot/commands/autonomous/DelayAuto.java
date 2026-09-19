@@ -28,7 +28,7 @@ public class DelayAuto extends SequentialCommandGroup {
 
       addCommands(
           AutoBuilder.resetOdom(startingPose).onlyIf(() -> RobotBase.isSimulation()),
-          Commands.waitSeconds(5).deadlineFor(indexer.index(), shooter.cruiseControl()),
+          Commands.waitSeconds(5).deadlineFor(indexer.index(), shooter.runVelocity(45, 42)),
           Commands.waitSeconds(9)
               .deadlineFor(Commands.parallel(shooter.runVoltage(0), indexer.runVoltage(0))),
           Commands.parallel(
