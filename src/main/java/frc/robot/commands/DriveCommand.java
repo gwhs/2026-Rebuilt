@@ -40,8 +40,8 @@ public class DriveCommand extends Command {
   private final SlewRateLimiter xVelocityLimiter;
   private final SlewRateLimiter yVelocityLimiter;
 
-  private final double maxSpeed = 3.9;
-  private final double maxAngularSpeed = 2.2 * Math.PI;
+  private final double maxSpeed = 4.25;
+  private final double maxAngularSpeed = 3.5 * Math.PI;
 
   private final double deadband = 0.06;
 
