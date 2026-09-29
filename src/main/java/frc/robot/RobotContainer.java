@@ -59,7 +59,7 @@ public class RobotContainer {
     SIM
   }
 
-  private final SwerveSubsystem drivetrain;
+  private final SwerveSubsystem drivetrain = TunerConstants_mk5n.createDrivetrain();;
   public static final CommandXboxController controller = new CommandXboxController(0);
 
   private final DriveCommand defualtDriveCommand;
@@ -97,7 +97,7 @@ public class RobotContainer {
 
   private final StatusSignalCollection signalList = new StatusSignalCollection();
 
-  private final ShooterSubsystem shooter;
+  private final ShooterSubsystem shooter = new ShooterSubsystem(rioCanbus);
   private final GroundIntakeRollerSubsystem groundIntakeRoller;
   private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension;
   private final ClimberSubsystem climber;
@@ -179,15 +179,6 @@ public class RobotContainer {
 
     switch (getRobot()) {
       case COMP:
-        drivetrain = TunerConstants_mk5n.createDrivetrain();
-        shooter =
-            ShooterSubsystem.createReal(
-                rioCanbus,
-                canivoreCanbus,
-                signalList,
-                drivetrain.poseSupplier(),
-                drivetrain::getVirtualTarget);
-
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
@@ -226,10 +217,6 @@ public class RobotContainer {
                 () -> drivetrain.getCachedState().Speeds);
         break;
       case ANEMONE:
-        drivetrain = TunerConstants_Anemone.createDrivetrain();
-        shooter =
-            ShooterSubsystem.createDisabled(
-                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -237,14 +224,6 @@ public class RobotContainer {
         blocker = BlockerSubsystem.createDisabled();
         break;
       case KITBOT:
-        drivetrain = TunerConstants_Mk4i.createDrivetrain();
-        shooter =
-            ShooterSubsystem.createKitbot(
-                rioCanbus,
-                canivoreCanbus,
-                signalList,
-                drivetrain.poseSupplier(),
-                drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(canivoreCanbus, rioCanbus, signalList);
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -252,10 +231,6 @@ public class RobotContainer {
         blocker = BlockerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         break;
       case DEV:
-        drivetrain = TunerConstants_mk4n.createDrivetrain();
-        shooter =
-            ShooterSubsystem.createDisabled(
-                drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createDisabled();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createDisabled();
@@ -263,9 +238,6 @@ public class RobotContainer {
         blocker = BlockerSubsystem.createDisabled();
         break;
       case SIM:
-        drivetrain = TunerConstants_mk5n.createDrivetrain();
-        shooter =
-            ShooterSubsystem.createSim(drivetrain.poseSupplier(), drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createSim();
         indexer = IndexerSubsystem.createSim();
         groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
@@ -305,13 +277,6 @@ public class RobotContainer {
         break;
       default:
         drivetrain = TunerConstants_mk5n.createDrivetrain();
-        shooter =
-            ShooterSubsystem.createReal(
-                rioCanbus,
-                canivoreCanbus,
-                signalList,
-                drivetrain.poseSupplier(),
-                drivetrain::getVirtualTarget);
         climber = ClimberSubsystem.createDisabled();
         indexer = IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
         groundIntakeRoller =
