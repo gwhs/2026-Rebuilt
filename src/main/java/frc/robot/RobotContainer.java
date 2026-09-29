@@ -33,7 +33,7 @@ public class RobotContainer {
   private final SwerveSubsystem drivetrain = TunerConstants_mk5n.createDrivetrain();
   private final GroundIntakeRollerSubsystem groundIntakeRoller =
       GroundIntakeRollerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
-  private final GroundIntakeLinearExtensionSubsystem groundIntakeExtension =
+  private final GroundIntakeLinearExtensionSubsystem groundIntakePivot =
       GroundIntakeLinearExtensionSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
   private final IndexerSubsystem indexer =
       IndexerSubsystem.createReal(rioCanbus, canivoreCanbus, signalList);
@@ -49,7 +49,7 @@ public class RobotContainer {
 
   private final DriveCommand defualtDriveCommand = new DriveCommand(drivetrain, controller);
 
-  private final RobotVisualizer robotVisualizer = new RobotVisualizer(groundIntakeExtension);
+  private final RobotVisualizer robotVisualizer = new RobotVisualizer(groundIntakePivot);
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
@@ -108,7 +108,7 @@ public class RobotContainer {
                     drivetrain.setSlowMode(false),
                     shooter.stopShooter(),
                     indexer.runVoltage(0),
-                    groundIntakeExtension.retractFull(),
+                    groundIntakePivot.retractFull(),
                     groundIntakeRoller.stopIntake())
                 .withName("Warm Up Command")
                 .ignoringDisable(true));
