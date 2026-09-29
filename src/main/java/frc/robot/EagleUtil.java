@@ -6,11 +6,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.HubTracker.Shift;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class EagleUtil {
@@ -197,5 +200,55 @@ public class EagleUtil {
 
   public static Pose2d getClimbPose(Pose2d robotPose) {
     return robotPose.nearest(FieldConstants.CLIMBPOSE);
+  }
+
+  public static boolean isHubActive() {
+    Shift currentShift = HubTracker.getCurrentShift().orElse(Shift.SHIFT_1);
+    double timeRemaining =
+        HubTracker.timeRemainingInCurrentShift()
+            .orElse(Time.ofBaseUnits(0, Units.Second))
+            .in(Units.Seconds);
+    DogLog.log("Hub Status/Time Remaining in Shift", timeRemaining);
+    DogLog.log("Hub Status/Current Shift", currentShift.name());
+
+    double upperThreshold = 3;
+    double lowerThreshold = 24;
+
+    if (HubTracker.getAutoWinner().orElse(Alliance.Red) == Alliance.Red) {
+      // Red Win
+      if (EagleUtil.isRedAlliance()) {
+        // as Red Team (win)
+        if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
+          return timeRemaining >= lowerThreshold
+              || timeRemaining <= upperThreshold
+              || HubTracker.isActive();
+        }
+      } else {
+        // as Blue Team (loss)
+        if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
+          return timeRemaining >= lowerThreshold
+              || timeRemaining <= upperThreshold
+              || HubTracker.isActive();
+        }
+      }
+    } else {
+      // Blue Win
+      if (!EagleUtil.isRedAlliance()) {
+        // as Blue Team (win)
+        if (currentShift == Shift.SHIFT_1 || currentShift == Shift.SHIFT_3) {
+          return timeRemaining >= lowerThreshold
+              || timeRemaining <= upperThreshold
+              || HubTracker.isActive();
+        }
+      } else {
+        // as Red Team (loss)
+        if (currentShift == Shift.SHIFT_2 || currentShift == Shift.SHIFT_4) {
+          return timeRemaining >= lowerThreshold
+              || timeRemaining <= upperThreshold
+              || HubTracker.isActive();
+        }
+      }
+    }
+    return HubTracker.isActive();
   }
 }
