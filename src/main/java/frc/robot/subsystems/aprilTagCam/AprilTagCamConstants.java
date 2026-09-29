@@ -55,7 +55,7 @@ public class AprilTagCamConstants {
   public static final double XY_TOLERANCE = 0.3;
   public static final double MAX_X_VALUE = 17.6;
   public static final double MAX_Y_VALUE = 8.05;
-  public static final double SINGLE_APRILTAG_MAX_DISTANCE = 3.0;
+  public static final double SINGLE_APRILTAG_MAX_DISTANCE = 4.0;
   public static final double MULTI_APRILTAG_MAX_DISTANCE = 7.0;
   public static final double MAX_VELOCITY = 4;
   public static final double MAX_ROTATION = Math.PI;
