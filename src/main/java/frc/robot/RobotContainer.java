@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
+import com.ctre.phoenix6.swerve.jni.SwerveJNI.ControlParams;
 import com.ctre.phoenix6.StatusSignalCollection;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLog;
@@ -126,16 +127,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controller.rightTrigger().onTrue(shooter.runVelocity(45).alongWith(indexer.index()));
-    controller
-        .rightTrigger()
-        .onTrue(
-            Commands.sequence(
+    controller.rightTrigger().onTrue(shooter.runVelocity(45).alongWith(indexer.index()).alongWith(Commands.sequence(
                     Commands.waitSeconds(1),
                     groundIntakePivot.extend(),
                     Commands.waitSeconds(1),
                     groundIntakePivot.retract())
-                .repeatedly());
+                .repeatedly()));
     controller
         .rightTrigger()
         .onFalse(
@@ -146,7 +143,22 @@ public class RobotContainer {
     controller
         .leftTrigger()
         .onTrue(groundIntakePivot.extend().alongWith(groundIntakeRoller.startIntake()));
+    controller
+        .leftTrigger()
+        .onFalse(groundIntakePivot.retract().alongWith(groundIntakeRoller.stopIntake()));
     controller.a().onTrue(groundIntakePivot.retractFull());
+    controller.rightTrigger().and(controller.leftTrigger().negate()).whileTrue(shooter.runVoltage(1).alongWith(Commands.sequence(
+                    Commands.waitSeconds(1),
+                    groundIntakePivot.extend(),
+                    Commands.waitSeconds(1),
+                    groundIntakePivot.retract())
+                .repeatedly()));
+    controller.rightTrigger().and(controller.leftTrigger()).whileTrue(shooter.runVoltage(1).alongWith(Commands.sequence(
+                    Commands.waitSeconds(1),
+                    groundIntakePivot.extend(),
+                    Commands.waitSeconds(1),
+                    groundIntakePivot.retract())
+                .repeatedly()).alongWith(groundIntakeRoller.startIntake()));
   }
 
   public Command getAutonomousCommand() {
