@@ -69,11 +69,11 @@ public class BlockerIOReal implements BlockerIO {
 
     talonFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    talonFXConfig.Slot0.kS = 0; // TODO
+    talonFXConfig.Slot0.kS = 0;
     talonFXConfig.Slot0.kG = 0;
     talonFXConfig.Slot0.kA = 0;
-    talonFXConfig.Slot0.kV = 0.11; // TODO
-    talonFXConfig.Slot0.kP = 2; // TODO
+    talonFXConfig.Slot0.kV = 0.11;
+    talonFXConfig.Slot0.kP = 2;
     talonFXConfig.Slot0.kI = 0;
     talonFXConfig.Slot0.kD = 0;
 
