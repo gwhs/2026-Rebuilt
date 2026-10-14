@@ -126,20 +126,17 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controller.rightTrigger().onTrue(
-    Commands.parallel(
-    shooter.runVelocity(45),
-    indexer.index()
-    ));
-    controller.rightTrigger().onTrue(
-    Commands.sequence(
-    groundIntakePivot.extend(),
-    Commands.waitSeconds(0.05),
-    groundIntakePivot.retract(),
-    Commands.waitSeconds(0.05)    
-    ).repeatedly());
-
-    
+    controller.rightTrigger().onTrue(Commands.parallel(shooter.runVelocity(45), indexer.index()));
+    controller.rightTrigger().onFalse(Commands.parallel(shooter.runVelocity(0), indexer.runVoltage(0)));
+    controller
+        .rightTrigger()
+        .whileTrue(
+            Commands.sequence(
+                    groundIntakePivot.extend(),
+                    Commands.waitSeconds(0.05),
+                    groundIntakePivot.retract(),
+                    Commands.waitSeconds(0.05))
+                .repeatedly());
   }
 
   public Command getAutonomousCommand() {
@@ -150,7 +147,6 @@ public class RobotContainer {
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
-  
   public void periodic() {
     backRightCam.updatePoseEstim();
     backLeftCam.updatePoseEstim();
