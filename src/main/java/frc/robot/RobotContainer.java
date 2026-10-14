@@ -125,7 +125,23 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    controller.rightTrigger().onTrue(
+    Commands.parallel(
+    shooter.runVelocity(45),
+    indexer.index()
+    ));
+    controller.rightTrigger().onTrue(
+    Commands.sequence(
+    groundIntakePivot.extend(),
+    Commands.waitSeconds(0.05),
+    groundIntakePivot.retract(),
+    Commands.waitSeconds(0.05);
+    ).repeatedly()
+    )
+
+    
+  }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
@@ -135,6 +151,7 @@ public class RobotContainer {
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
+  
   public void periodic() {
     backRightCam.updatePoseEstim();
     backLeftCam.updatePoseEstim();
