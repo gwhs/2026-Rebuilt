@@ -127,29 +127,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controller.rightTrigger().onTrue(shooter.runVelocity(45).alongWith(indexer.index()).alongWith(Commands.sequence(
-                    Commands.waitSeconds(1),
-                    groundIntakePivot.extend(),
-                    Commands.waitSeconds(1),
-                    groundIntakePivot.retract())
-                .repeatedly()));
-    controller
-        .rightTrigger()
-        .onFalse(
-          shooter.runVoltage(0)
-                .alongWith(indexer.runVoltage(0))
-                .alongWith(groundIntakePivot.retractFull()));
-    controller
-        .leftTrigger()
-        .whileTrue(groundIntakePivot.extend().alongWith(groundIntakeRoller.startIntake()));
-    controller.a().onTrue(groundIntakePivot.retractFull());
-    controller.rightTrigger().and(controller.leftTrigger().negate()).whileTrue(shooter.runVoltage(10).alongWith(Commands.sequence(
-                    Commands.waitSeconds(1),
-                    groundIntakePivot.extend(),
-                    Commands.waitSeconds(1),
-                    groundIntakePivot.retract())
-                .repeatedly()));
-    controller.rightTrigger().and(controller.leftTrigger()).whileTrue(shooter.runVoltage(10).alongWith(groundIntakePivot.extend()).alongWith(groundIntakeRoller.startIntake()));
+    controller.rightTrigger().onTrue(rightTriggerCOMP());
+    controller.rightTrigger().onFalse(rightTriggerFalseCOMP());
+    controller.leftTrigger().whileTrue(leftTriggerCOMP());
+    controller.a().onTrue(buttonA());
+    controller.rightTrigger().and(controller.leftTrigger().negate()).whileTrue(RightNLeft());
+    controller.rightTrigger().and(controller.leftTrigger()).whileTrue(LeftARight());
   }
 
   public Command getAutonomousCommand() {
@@ -169,5 +152,55 @@ public class RobotContainer {
     signalList.refreshAll();
 
     robotVisualizer.periodic();
+  }
+
+// COMPOUND COMPISTION
+public Command rightTriggerCOMP() {
+  return Commands.parallel(
+    shooter.runVelocity(45),
+    indexer.index(),
+    Commands.sequence(
+                    Commands.waitSeconds(1),
+                    groundIntakePivot.extend(),
+                    Commands.waitSeconds(1),
+                    groundIntakePivot.retract())
+                .repeatedly()
+  );
+}
+public Command rightTriggerFalseCOMP() {
+  return Commands.parallel(
+    shooter.runVoltage(0),
+    indexer.runVoltage(0),
+    groundIntakePivot.retractFull()
+  );
+}
+public Command leftTriggerCOMP() {
+  return Commands.parallel(
+    groundIntakePivot.extend(),
+    groundIntakeRoller.startIntake()
+  );
+}
+public Command buttonA() {
+  return Commands.parallel(
+    groundIntakePivot.retractFull()
+  );
+}
+public Command RightNLeft() {
+  return Commands.parallel(
+    shooter.runVoltage(10),
+    Commands.sequence(
+                    Commands.waitSeconds(1),
+                    groundIntakePivot.extend(),
+                    Commands.waitSeconds(1),
+                    groundIntakePivot.retract())
+                .repeatedly()
+  );
+}
+public Command LeftARight() {
+  return Commands.parallel(
+    shooter.runVoltage(10),
+    groundIntakePivot.extend(),
+    groundIntakeRoller.startIntake()
+  );
   }
 }
