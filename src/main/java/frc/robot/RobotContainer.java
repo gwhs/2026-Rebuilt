@@ -136,26 +136,20 @@ public class RobotContainer {
     controller
         .rightTrigger()
         .onFalse(
-            shooter
-                .runVelocity(0)
+          shooter.runVoltage(0)
                 .alongWith(indexer.runVoltage(0))
                 .alongWith(groundIntakePivot.retractFull()));
     controller
         .leftTrigger()
         .whileTrue(groundIntakePivot.extend().alongWith(groundIntakeRoller.startIntake()));
     controller.a().onTrue(groundIntakePivot.retractFull());
-    controller.rightTrigger().and(controller.leftTrigger().negate()).whileTrue(shooter.runVoltage(1).alongWith(Commands.sequence(
+    controller.rightTrigger().and(controller.leftTrigger().negate()).whileTrue(shooter.runVoltage(10).alongWith(Commands.sequence(
                     Commands.waitSeconds(1),
                     groundIntakePivot.extend(),
                     Commands.waitSeconds(1),
                     groundIntakePivot.retract())
                 .repeatedly()));
-    controller.rightTrigger().and(controller.leftTrigger()).whileTrue(shooter.runVoltage(1).alongWith(Commands.sequence(
-                    Commands.waitSeconds(1),
-                    groundIntakePivot.extend(),
-                    Commands.waitSeconds(1),
-                    groundIntakePivot.retract())
-                .repeatedly()).alongWith(groundIntakeRoller.startIntake()));
+    controller.rightTrigger().and(controller.leftTrigger()).whileTrue(shooter.runVoltage(10).alongWith(groundIntakePivot.extend()).alongWith(groundIntakeRoller.startIntake()));
   }
 
   public Command getAutonomousCommand() {
