@@ -142,10 +142,7 @@ public class RobotContainer {
                 .alongWith(groundIntakePivot.retractFull()));
     controller
         .leftTrigger()
-        .onTrue(groundIntakePivot.extend().alongWith(groundIntakeRoller.startIntake()));
-    controller
-        .leftTrigger()
-        .onFalse(groundIntakePivot.retract().alongWith(groundIntakeRoller.stopIntake()));
+        .whileTrue(groundIntakePivot.extend().alongWith(groundIntakeRoller.startIntake()));
     controller.a().onTrue(groundIntakePivot.retractFull());
     controller.rightTrigger().and(controller.leftTrigger().negate()).whileTrue(shooter.runVoltage(1).alongWith(Commands.sequence(
                     Commands.waitSeconds(1),
