@@ -127,7 +127,9 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controller.rightTrigger().onTrue(Commands.parallel(shooter.runVelocity(45), indexer.index()));
-    controller.rightTrigger().onFalse(Commands.parallel(shooter.runVelocity(0), indexer.runVoltage(0)));
+    controller
+        .rightTrigger()
+        .onFalse(Commands.parallel(shooter.runVelocity(0), indexer.runVoltage(0)));
     controller
         .rightTrigger()
         .whileTrue(
