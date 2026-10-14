@@ -136,9 +136,8 @@ public class RobotContainer {
     groundIntakePivot.extend(),
     Commands.waitSeconds(0.05),
     groundIntakePivot.retract(),
-    Commands.waitSeconds(0.05);
-    ).repeatedly()
-    )
+    Commands.waitSeconds(0.05)    
+    ).repeatedly());
 
     
   }
