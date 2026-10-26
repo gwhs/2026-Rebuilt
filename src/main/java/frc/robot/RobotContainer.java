@@ -154,7 +154,6 @@ controller.leftTrigger().onFalse(Commands.parallel(groundIntakeRoller.runVoltage
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
-  
   public void periodic() {
     backRightCam.updatePoseEstim();
     backLeftCam.updatePoseEstim();
