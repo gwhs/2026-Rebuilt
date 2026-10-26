@@ -129,18 +129,21 @@ public class RobotContainer {
     controller.rightTrigger().onTrue(
     Commands.parallel(
     shooter.runVelocity(45),
-    indexer.index()
-    ));
+    indexer.index()));
     controller.rightTrigger().onTrue(
     Commands.sequence(
     groundIntakePivot.extend(),
     Commands.waitSeconds(0.05),
     groundIntakePivot.retract(),
-    Commands.waitSeconds(0.05);
-    ).repeatedly()
-    )
+    Commands.waitSeconds(0.05)
+    ).repeatedly());
 
-    
+    controller.leftTrigger().onTrue(
+      Commands.parallel(
+groundIntakePivot.extend(),
+groundIntakeRoller.startIntake()) 
+);
+controller.leftTrigger().onFalse(Commands.parallel(groundIntakeRoller.runVoltage(0), (groundIntakePivot.retract())));
   }
 
   public Command getAutonomousCommand() {
