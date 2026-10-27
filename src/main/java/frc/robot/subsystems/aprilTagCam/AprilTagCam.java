@@ -40,6 +40,7 @@ public class AprilTagCam {
   private final Supplier<ChassisSpeeds> currRobotSpeed;
   private final String ntKey;
   private final Alert visionNotConnected;
+  private ArrayList<Integer> targets = new ArrayList<>();
   private Pose3d[] estimPoseArray = new Pose3d[1];
   private Pose3d[] pose3dEmpty = new Pose3d[0];
   private Pose2d[] acceptedPoseArray = new Pose2d[1];
@@ -73,6 +74,16 @@ public class AprilTagCam {
     photonEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, robotToCam);
 
     ntKey = "Vision/" + name + "/";
+  }
+
+  public void clearTargets() {
+    targets.clear();
+  }
+
+  public void addTargets(Integer[] targetsToAdd) {
+    for (int i = 0; i < targetsToAdd.length; i++) {
+      targets.add(targetsToAdd[i]);
+    }
   }
 
   /**
@@ -116,10 +127,17 @@ public class AprilTagCam {
 
     DogLog.log(ntKey + "Number of Results", results.size());
 
+    targetsLoop:
     for (PhotonPipelineResult targetPose : results) {
+      if (!targetPose.targets.isEmpty()) {
+        for (PhotonTrackedTarget targetPoseID : targetPose.targets) {
+          if (!targets.contains(targetPoseID.fiducialId)) {
+            continue targetsLoop;
+          }
+        }
+      }
       Optional<EstimatedRobotPose> optionalEstimPose =
           photonEstimator.estimateCoprocMultiTagPose(targetPose);
-
       if (optionalEstimPose.isEmpty()) {
         optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(targetPose);
         if (optionalEstimPose.isEmpty()) {
