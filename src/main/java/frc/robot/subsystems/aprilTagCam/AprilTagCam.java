@@ -40,7 +40,7 @@ public class AprilTagCam {
   private final Supplier<ChassisSpeeds> currRobotSpeed;
   private final String ntKey;
   private final Alert visionNotConnected;
-  private ArrayList<Integer> targets = new ArrayList<>();
+  private ArrayList<Integer> targetIDsToTrack = new ArrayList<>();
   private Pose3d[] estimPoseArray = new Pose3d[1];
   private Pose3d[] pose3dEmpty = new Pose3d[0];
   private Pose2d[] acceptedPoseArray = new Pose2d[1];
@@ -77,12 +77,12 @@ public class AprilTagCam {
   }
 
   public void clearTargets() {
-    targets.clear();
+    targetIDsToTrack.clear();
   }
 
   public void addTargets(Integer[] targetsToAdd) {
     for (int i = 0; i < targetsToAdd.length; i++) {
-      targets.add(targetsToAdd[i]);
+      targetIDsToTrack.add(targetsToAdd[i]);
     }
   }
 
@@ -127,19 +127,24 @@ public class AprilTagCam {
 
     DogLog.log(ntKey + "Number of Results", results.size());
 
-    targetsLoop:
     for (PhotonPipelineResult targetPose : results) {
-      if (!targetPose.targets.isEmpty()) {
-        for (PhotonTrackedTarget targetPoseID : targetPose.targets) {
-          if (!targets.contains(targetPoseID.fiducialId)) {
-            continue targetsLoop;
+      ArrayList<PhotonTrackedTarget> filteredTargets = new ArrayList<>();
+      if (!targetPose.getTargets().isEmpty()) {
+        for (PhotonTrackedTarget target : targetPose.getTargets()) {
+          if (targetIDsToTrack.contains(target.getFiducialId())) {
+            filteredTargets.add(target);
           }
         }
+      } else {
+        filteredTargets = new ArrayList<>(targetPose.getTargets());
       }
+      PhotonPipelineResult filteredTargetPose =
+          new PhotonPipelineResult(null, filteredTargets, null);
+
       Optional<EstimatedRobotPose> optionalEstimPose =
-          photonEstimator.estimateCoprocMultiTagPose(targetPose);
+          photonEstimator.estimateCoprocMultiTagPose(filteredTargetPose);
       if (optionalEstimPose.isEmpty()) {
-        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(targetPose);
+        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(filteredTargetPose);
         if (optionalEstimPose.isEmpty()) {
           continue;
         }
