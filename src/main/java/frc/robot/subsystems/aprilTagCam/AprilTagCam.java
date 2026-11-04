@@ -45,6 +45,7 @@ public class AprilTagCam {
   private Pose3d[] pose3dEmpty = new Pose3d[0];
   private Pose2d[] acceptedPoseArray = new Pose2d[1];
   private Pose2d[] acceptedPoseArrayEmpty = new Pose2d[0];
+  private Boolean tagsRemoved = false;
 
   public AprilTagCam(
       String name,
@@ -127,24 +128,23 @@ public class AprilTagCam {
 
     DogLog.log(ntKey + "Number of Results", results.size());
 
-    for (PhotonPipelineResult targetPose : results) {
-      ArrayList<PhotonTrackedTarget> filteredTargets = new ArrayList<>();
-      if (!targetPose.getTargets().isEmpty()) {
-        for (PhotonTrackedTarget target : targetPose.getTargets()) {
-          if (targetIDsToTrack.contains(target.getFiducialId())) {
-            filteredTargets.add(target);
+    for (PhotonPipelineResult pipelineResult : results) {
+      tagsRemoved = false;
+      if (!pipelineResult.getTargets().isEmpty()) {
+        for (PhotonTrackedTarget target : pipelineResult.getTargets()) {
+          if (!targetIDsToTrack.contains(target.getFiducialId())) {
+            pipelineResult.getTargets().remove(target);
+            tagsRemoved = true;
           }
         }
-      } else {
-        filteredTargets = new ArrayList<>(targetPose.getTargets());
       }
-      PhotonPipelineResult filteredTargetPose =
-          new PhotonPipelineResult(null, filteredTargets, null);
 
       Optional<EstimatedRobotPose> optionalEstimPose =
-          photonEstimator.estimateCoprocMultiTagPose(filteredTargetPose);
+          (tagsRemoved
+              ? photonEstimator.estimateLowestAmbiguityPose(pipelineResult)
+              : photonEstimator.estimateCoprocMultiTagPose(pipelineResult));
       if (optionalEstimPose.isEmpty()) {
-        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(filteredTargetPose);
+        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(pipelineResult);
         if (optionalEstimPose.isEmpty()) {
           continue;
         }
@@ -157,7 +157,7 @@ public class AprilTagCam {
       }
 
       Pose2d pos = estimPose3d.toPose2d(); // yay :0 im so happy
-      double timestamp = Utils.fpgaToCurrentTime(targetPose.getTimestampSeconds());
+      double timestamp = Utils.fpgaToCurrentTime(pipelineResult.getTimestampSeconds());
       Matrix<N3, N1> sd = findSD(optionalEstimPose, optionalEstimPose.get().targetsUsed);
       acceptedPoseArray[0] = pos;
 
