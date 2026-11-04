@@ -28,8 +28,9 @@ import java.util.function.Supplier;
 /** Base command for following a path */
 public class EagleFollowPathCommand extends Command {
 
-    private static final double STOP_TOLERANCE = 0;
-    private static final double START_TOLERANCE = 0; //placeholder
+    private final double stopErrorThreshold;
+    private final double resumeErrorThreshold;
+    private boolean timerRunning = true;
 
     private final Timer timer = new Timer();
     private final PathPlannerPath originalPath;
@@ -71,6 +72,8 @@ public class EagleFollowPathCommand extends Command {
           PathFollowingController controller,
           RobotConfig robotConfig,
           BooleanSupplier shouldFlipPath,
+          double stopErrorThreshold,
+          double resumeErrorThreshold,
           Subsystem... requirements) {
         this.originalPath = path;
         this.poseSupplier = poseSupplier;
@@ -79,6 +82,8 @@ public class EagleFollowPathCommand extends Command {
         this.controller = controller;
         this.robotConfig = robotConfig;
         this.shouldFlipPath = shouldFlipPath;
+        this.stopErrorThreshold = stopErrorThreshold;
+        this.resumeErrorThreshold = resumeErrorThreshold;
         this.eventScheduler = new EventScheduler();
     
         Set<Subsystem> driveRequirements = Set.of(requirements);
@@ -148,6 +153,7 @@ public class EagleFollowPathCommand extends Command {
     
         timer.reset();
         timer.start();
+        timerRunning = true;
   
       }
     
@@ -163,15 +169,24 @@ public class EagleFollowPathCommand extends Command {
   
         double currentError = currentPose.getTranslation().getDistance(targetState.pose.getTranslation());  
   
-        if (currentError > STOP_TOLERANCE) {
+        if (timerRunning && currentError > stopErrorThreshold) {
           timer.stop();
-        } else {
+          timerRunning = false;
+        } 
+        else if (!timerRunning && currentError < resumeErrorThreshold) {
           timer.start();
+          timerRunning = true;
         }
       
       ChassisSpeeds currentSpeeds = speedsSupplier.get();
   
       ChassisSpeeds targetSpeeds = controller.calculateRobotRelativeSpeeds(currentPose, targetState);
+
+      DriveFeedforwards feedforwards = targetState.feedforwards;
+
+      if (!timerRunning) {
+        feedforwards = DriveFeedforwards.zeros(robotConfig.numModules); // zero out ff if timer is paused
+      }
   
       double currentVel =
           Math.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
@@ -188,9 +203,11 @@ public class EagleFollowPathCommand extends Command {
           currentSpeeds.omegaRadiansPerSecond,
           targetSpeeds.omegaRadiansPerSecond);
   
-      output.accept(targetSpeeds, targetState.feedforwards);
+      output.accept(targetSpeeds, feedforwards); // pass ff here
   
-      eventScheduler.execute(currentTime);
+      if (timerRunning) {
+        eventScheduler.execute(currentTime); 
+      }
     }
   
     @Override
@@ -245,7 +262,7 @@ public class EagleFollowPathCommand extends Command {
                 new ModuleConfig(
                     0.048, 5.0, 1.2, DCMotor.getKrakenX60(1).withReduction(6.14), 60.0, 1),
                 0.55),
-            () -> true)
+            () -> true, 0.1, 0.1)
         .andThen(Commands.print("[PathPlanner] FollowPathCommand finished warmup"))
         .ignoringDisable(true);
   }
