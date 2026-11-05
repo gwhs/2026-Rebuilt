@@ -15,6 +15,8 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -77,14 +79,17 @@ public class AprilTagCam {
     ntKey = "Vision/" + name + "/";
   }
 
-  public void clearTargets() {
-    targetIDsToTrack.clear();
+  public Command clearTargets() {
+    return Commands.runOnce(() -> targetIDsToTrack.clear());
   }
 
-  public void addTargets(Integer[] targetsToAdd) {
-    for (int i = 0; i < targetsToAdd.length; i++) {
-      targetIDsToTrack.add(targetsToAdd[i]);
-    }
+  public Command addTargets(Integer[] targetsToAdd) {
+    return Commands.runOnce(
+        () -> {
+          for (int i = 0; i < targetsToAdd.length; i++) {
+            targetIDsToTrack.add(targetsToAdd[i]);
+          }
+        });
   }
 
   /**
@@ -131,12 +136,10 @@ public class AprilTagCam {
     for (PhotonPipelineResult pipelineResult : results) {
       tagsRemoved = false;
       if (!targetIDsToTrack.isEmpty()) {
-        if (!pipelineResult.getTargets().isEmpty()) {
-          for (PhotonTrackedTarget target : pipelineResult.getTargets()) {
-            if (!targetIDsToTrack.contains(target.getFiducialId())) {
-              pipelineResult.getTargets().remove(target);
-              tagsRemoved = true;
-            }
+        for (PhotonTrackedTarget target : pipelineResult.getTargets()) {
+          if (!targetIDsToTrack.contains(target.getFiducialId())) {
+            pipelineResult.getTargets().remove(target);
+            tagsRemoved = true;
           }
         }
       }
