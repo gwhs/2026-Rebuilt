@@ -130,11 +130,13 @@ public class AprilTagCam {
 
     for (PhotonPipelineResult pipelineResult : results) {
       tagsRemoved = false;
-      if (!pipelineResult.getTargets().isEmpty()) {
-        for (PhotonTrackedTarget target : pipelineResult.getTargets()) {
-          if (!targetIDsToTrack.contains(target.getFiducialId())) {
-            pipelineResult.getTargets().remove(target);
-            tagsRemoved = true;
+      if (!targetIDsToTrack.isEmpty()) {
+        if (!pipelineResult.getTargets().isEmpty()) {
+          for (PhotonTrackedTarget target : pipelineResult.getTargets()) {
+            if (!targetIDsToTrack.contains(target.getFiducialId())) {
+              pipelineResult.getTargets().remove(target);
+              tagsRemoved = true;
+            }
           }
         }
       }
