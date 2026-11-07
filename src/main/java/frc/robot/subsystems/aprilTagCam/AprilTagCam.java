@@ -135,21 +135,32 @@ public class AprilTagCam {
 
     for (PhotonPipelineResult pipelineResult : results) {
       tagsRemoved = false;
+      targetIDsToTrack.clear();
+      targetIDsToTrack.add(2);
+      ArrayList<PhotonTrackedTarget> filteredTargets = new ArrayList<>();
       if (!targetIDsToTrack.isEmpty()) {
+        tagsRemoved = true;
         for (PhotonTrackedTarget target : pipelineResult.getTargets()) {
-          if (!targetIDsToTrack.contains(target.getFiducialId())) {
-            pipelineResult.getTargets().remove(target);
-            tagsRemoved = true;
+          if (targetIDsToTrack.contains(target.getFiducialId())) {
+            // pipelineResult.getTargets().remove(target);
+            filteredTargets.add(target);
           }
         }
+      } else {
+        filteredTargets = new ArrayList<>(pipelineResult.getTargets());
+        tagsRemoved = false;
       }
+
+      PhotonPipelineResult filteredTargetPose =
+          new PhotonPipelineResult(
+              pipelineResult.metadata, filteredTargets, pipelineResult.multitagResult);
 
       Optional<EstimatedRobotPose> optionalEstimPose =
           (tagsRemoved
-              ? photonEstimator.estimateLowestAmbiguityPose(pipelineResult)
-              : photonEstimator.estimateCoprocMultiTagPose(pipelineResult));
+              ? photonEstimator.estimateLowestAmbiguityPose(filteredTargetPose)
+              : photonEstimator.estimateCoprocMultiTagPose(filteredTargetPose));
       if (optionalEstimPose.isEmpty()) {
-        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(pipelineResult);
+        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(filteredTargetPose);
         if (optionalEstimPose.isEmpty()) {
           continue;
         }
@@ -166,6 +177,8 @@ public class AprilTagCam {
       Matrix<N3, N1> sd = findSD(optionalEstimPose, optionalEstimPose.get().targetsUsed);
       acceptedPoseArray[0] = pos;
 
+      DogLog.log(
+          ntKey + "Targets", targetIDsToTrack.stream().mapToInt(Integer::intValue).toArray());
       DogLog.log(ntKey + "Accepted Pose", acceptedPoseArray);
       DogLog.log(ntKey + "Accepted Time Stamp", timestamp);
       DogLog.log(ntKey + "Accepted Stdev", getSDArray(sd));
