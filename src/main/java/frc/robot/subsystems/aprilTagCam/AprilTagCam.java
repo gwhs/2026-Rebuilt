@@ -83,7 +83,7 @@ public class AprilTagCam {
     return Commands.runOnce(() -> targetIDsToTrack.clear());
   }
 
-  public Command addTargets(Integer[] targetsToAdd) {
+  public Command addTargets(int[] targetsToAdd) {
     return Commands.runOnce(
         () -> {
           for (int i = 0; i < targetsToAdd.length; i++) {

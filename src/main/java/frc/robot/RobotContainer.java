@@ -164,6 +164,7 @@ public class RobotContainer {
   private AprilTagCam backLeftCam;
   private AprilTagCam frontRightCam;
   private AprilTagCam frontLeftCam;
+  private AprilTagCam testingCam;
 
   public RobotContainer(BiConsumer<Runnable, Double> addPeriodic) {
 
@@ -271,7 +272,13 @@ public class RobotContainer {
         groundIntakeRoller = GroundIntakeRollerSubsystem.createSim();
         groundIntakeExtension = GroundIntakeLinearExtensionSubsystem.createSim();
         blocker = BlockerSubsystem.createSim();
-
+        testingCam =
+            new AprilTagCam(
+                "test_cam",
+                AprilTagCamConstants.BACK_RIGHT_CAM_LOCATION,
+                drivetrain::addVisionMeasurement,
+                () -> drivetrain.getCachedState().Pose,
+                () -> drivetrain.getCachedState().Speeds);
         backRightCam =
             new AprilTagCam(
                 AprilTagCamConstants.BACK_RIGHT_CAM,
@@ -557,6 +564,12 @@ public class RobotContainer {
 
     startTime = HALUtil.getFPGATime();
 
+    if (testingCam != null && RobotBase.isSimulation()) {
+      testingCam.updatePoseEstim();
+      testingCam.addTargets(new int[] {2});
+      DogLog.log(
+          "Loop Time/Robot Container/Testing Cam", (HALUtil.getFPGATime() - startTime) / 1000);
+    }
     if (backRightCam != null) {
       backRightCam.updatePoseEstim();
       DogLog.log(
