@@ -136,31 +136,23 @@ public class AprilTagCam {
     for (PhotonPipelineResult pipelineResult : results) {
       tagsRemoved = false;
       targetIDsToTrack.clear();
-      targetIDsToTrack.add(2);
-      ArrayList<PhotonTrackedTarget> filteredTargets = new ArrayList<>();
+      targetIDsToTrack.add(10);
       if (!targetIDsToTrack.isEmpty()) {
-        tagsRemoved = true;
         for (PhotonTrackedTarget target : pipelineResult.getTargets()) {
-          if (targetIDsToTrack.contains(target.getFiducialId())) {
+          if (!targetIDsToTrack.contains(target.getFiducialId())) {
             // pipelineResult.getTargets().remove(target);
-            filteredTargets.add(target);
+            pipelineResult.targets.remove(pipelineResult.targets.indexOf(target));
+            tagsRemoved = true;
           }
         }
-      } else {
-        filteredTargets = new ArrayList<>(pipelineResult.getTargets());
-        tagsRemoved = false;
       }
-
-      PhotonPipelineResult filteredTargetPose =
-          new PhotonPipelineResult(
-              pipelineResult.metadata, filteredTargets, pipelineResult.multitagResult);
 
       Optional<EstimatedRobotPose> optionalEstimPose =
           (tagsRemoved
-              ? photonEstimator.estimateLowestAmbiguityPose(filteredTargetPose)
-              : photonEstimator.estimateCoprocMultiTagPose(filteredTargetPose));
+              ? photonEstimator.estimateLowestAmbiguityPose(pipelineResult)
+              : photonEstimator.estimateCoprocMultiTagPose(pipelineResult));
       if (optionalEstimPose.isEmpty()) {
-        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(filteredTargetPose);
+        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(pipelineResult);
         if (optionalEstimPose.isEmpty()) {
           continue;
         }
