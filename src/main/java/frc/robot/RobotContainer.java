@@ -7,6 +7,7 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLog;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Time;
@@ -478,6 +479,9 @@ public class RobotContainer {
     controller.rightStick().onFalse(stopShoot());
     controller.leftStick().whileTrue(backupShootTrench());
     controller.leftStick().onFalse(stopShoot());
+
+    SmartDashboard.putData(
+        Commands.runOnce(() -> drivetrain.resetPose(new Pose2d(1, 2, new Rotation2d(0)))).withName("test"));
   }
 
   public Command getAutonomousCommand() {
