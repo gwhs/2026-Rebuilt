@@ -12,9 +12,12 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -22,6 +25,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -37,6 +41,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.EagleUtil;
 import frc.robot.FieldConstants;
 import frc.robot.commands.AlignToPose;
+import frc.robot.commands.autonomous.EagleFollowPathCommand;
+
 import java.util.function.Supplier;
 
 /**
@@ -574,4 +580,29 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
           }
         });
   }
+
+  public Command followPath(PathPlannerPath path) {
+    var config = new RobotConfig(
+                75,
+                6.8,
+                new ModuleConfig(
+                    0.0508, 
+                    5.0, 
+                    1.2, 
+                    DCMotor.getKrakenX60(1).withReduction(6.14), 
+                    60.0, 
+                    1),
+                getModuleLocations());
+    return new EagleFollowPathCommand(path, () -> getCachedState().Pose, () -> getCachedState().Speeds,  (speeds, feedforwards) ->
+               setControl(
+                   m_pathApplyRobotSpeeds
+                       .withSpeeds(ChassisSpeeds.discretize(speeds, 0.020))
+                       .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                      .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),  new PPHolonomicDriveController(
+              // PID constants for translation
+              new PIDConstants(10, 0, 0),
+              // PID constants for rotation
+              new PIDConstants(7, 0, 0)), config, () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, 0, 0, this);
+  }
 }
+

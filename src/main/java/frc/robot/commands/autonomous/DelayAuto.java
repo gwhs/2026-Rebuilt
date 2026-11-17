@@ -11,13 +11,15 @@ import frc.robot.subsystems.groundIntakeLinearExtension.GroundIntakeLinearExtens
 import frc.robot.subsystems.groundIntakeRoller.GroundIntakeRollerSubsystem;
 import frc.robot.subsystems.indexer.IndexerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class DelayAuto extends SequentialCommandGroup {
   public DelayAuto(
       ShooterSubsystem shooter,
       IndexerSubsystem indexer,
       GroundIntakeLinearExtensionSubsystem groundIntakeExtend,
-      GroundIntakeRollerSubsystem groundIntakeRoller) {
+      GroundIntakeRollerSubsystem groundIntakeRoller,
+      SwerveSubsystem drivetrain) {
 
     try {
       PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("Delay_Start_Center");
@@ -32,7 +34,7 @@ public class DelayAuto extends SequentialCommandGroup {
           Commands.waitSeconds(9)
               .deadlineFor(Commands.parallel(shooter.runVoltage(0), indexer.runVoltage(0))),
           Commands.parallel(
-              AutoBuilder.followPath(path),
+              drivetrain.followPath(path),
               Commands.sequence(
                   Commands.waitSeconds(2.5),
                   Commands.parallel(
