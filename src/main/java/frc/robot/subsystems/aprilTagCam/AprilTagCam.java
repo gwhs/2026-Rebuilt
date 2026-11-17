@@ -147,10 +147,15 @@ public class AprilTagCam {
         }
       }
 
-      Optional<EstimatedRobotPose> optionalEstimPose =
-          (tagsRemoved
-              ? photonEstimator.estimateLowestAmbiguityPose(pipelineResult)
-              : photonEstimator.estimateCoprocMultiTagPose(pipelineResult));
+      Optional<EstimatedRobotPose> optionalEstimPose;
+      if (tagsRemoved) {
+        System.out.println("Tags removed, using lowest ambiguity");
+        System.out.println(pipelineResult);
+        optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(pipelineResult);
+      } else {
+        optionalEstimPose = photonEstimator.estimateCoprocMultiTagPose(pipelineResult);
+      }
+
       if (optionalEstimPose.isEmpty()) {
         optionalEstimPose = photonEstimator.estimateLowestAmbiguityPose(pipelineResult);
         if (optionalEstimPose.isEmpty()) {
