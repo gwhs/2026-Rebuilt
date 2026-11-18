@@ -512,7 +512,7 @@ public class RobotContainer {
         "4 Poofs 2nd pick Outpost", new NeutralAutos(true, Routine.BUMP, true, true, 4.0));
     autoChooser.addOption(
         "Super Intake Delay",
-        new DelayAuto(shooter, indexer, groundIntakeExtension, groundIntakeRoller));
+        new DelayAuto(shooter, indexer, groundIntakeExtension, groundIntakeRoller, drivetrain));
     SmartDashboard.putData("autonomous", autoChooser);
   }
 
